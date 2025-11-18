@@ -1,0 +1,113 @@
+@import url("https://fonts.googleapis.com/css2?family=Italiana&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap');
+
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Italiana", serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Italiana", serif;
+
+}
+
+p, small, li, span, a{
+  font-family: "Manrope", sans-serif;
+}
+
+.icon {
+  position: absolute;
+  font-size: 2rem;
+  color: #4F4A4A;
+  pointer-events: none;
+  transform-origin: center center;
+  left: 0;
+  top: 0;
+}
+
+/* Skills Section Styles */
+.skill-category {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.skill-item {
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  padding: 0.5rem;
+  border-radius: 2px;
+}
+
+.skill-item:hover {
+  transform: translateX(6px);
+}
+
+.skill-item h4 {
+  transition: letter-spacing 0.3s ease;
+}
+
+.skill-item:hover h4 {
+  letter-spacing: 0.5px;
+}
+
+.skill-indicator {
+  transition: height 0.5s ease, background-color 0.5s ease, width 0.3s ease;
+}
+
+.skill-item:hover .skill-indicator {
+  height: 2.5rem;
+  width: 2px;
+}
+
+.skill-bar {
+  transition: height 0.5s ease;
+}
+
+.skill-category h3 {
+  position: relative;
+}
+
+.skill-category:hover .skill-bar {
+  height: 4.5rem;
+}
+
+/* Projects Section Styles */
+.project-item {
+  opacity: 0;
+  transform: translateY(40px);
+}
+
+.project-line {
+  transition: width 0.5s ease;
+}
+
+.project-item:hover .project-line {
+  width: 5rem;
+}
+
+.project-visual {
+  transition: transform 0.4s ease;
+}
+
+.project-item:hover .project-visual {
+  transform: translateY(-8px);
+}
+
+.project-content h3 {
+  transition: letter-spacing 0.3s ease;
+}
+
+.project-item:hover .project-content h3 {
+  letter-spacing: 1px;
+}
+
+.project-highlight {
+  opacity: 0;
+  transform: translateY(30px);
+}

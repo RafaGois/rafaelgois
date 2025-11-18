@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rafael Gois</title>
+    <link rel="stylesheet" href="style.css" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+  </head>
+  <body class="bg-[#EDEDED] text-[#4F4A4A]">
+    <header class="flex flex-col min-h-screen relative">
+      <div class="flex items-center justify-between px-10 py-6">
+        <p>Rafael Gois</p>
+        <ul class="flex gap-16">
+          <li><a href="#about">Sobre mim</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+        <div
+          class="border border-[#4F4A4A] border-opacity-80 rounded-md p-1 px-4"
+        >
+          <a href="#">Contato</a>
+        </div>
+      </div>
+      <div class="flex-1 flex flex-col items-center justify-center">
+        <h1 class="text-7xl">Rafael Gois</h1>
+        <p class="text-2xl mb-4">Software Engineer</p>
+        <small class="text-sm text-wrap text-center max-w-xl"
+          >Criando soluções que impactam a vida das pessoas, resolvendo
+          problemas complexos e criando experiências incríveis</small
+        >
+      </div>
+      <!--         <div class="absolute w-full h-full flex items-center justify-center">
+          <i class="fa-solid fa-computer icon"></i>
+          <i class="fa-solid fa-computer-mouse icon"></i>
+          <i class="fa-solid fa-database icon"></i>
+          <i class="fa-solid fa-laptop icon"></i>
+          <i class="fa-solid fa-code icon"></i>
+          <i class="fa-solid fa-code-fork icon"></i>
+          <i class="fa-solid fa-file-code icon"></i>
+          <i class="fa-brands fa-html5 icon"></i>
+          <i class="fa-brands fa-css3-alt icon"></i>
+          <i class="fa-brands fa-square-js icon"></i>
+        </div>  -->
+    </header>
+    <main>
+      <section id="about" class="min-h-screen flex flex-col">
+        <h2 class="text-4xl text-center mb-4">Sobre mim</h2>
+        <p class="text-sm text-wrap text-center max-w-xl mx-auto">
+          Sou um desenvolvedor de software com uma paixão por criar soluções que impactam a vida das pessoas.
+          Resolvo problemas complexos e crio experiências incríveis.
+        </p>
+        <div class="flex-1 flex items-center justify-center gap-4">
+            <p class="text-sm text-wrap text-center max-w-xl ">Me chamo <span class="font-bold">Rafael Gois</span>, e sou desenvolvedor a mais de 4 anos, boa parte da minha experiencia envolveram as áreas de <span class="font-bold">planejamento</span> e <span class="font-bold">controle de processos</span> e <span class="font-bold">engenharia de automaçao</span>, com foco em criar soluções dentro da <span class="font-bold">indústria</span>.</p>
+          <img src="/boblioteca-3.PNG" alt="Sobre mim" class=" w-1/4 h-1/4"> 
+          <p class="text-sm text-wrap text-center max-w-xl ">Atualmente me aventuro empreendendo, com o objetivo de criar soluções e alavancar ainda mais o negócio das pessoas, seja desenvolvendo uma solução para o seu  problema ou mostrando você e seu negócio para o mundo de uma forma profissional.</p>
+        </div>
+      </section>
+      <section id="skills" class="min-h-screen flex flex-col py-20 px-10">
+        <div class="max-w-6xl mx-auto w-full">
+          <div class="text-center mb-16">
+            <h2 class="text-5xl mb-4">Habilidades</h2>
+            <p class="text-sm max-w-2xl mx-auto text-[#4F4A4A]/70 leading-relaxed">
+              Ao longo dos anos, desenvolvi expertise em diversas tecnologias e metodologias, 
+              sempre priorizando qualidade, performance e experiência do usuário. 
+              Cada ferramenta é escolhida com propósito, cada solução é pensada com cuidado.
+            </p>
+          </div>
+
+          <div class="skills-container space-y-20">
+            <!-- Frontend -->
+            <div class="skill-category" data-category="frontend">
+              <div class="flex items-center gap-4 mb-10">
+                <div class="skill-bar h-16 w-0.5 bg-[#4F4A4A]"></div>
+                <div>
+                  <h3 class="text-3xl mb-1">Frontend</h3>
+                  <p class="text-xs text-[#4F4A4A]/50">Interfaces modernas e experiências fluidas</p>
+                </div>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pl-6">
+                <div class="skill-item group">
+                  <div class="flex items-start gap-3 mb-3">
+                    <div class="skill-indicator w-1 h-10 bg-[#4F4A4A]/30 group-hover:bg-[#4F4A4A] transition-all duration-500"></div>
+                    <div class="flex-1">
+                      <h4 class="text-xl mb-2">React</h4>
+                      <p class="text-xs text-[#4F4A4A]/60 group-hover:text-[#4F4A4A] transition-colors duration-300 leading-relaxed">
+                        Construção de interfaces modernas com componentes reutilizáveis, 
+                        gerenciamento de estado e hooks personalizados
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="skill-item group">
+                  <div class="flex items-start gap-3 mb-3">
+                    <div class="skill-indicator w-1 h-10 bg-[#4F4A4A]/30 group-hover:bg-[#4F4A4A] transition-all duration-500"></div>
+                    <div class="flex-1">
+                      <h4 class="text-xl mb-2">Next.js</h4>
+                      <p class="text-xs text-[#4F4A4A]/60 group-hover:text-[#4F4A4A] transition-colors duration-300 leading-relaxed">
+                        Aplicações fullstack com Server-Side Rendering, 
+                        otimizações de performance e API Routes
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="skill-item group">
+                  <div class="flex items-start gap-3 mb-3">
+                    <div class="skill-indicator w-1 h-10 bg-[#4F4A4A]/30 group-hover:bg-[#4F4A4A] transition-all duration-500"></div>
+                    <div class="flex-1">
+                      <h4 class="text-xl mb-2">JavaScript</h4>
+                      <p class="text-xs text-[#4F4A4A]/60 group-hover:text-[#4F4A4A] transition-colors duration-300 leading-relaxed">
+                        Linguagem fundamental para desenvolvimento web, 
+                        ES6+ e programação assíncrona moderna
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="skill-item group">
+                  <div class="flex items-start gap-3 mb-3">
+                    <div class="skill-indicator w-1 h-10 bg-[#4F4A4A]/30 group-hover:bg-[#4F4A4A] transition-all duration-500"></div>
+                    <div class="flex-1">
+                      <h4 class="text-xl mb-2">React Native</h4>
+                      <p class="text-xs text-[#4F4A4A]/60 group-hover:text-[#4F4A4A] transition-colors duration-300 leading-relaxed">
+                        Desenvolvimento mobile multiplataforma, 
+                        criando aplicações nativas para iOS e Android
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="skill-item group">
+                  <div class="flex items-start gap-3 mb-3">
+                    <div class="skill-indicator w-1 h-10 bg-[#4F4A4A]/30 group-hover:bg-[#4F4A4A] transition-all duration-500"></div>
+                    <div class="flex-1">
+                      <h4 class="text-xl mb-2">GSAP</h4>
+                      <p class="text-xs text-[#4F4A4A]/60 group-hover:text-[#4F4A4A] transition-colors duration-300 leading-relaxed">
+                        Animações performáticas e interativas, 
+                        criando experiências visuais sofisticadas
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="skill-item group">
+                  <div class="flex items-start gap-3 mb-3">
+                    <div class="skill-indicator w-1 h-10 bg-[#4F4A4A]/30 group-hover:bg-[#4F4A4A] transition-all duration-500"></div>
+                    <div class="flex-1">
+                      <h4 class="text-xl mb-2">HTML5 & CSS3</h4>
+                      <p class="text-xs text-[#4F4A4A]/60 group-hover:text-[#4F4A4A] transition-colors duration-300 leading-relaxed">
+                        Fundamentos sólidos em semântica, acessibilidade 
+                        e layouts modernos com Flexbox e Grid
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Backend -->
+            <div class="skill-category" data-category="backend">
+              <div class="flex items-center gap-4 mb-10">
+                <div class="skill-bar h-16 w-0.5 bg-[#4F4A4A]"></div>
+                <div>
+                  <h3 class="text-3xl mb-1">Backend</h3>
+                  <p class="text-xs text-[#4F4A4A]/50">Arquitetura robusta e APIs eficientes</p>
+                </div>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pl-6">
+                <div class="skill-item group">
+                  <div class="flex items-start gap-3 mb-3">
+                    <div class="skill-indicator w-1 h-10 bg-[#4F4A4A]/30 group-hover:bg-[#4F4A4A] transition-all duration-500"></div>
+                    <div class="flex-1">
+                      <h4 class="text-xl mb-2">Node.js</h4>
+                      <p class="text-xs text-[#4F4A4A]/60 group-hover:text-[#4F4A4A] transition-colors duration-300 leading-relaxed">
+                        Desenvolvimento de APIs RESTful e GraphQL, 
+                        arquitetura escalável e processamento assíncrono
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="skill-item group">
+                  <div class="flex items-start gap-3 mb-3">
+                    <div class="skill-indicator w-1 h-10 bg-[#4F4A4A]/30 group-hover:bg-[#4F4A4A] transition-all duration-500"></div>
+                    <div class="flex-1">
+                      <h4 class="text-xl mb-2">Prisma</h4>
+                      <p class="text-xs text-[#4F4A4A]/60 group-hover:text-[#4F4A4A] transition-colors duration-300 leading-relaxed">
+                        ORM type-safe com migrations eficientes, 
+                        garantindo integridade e versionamento de dados
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="skill-item group">
+                  <div class="flex items-start gap-3 mb-3">
+                    <div class="skill-indicator w-1 h-10 bg-[#4F4A4A]/30 group-hover:bg-[#4F4A4A] transition-all duration-500"></div>
+                    <div class="flex-1">
+                      <h4 class="text-xl mb-2">SQL Server</h4>
+                      <p class="text-xs text-[#4F4A4A]/60 group-hover:text-[#4F4A4A] transition-colors duration-300 leading-relaxed">
+                        Bancos de dados relacionais com queries otimizadas, 
+                        stored procedures e triggers
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="skill-item group">
+                  <div class="flex items-start gap-3 mb-3">
+                    <div class="skill-indicator w-1 h-10 bg-[#4F4A4A]/30 group-hover:bg-[#4F4A4A] transition-all duration-500"></div>
+                    <div class="flex-1">
+                      <h4 class="text-xl mb-2">Express.js</h4>
+                      <p class="text-xs text-[#4F4A4A]/60 group-hover:text-[#4F4A4A] transition-colors duration-300 leading-relaxed">
+                        Framework minimalista para construção de APIs, 
+                        middleware customizado e roteamento eficiente
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="skill-item group">
+                  <div class="flex items-start gap-3 mb-3">
+                    <div class="skill-indicator w-1 h-10 bg-[#4F4A4A]/30 group-hover:bg-[#4F4A4A] transition-all duration-500"></div>
+                    <div class="flex-1">
+                      <h4 class="text-xl mb-2">JWT & Auth</h4>
+                      <p class="text-xs text-[#4F4A4A]/60 group-hover:text-[#4F4A4A] transition-colors duration-300 leading-relaxed">
+                        Autenticação e autorização seguras, 
+                        implementação de tokens e controle de acesso
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="skill-item group">
+                  <div class="flex items-start gap-3 mb-3">
+                    <div class="skill-indicator w-1 h-10 bg-[#4F4A4A]/30 group-hover:bg-[#4F4A4A] transition-all duration-500"></div>
+                    <div class="flex-1">
+                      <h4 class="text-xl mb-2">TypeScript</h4>
+                      <p class="text-xs text-[#4F4A4A]/60 group-hover:text-[#4F4A4A] transition-colors duration-300 leading-relaxed">
+                        Desenvolvimento type-safe com tipagem estática, 
+                        melhorando manutenibilidade e reduzindo erros em APIs
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Outros -->
+            <div class="skill-category" data-category="others">
+              <div class="flex items-center gap-4 mb-10">
+                <div class="skill-bar h-16 w-0.5 bg-[#4F4A4A]"></div>
+                <div>
+                  <h3 class="text-3xl mb-1">Outros</h3>
+                  <p class="text-xs text-[#4F4A4A]/50">Competências complementares e metodologias</p>
+                </div>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pl-6">
+                <div class="skill-item group">
+                  <div class="flex items-start gap-3 mb-3">
+                    <div class="skill-indicator w-1 h-10 bg-[#4F4A4A]/30 group-hover:bg-[#4F4A4A] transition-all duration-500"></div>
+                    <div class="flex-1">
+                      <h4 class="text-xl mb-2">UI/UX Design</h4>
+                      <p class="text-xs text-[#4F4A4A]/60 group-hover:text-[#4F4A4A] transition-colors duration-300 leading-relaxed">
+                        Design centrado no usuário, prototipagem 
+                        e criação de interfaces intuitivas
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="skill-item group">
+                  <div class="flex items-start gap-3 mb-3">
+                    <div class="skill-indicator w-1 h-10 bg-[#4F4A4A]/30 group-hover:bg-[#4F4A4A] transition-all duration-500"></div>
+                    <div class="flex-1">
+                      <h4 class="text-xl mb-2">Performance</h4>
+                      <p class="text-xs text-[#4F4A4A]/60 group-hover:text-[#4F4A4A] transition-colors duration-300 leading-relaxed">
+                        Otimização de carregamento, métricas Core Web Vitals 
+                        e análise de performance
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="skill-item group">
+                  <div class="flex items-start gap-3 mb-3">
+                    <div class="skill-indicator w-1 h-10 bg-[#4F4A4A]/30 group-hover:bg-[#4F4A4A] transition-all duration-500"></div>
+                    <div class="flex-1">
+                      <h4 class="text-xl mb-2">Responsividade</h4>
+                      <p class="text-xs text-[#4F4A4A]/60 group-hover:text-[#4F4A4A] transition-colors duration-300 leading-relaxed">
+                        Desenvolvimento mobile-first, 
+                        adaptação para todos os dispositivos
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="skill-item group">
+                  <div class="flex items-start gap-3 mb-3">
+                    <div class="skill-indicator w-1 h-10 bg-[#4F4A4A]/30 group-hover:bg-[#4F4A4A] transition-all duration-500"></div>
+                    <div class="flex-1">
+                      <h4 class="text-xl mb-2">SEO</h4>
+                      <p class="text-xs text-[#4F4A4A]/60 group-hover:text-[#4F4A4A] transition-colors duration-300 leading-relaxed">
+                        Otimização para mecanismos de busca, 
+                        meta tags e estrutura semântica
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="skill-item group">
+                  <div class="flex items-start gap-3 mb-3">
+                    <div class="skill-indicator w-1 h-10 bg-[#4F4A4A]/30 group-hover:bg-[#4F4A4A] transition-all duration-500"></div>
+                    <div class="flex-1">
+                      <h4 class="text-xl mb-2">Git & Versionamento</h4>
+                      <p class="text-xs text-[#4F4A4A]/60 group-hover:text-[#4F4A4A] transition-colors duration-300 leading-relaxed">
+                        Controle de versão, branching strategies 
+                        e workflows colaborativos
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section id="projects" class="min-h-screen flex flex-col py-12 px-10">
+        <div class="max-w-7xl mx-auto w-full">
+          <div class="text-center mb-12">
+            <h2 class="text-5xl mb-4">Projetos</h2>
+            <p class="text-sm max-w-2xl mx-auto text-[#4F4A4A]/70 leading-relaxed">
+              Cada projeto é uma narrativa única, onde tecnologia encontra propósito, 
+              e código se transforma em experiência.
+            </p>
+          </div>
+
+          <div class="projects-container space-y-16">
+            <!-- Project 1: Elevate Pro Media -->
+            <div class="project-item" data-project="elevate">
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                <div class="project-content order-2 lg:order-1">
+                  <div class="flex items-center gap-3 mb-4">
+                    <div class="project-line h-px w-12 bg-[#4F4A4A]"></div>
+                    <span class="text-xs text-[#4F4A4A]/50 uppercase tracking-wider">01</span>
+                  </div>
+                  <h3 class="text-3xl mb-3">Elevate Pro Media</h3>
+                  <p class="text-sm text-[#4F4A4A]/70 mb-4 leading-relaxed max-w-lg">
+                    Plataforma completa para agência de marketing digital, 
+                    apresentando serviços, portfólio e estratégias de crescimento. 
+                    Design moderno que reflete inovação e profissionalismo.
+                  </p>
+                  <div class="flex flex-wrap gap-2 mb-4">
+                    <span class="text-xs px-2 py-1 border border-[#4F4A4A]/30 text-[#4F4A4A]/70">React</span>
+                    <span class="text-xs px-2 py-1 border border-[#4F4A4A]/30 text-[#4F4A4A]/70">Next.js</span>
+                    <span class="text-xs px-2 py-1 border border-[#4F4A4A]/30 text-[#4F4A4A]/70">TypeScript</span>
+                  </div>
+                  <a href="https://elevatepromedia.com" target="_blank" rel="noopener noreferrer" 
+                     class="inline-flex items-center gap-2 text-sm text-[#4F4A4A] hover:text-[#4F4A4A]/70 transition-colors group">
+                    <span>Ver projeto</span>
+                    <span class="group-hover:translate-x-1 transition-transform">→</span>
+                  </a>
+                </div>
+                <div class="project-visual order-1 lg:order-2 relative">
+                  <div class="aspect-[4/3] bg-[#4F4A4A]/5 border border-[#4F4A4A]/10 flex items-center justify-center">
+                    <span class="text-[#4F4A4A]/30 text-sm">elevatepromedia.com</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Project 2: Pollen Intelligence -->
+            <div class="project-item" data-project="pollen">
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                <div class="project-visual">
+                  <div class="aspect-[4/3] bg-[#4F4A4A]/5 border border-[#4F4A4A]/10 flex items-center justify-center">
+                    <span class="text-[#4F4A4A]/30 text-sm">pollenintelligence.com</span>
+                  </div>
+                </div>
+                <div class="project-content">
+                  <div class="flex items-center gap-3 mb-4">
+                    <div class="project-line h-px w-12 bg-[#4F4A4A]"></div>
+                    <span class="text-xs text-[#4F4A4A]/50 uppercase tracking-wider">02</span>
+                  </div>
+                  <h3 class="text-3xl mb-3">Pollen Intelligence</h3>
+                  <p class="text-sm text-[#4F4A4A]/70 mb-4 leading-relaxed max-w-lg">
+                    Solução tecnológica para análise e inteligência de dados, 
+                    oferecendo insights precisos através de uma interface intuitiva 
+                    e visualizações sofisticadas.
+                  </p>
+                  <div class="flex flex-wrap gap-2 mb-4">
+                    <span class="text-xs px-2 py-1 border border-[#4F4A4A]/30 text-[#4F4A4A]/70">React</span>
+                    <span class="text-xs px-2 py-1 border border-[#4F4A4A]/30 text-[#4F4A4A]/70">Node.js</span>
+                    <span class="text-xs px-2 py-1 border border-[#4F4A4A]/30 text-[#4F4A4A]/70">SQL Server</span>
+                  </div>
+                  <a href="https://pollenintelligence.com" target="_blank" rel="noopener noreferrer" 
+                     class="inline-flex items-center gap-2 text-sm text-[#4F4A4A] hover:text-[#4F4A4A]/70 transition-colors group">
+                    <span>Ver projeto</span>
+                    <span class="group-hover:translate-x-1 transition-transform">→</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Project 3: Codinome Barbearia -->
+            <div class="project-item" data-project="codinome">
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                <div class="project-content order-2 lg:order-1">
+                  <div class="flex items-center gap-3 mb-4">
+                    <div class="project-line h-px w-12 bg-[#4F4A4A]"></div>
+                    <span class="text-xs text-[#4F4A4A]/50 uppercase tracking-wider">03</span>
+                  </div>
+                  <h3 class="text-3xl mb-3">Codinome Barbearia</h3>
+                  <p class="text-sm text-[#4F4A4A]/70 mb-4 leading-relaxed max-w-lg">
+                    Website elegante para barbearia moderna, combinando estética 
+                    contemporânea com funcionalidades de agendamento e apresentação 
+                    de serviços de forma sofisticada.
+                  </p>
+                  <div class="flex flex-wrap gap-2 mb-4">
+                    <span class="text-xs px-2 py-1 border border-[#4F4A4A]/30 text-[#4F4A4A]/70">Next.js</span>
+                    <span class="text-xs px-2 py-1 border border-[#4F4A4A]/30 text-[#4F4A4A]/70">React</span>
+                    <span class="text-xs px-2 py-1 border border-[#4F4A4A]/30 text-[#4F4A4A]/70">JavaScript</span>
+                  </div>
+                  <a href="https://codinomebarbearia.com" target="_blank" rel="noopener noreferrer" 
+                     class="inline-flex items-center gap-2 text-sm text-[#4F4A4A] hover:text-[#4F4A4A]/70 transition-colors group">
+                    <span>Ver projeto</span>
+                    <span class="group-hover:translate-x-1 transition-transform">→</span>
+                  </a>
+                </div>
+                <div class="project-visual order-1 lg:order-2 relative">
+                  <div class="aspect-[4/3] bg-[#4F4A4A]/5 border border-[#4F4A4A]/10 flex items-center justify-center">
+                    <span class="text-[#4F4A4A]/30 text-sm">codinomebarbearia.com</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Project 4: Divina Massa -->
+            <div class="project-item" data-project="divina">
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                <div class="project-visual">
+                  <div class="aspect-[4/3] bg-[#4F4A4A]/5 border border-[#4F4A4A]/10 flex items-center justify-center">
+                    <span class="text-[#4F4A4A]/30 text-sm">divinamassa.com</span>
+                  </div>
+                </div>
+                <div class="project-content">
+                  <div class="flex items-center gap-3 mb-4">
+                    <div class="project-line h-px w-12 bg-[#4F4A4A]"></div>
+                    <span class="text-xs text-[#4F4A4A]/50 uppercase tracking-wider">04</span>
+                  </div>
+                  <h3 class="text-3xl mb-3">Divina Massa</h3>
+                  <p class="text-sm text-[#4F4A4A]/70 mb-4 leading-relaxed max-w-lg">
+                    E-commerce especializado em produtos artesanais, 
+                    com experiência de compra fluida e apresentação visual 
+                    que valoriza a qualidade e autenticidade dos produtos.
+                  </p>
+                  <div class="flex flex-wrap gap-2 mb-4">
+                    <span class="text-xs px-2 py-1 border border-[#4F4A4A]/30 text-[#4F4A4A]/70">React</span>
+                    <span class="text-xs px-2 py-1 border border-[#4F4A4A]/30 text-[#4F4A4A]/70">Next.js</span>
+                    <span class="text-xs px-2 py-1 border border-[#4F4A4A]/30 text-[#4F4A4A]/70">Prisma</span>
+                  </div>
+                  <a href="https://divinamassa.com" target="_blank" rel="noopener noreferrer" 
+                     class="inline-flex items-center gap-2 text-sm text-[#4F4A4A] hover:text-[#4F4A4A]/70 transition-colors group">
+                    <span>Ver projeto</span>
+                    <span class="group-hover:translate-x-1 transition-transform">→</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Project 5: Escolinha CT Nine -->
+            <div class="project-item" data-project="escolinha">
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                <div class="project-content order-2 lg:order-1">
+                  <div class="flex items-center gap-3 mb-4">
+                    <div class="project-line h-px w-12 bg-[#4F4A4A]"></div>
+                    <span class="text-xs text-[#4F4A4A]/50 uppercase tracking-wider">05</span>
+                  </div>
+                  <h3 class="text-3xl mb-3">Escolinha CT Nine</h3>
+                  <p class="text-sm text-[#4F4A4A]/70 mb-4 leading-relaxed max-w-lg">
+                    Plataforma educacional para escola de futebol, 
+                    integrando gestão de alunos, calendário de atividades 
+                    e comunicação com pais e responsáveis.
+                  </p>
+                  <div class="flex flex-wrap gap-2 mb-4">
+                    <span class="text-xs px-2 py-1 border border-[#4F4A4A]/30 text-[#4F4A4A]/70">React</span>
+                    <span class="text-xs px-2 py-1 border border-[#4F4A4A]/30 text-[#4F4A4A]/70">Node.js</span>
+                    <span class="text-xs px-2 py-1 border border-[#4F4A4A]/30 text-[#4F4A4A]/70">Express</span>
+                  </div>
+                  <a href="https://escolhinhactnine.com" target="_blank" rel="noopener noreferrer" 
+                     class="inline-flex items-center gap-2 text-sm text-[#4F4A4A] hover:text-[#4F4A4A]/70 transition-colors group">
+                    <span>Ver projeto</span>
+                    <span class="group-hover:translate-x-1 transition-transform">→</span>
+                  </a>
+                </div>
+                <div class="project-visual order-1 lg:order-2 relative">
+                  <div class="aspect-[4/3] bg-[#4F4A4A]/5 border border-[#4F4A4A]/10 flex items-center justify-center">
+                    <span class="text-[#4F4A4A]/30 text-sm">escolhinhactnine.com</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bloco de Destaque - Outros Projetos -->
+          <div class="project-highlight mt-16 pt-8 border-t border-[#4F4A4A]/20">
+            <div class="max-w-4xl mx-auto text-center">
+              <div class="mb-6">
+                <div class="inline-block h-px w-20 bg-[#4F4A4A] mb-4"></div>
+              </div>
+              <p class="text-xl text-[#4F4A4A] leading-relaxed mb-3">
+                Além desses, desenvolvi diversos outros projetos para a indústria, 
+                aplicando soluções completas, profissionais e de alto padrão.
+              </p>
+              <p class="text-sm text-[#4F4A4A]/60 mt-6">
+                Cada solução é pensada para atender necessidades específicas, 
+                sempre com foco em qualidade, performance e experiência do usuário.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer></footer>
+    <script src="index.js"></script>
+  </body>
+</html>
