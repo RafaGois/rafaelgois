@@ -111,3 +111,48 @@ p, small, li, span, a{
   opacity: 0;
   transform: translateY(30px);
 }
+
+/* Services Section Styles */
+.service-item {
+  opacity: 0;
+  transform: translateY(40px);
+}
+
+.service-icon {
+  transition: transform 0.4s ease, border-color 0.4s ease;
+}
+
+.service-item:hover .service-icon {
+  transform: scale(1.1);
+  border-color: #4F4A4A;
+}
+
+.service-icon-line {
+  transition: width 0.5s ease, opacity 0.4s ease;
+}
+
+.service-item:hover .service-icon-line {
+  width: 20rem;
+  opacity: 0.6;
+}
+
+.service-item h3 {
+  transition: letter-spacing 0.3s ease;
+}
+
+.service-item:hover h3 {
+  letter-spacing: 2px;
+}
+
+.service-item p {
+  transition: opacity 0.3s ease;
+}
+
+.service-item:hover p {
+  opacity: 1;
+}
+
+.service-cta {
+  opacity: 0;
+  transform: translateY(20px);
+}

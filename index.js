@@ -34,6 +34,9 @@ document.addEventListener("DOMContentLoaded", () => {
   
   // Projects Section Animations
   initProjectsAnimations();
+  
+  // Services Section Animations
+  initServicesAnimations();
 });
 
 function initIconsAnimation(element, x, y) {
@@ -144,6 +147,58 @@ function initProjectsAnimations() {
         ease: "power2.out",
         scrollTrigger: {
           trigger: projectHighlight,
+          start: "top 85%",
+          toggleActions: "play none none none"
+        }
+      }
+    );
+  }
+}
+
+function initServicesAnimations() {
+  const serviceItems = document.querySelectorAll(".service-item");
+  const serviceCta = document.querySelector(".service-cta");
+  
+  if (serviceItems.length === 0) return;
+
+  serviceItems.forEach((item, index) => {
+    gsap.fromTo(
+      item,
+      {
+        opacity: 0,
+        y: 40
+      },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        delay: index * 0.25,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: item,
+          start: "top 85%",
+          end: "top 60%",
+          toggleActions: "play none none none"
+        }
+      }
+    );
+  });
+
+  // Animar bloco CTA
+  if (serviceCta) {
+    gsap.fromTo(
+      serviceCta,
+      {
+        opacity: 0,
+        y: 20
+      },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: serviceCta,
           start: "top 85%",
           toggleActions: "play none none none"
         }
