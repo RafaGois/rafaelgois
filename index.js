@@ -44,6 +44,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Services Section Animations
   initServicesAnimations();
+
+  // Testimonials Section Navigation
+  initTestimonialsNavigation();
+
+  // Contact Form
+  initContactForm();
+
+  // Footer - Update year
+  updateFooterYear();
 });
 
 function initIconsAnimation(element, x, y) {
@@ -246,4 +255,125 @@ function aboutMeAnimations() {
     x: 50,
     ease: "power2.out",
   }, 0);
+}
+
+function initTestimonialsNavigation() {
+  const testimonialItems = document.querySelectorAll(".testimonial-item");
+  const prevBtn = document.querySelector(".prev-btn");
+  const nextBtn = document.querySelector(".next-btn");
+  const dots = document.querySelectorAll(".dot");
+  
+  if (testimonialItems.length === 0) return;
+
+  let currentPage = 0;
+  const itemsPerPage = 3;
+  const totalPages = Math.ceil(testimonialItems.length / itemsPerPage);
+
+  function showPage(page) {
+    testimonialItems.forEach((item, index) => {
+      const itemPage = Math.floor(index / itemsPerPage);
+      if (itemPage === page) {
+        item.classList.remove("hidden");
+      } else {
+        item.classList.add("hidden");
+      }
+    });
+
+    // Update dots
+    dots.forEach((dot, index) => {
+      if (index === page) {
+        dot.classList.add("active");
+        dot.style.backgroundColor = "#4F4A4A";
+      } else {
+        dot.classList.remove("active");
+        dot.style.backgroundColor = "#4F4A4A30";
+      }
+    });
+
+    // Update buttons
+    prevBtn.disabled = page === 0;
+    nextBtn.disabled = page === totalPages - 1;
+    
+    if (page === 0) {
+      prevBtn.style.opacity = "0.5";
+      prevBtn.style.cursor = "not-allowed";
+    } else {
+      prevBtn.style.opacity = "1";
+      prevBtn.style.cursor = "pointer";
+    }
+    
+    if (page === totalPages - 1) {
+      nextBtn.style.opacity = "0.5";
+      nextBtn.style.cursor = "not-allowed";
+    } else {
+      nextBtn.style.opacity = "1";
+      nextBtn.style.cursor = "pointer";
+    }
+  }
+
+  prevBtn.addEventListener("click", () => {
+    if (currentPage > 0) {
+      currentPage--;
+      showPage(currentPage);
+    }
+  });
+
+  nextBtn.addEventListener("click", () => {
+    if (currentPage < totalPages - 1) {
+      currentPage++;
+      showPage(currentPage);
+    }
+  });
+
+  dots.forEach((dot, index) => {
+    dot.addEventListener("click", () => {
+      currentPage = index;
+      showPage(currentPage);
+    });
+  });
+
+  // Initialize
+  showPage(0);
+}
+
+function initContactForm() {
+  const contactForm = document.querySelector("#contact form");
+  
+  if (!contactForm) return;
+
+  contactForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    
+    // Aqui você pode adicionar a lógica de envio do formulário
+    // Por exemplo, usando um serviço como Formspree, EmailJS, ou seu próprio backend
+    
+    const formData = new FormData(contactForm);
+    const data = Object.fromEntries(formData);
+    
+    // Exemplo de feedback visual
+    const submitButton = contactForm.querySelector("button[type='submit']");
+    const originalText = submitButton.innerHTML;
+    
+    submitButton.innerHTML = "Enviando...";
+    submitButton.disabled = true;
+    
+    // Simular envio (substitua por sua lógica real)
+    setTimeout(() => {
+      submitButton.innerHTML = originalText;
+      submitButton.disabled = false;
+      
+      // Limpar formulário
+      contactForm.reset();
+      
+      // Feedback visual (você pode melhorar isso)
+      alert("Mensagem enviada com sucesso! Entrarei em contato em breve.");
+    }, 1500);
+  });
+}
+
+function updateFooterYear() {
+  const yearElement = document.getElementById("current-year");
+  if (yearElement) {
+    yearElement.textContent = new Date().getFullYear();
+  }
 }

@@ -156,3 +156,68 @@ p, small, li, span, a{
   opacity: 0;
   transform: translateY(20px);
 }
+
+/* Testimonials Section Styles */
+.testimonial-item.hidden {
+  display: none;
+}
+
+.testimonial-line {
+  transition: width 0.5s ease;
+}
+
+.testimonial-item:hover .testimonial-line {
+  width: 3rem;
+}
+
+.testimonial-item h4 {
+  transition: letter-spacing 0.3s ease;
+}
+
+.testimonial-item:hover h4 {
+  letter-spacing: 0.5px;
+}
+
+.testimonial-dots .dot.active {
+  background-color: #4F4A4A;
+}
+
+/* Contact Section Styles */
+.contact-line {
+  transition: width 0.5s ease;
+}
+
+.contact-form:hover .contact-line,
+.contact-info:hover .contact-line {
+  width: 5rem;
+}
+
+.contact-icon-line {
+  transition: width 0.5s ease;
+}
+
+.contact-item:hover .contact-icon-line {
+  width: 3rem;
+}
+
+.contact-item h3 {
+  transition: letter-spacing 0.3s ease;
+}
+
+.contact-item:hover h3 {
+  letter-spacing: 0.5px;
+}
+
+input:focus,
+textarea:focus {
+  border-color: #4F4A4A;
+}
+
+/* Footer Styles */
+footer a {
+  transition: all 0.3s ease;
+}
+
+footer a:hover {
+  letter-spacing: 0.3px;
+}
