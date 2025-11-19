@@ -1,18 +1,20 @@
 document.addEventListener("DOMContentLoaded", () => {
   // Registrar ScrollTrigger plugin
   gsap.registerPlugin(ScrollTrigger);
-  
+
   const icons = document.querySelectorAll(".icon");
   const iconContainer = document.querySelector(".absolute");
-  
+
+  aboutMeAnimations();
+
   if (iconContainer && icons.length > 0) {
     // Obter posição do container
     const containerRect = iconContainer.getBoundingClientRect();
-    
+
     // Calcular centro da tela relativo ao container
     const centerX = window.innerWidth / 2 - containerRect.left;
     const centerY = window.innerHeight / 2 - containerRect.top;
-    
+
     icons.forEach((icon, index) => {
       // Posição inicial: centro da tela
       gsap.set(icon, {
@@ -25,34 +27,39 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     icons.forEach((icon, index) => {
-      initIconsAnimation(icon, Math.random() * window.innerWidth - 200, Math.random() * window.innerHeight - 200, index);
+      initIconsAnimation(
+        icon,
+        Math.random() * window.innerWidth - 200,
+        Math.random() * window.innerHeight - 200,
+        index
+      );
     });
   }
 
   // Skills Section Animations
   initSkillsAnimations();
-  
+
   // Projects Section Animations
   initProjectsAnimations();
-  
+
   // Services Section Animations
   initServicesAnimations();
 });
 
 function initIconsAnimation(element, x, y) {
-    gsap.to(element, {
-      x: x,
-      y: y,
-      duration: 1,
-      ease: "power2.out",
-      scale: 1,
-      opacity: 1,
-    });
+  gsap.to(element, {
+    x: x,
+    y: y,
+    duration: 1,
+    ease: "power2.out",
+    scale: 1,
+    opacity: 1,
+  });
 }
 
 function initSkillsAnimations() {
   const skillCategories = document.querySelectorAll(".skill-category");
-  
+
   if (skillCategories.length === 0) return;
 
   skillCategories.forEach((category, index) => {
@@ -60,7 +67,7 @@ function initSkillsAnimations() {
       category,
       {
         opacity: 0,
-        y: 30
+        y: 30,
       },
       {
         opacity: 1,
@@ -72,8 +79,8 @@ function initSkillsAnimations() {
           trigger: category,
           start: "top 80%",
           end: "top 50%",
-          toggleActions: "play none none none"
-        }
+          toggleActions: "play none none none",
+        },
       }
     );
 
@@ -84,19 +91,19 @@ function initSkillsAnimations() {
         item,
         {
           opacity: 0,
-          x: -20
+          x: -20,
         },
         {
           opacity: 1,
           x: 0,
           duration: 0.6,
-          delay: (index * 0.2) + (itemIndex * 0.1),
+          delay: index * 0.2 + itemIndex * 0.1,
           ease: "power2.out",
           scrollTrigger: {
             trigger: category,
             start: "top 80%",
-            toggleActions: "play none none none"
-          }
+            toggleActions: "play none none none",
+          },
         }
       );
     });
@@ -106,7 +113,7 @@ function initSkillsAnimations() {
 function initProjectsAnimations() {
   const projectItems = document.querySelectorAll(".project-item");
   const projectHighlight = document.querySelector(".project-highlight");
-  
+
   if (projectItems.length === 0) return;
 
   projectItems.forEach((item, index) => {
@@ -114,7 +121,7 @@ function initProjectsAnimations() {
       item,
       {
         opacity: 0,
-        y: 40
+        y: 40,
       },
       {
         opacity: 1,
@@ -126,8 +133,8 @@ function initProjectsAnimations() {
           trigger: item,
           start: "top 85%",
           end: "top 60%",
-          toggleActions: "play none none none"
-        }
+          toggleActions: "play none none none",
+        },
       }
     );
   });
@@ -138,7 +145,7 @@ function initProjectsAnimations() {
       projectHighlight,
       {
         opacity: 0,
-        y: 30
+        y: 30,
       },
       {
         opacity: 1,
@@ -148,8 +155,8 @@ function initProjectsAnimations() {
         scrollTrigger: {
           trigger: projectHighlight,
           start: "top 85%",
-          toggleActions: "play none none none"
-        }
+          toggleActions: "play none none none",
+        },
       }
     );
   }
@@ -158,7 +165,7 @@ function initProjectsAnimations() {
 function initServicesAnimations() {
   const serviceItems = document.querySelectorAll(".service-item");
   const serviceCta = document.querySelector(".service-cta");
-  
+
   if (serviceItems.length === 0) return;
 
   serviceItems.forEach((item, index) => {
@@ -166,7 +173,7 @@ function initServicesAnimations() {
       item,
       {
         opacity: 0,
-        y: 40
+        y: 40,
       },
       {
         opacity: 1,
@@ -178,8 +185,8 @@ function initServicesAnimations() {
           trigger: item,
           start: "top 85%",
           end: "top 60%",
-          toggleActions: "play none none none"
-        }
+          toggleActions: "play none none none",
+        },
       }
     );
   });
@@ -190,7 +197,7 @@ function initServicesAnimations() {
       serviceCta,
       {
         opacity: 0,
-        y: 20
+        y: 20,
       },
       {
         opacity: 1,
@@ -200,10 +207,43 @@ function initServicesAnimations() {
         scrollTrigger: {
           trigger: serviceCta,
           start: "top 85%",
-          toggleActions: "play none none none"
-        }
+          toggleActions: "play none none none",
+        },
       }
     );
   }
 }
 
+function aboutMeAnimations() {
+  const aboutMeTextLeft = document.querySelector(".about-me-text-left");
+  const aboutMeTextRight = document.querySelector(".about-me-text-right");
+  const aboutMeImage = document.querySelector(".about-me-image");
+
+  if (!aboutMeImage) return;
+
+  gsap.set(aboutMeImage, { scale: 0.5 });
+  gsap.set(aboutMeTextLeft, { x: 90 }); 
+  gsap.set(aboutMeTextRight, { x: -90 }); 
+
+  const tl = gsap.timeline({
+    scrollTrigger: {
+      trigger: aboutMeImage,
+      start: "top 75%",
+      end: "bottom 30%",
+      scrub: true,
+    },
+  }); 
+  
+  tl.to(aboutMeImage, {
+    scale: 1,
+    ease: "power2.out",
+  })
+  .to(aboutMeTextLeft, {
+    x: -50,
+    ease: "power2.out",
+  }, 0) 
+  .to(aboutMeTextRight, {
+    x: 50,
+    ease: "power2.out",
+  }, 0);
+}
