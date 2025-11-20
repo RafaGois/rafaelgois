@@ -308,28 +308,23 @@ function toggleMenu() {
     
     // Resetar itens para visíveis
     const menuLinks = mobileMenu.querySelectorAll(".mobile-menu-link");
-    gsap.set(menuLinks, { 
+/*     gsap.set(menuLinks, { 
       opacity: 1,
       x: 0,
       display: "block"
-    });
+    }); */
     
-    // Animar menu descendo
-    gsap.to(mobileMenu, {
+    const tl = gsap.timeline(); 
+    tl.to(mobileMenu, {
       yPercent: 0,
       opacity: 1,
-  
       ease: "power2.out",
     });
-    
-    // Animar itens com stagger
-    gsap.from(menuLinks, {
-      x: -30,
+    tl.from(menuLinks, {
+      yPercent: -100,
       opacity: 0,
-
       stagger: 0.08,
-      ease: "power2.out",
-    });
+    }, "<");
   } else {
     closeMenu();
   }
