@@ -430,7 +430,7 @@ function initTestimonialsNavigation() {
 }
 
 function initContactForm() {
-  const contactForm = document.querySelector("#contact form");
+  /* const contactForm = document.querySelector("#contact form");
 
   if (!contactForm) return;
 
@@ -447,6 +447,13 @@ function initContactForm() {
     const submitButton = contactForm.querySelector("button[type='submit']");
     const originalText = submitButton.innerHTML;
 
+    emailjs.sendForm("SEU_SERVICE_ID", "SEU_TEMPLATE_ID", this)
+    .then(() => {
+      alert("Mensagem enviada!");
+    }, (err) => {
+      alert(JSON.stringify(err));
+    });
+
     submitButton.innerHTML = "Enviando...";
     submitButton.disabled = true;
 
@@ -461,7 +468,7 @@ function initContactForm() {
       // Feedback visual (você pode melhorar isso)
       alert("Mensagem enviada com sucesso! Entrarei em contato em breve.");
     }, 1500);
-  });
+  }); */
 }
 
 function updateFooterYear() {
