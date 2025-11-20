@@ -318,7 +318,7 @@ function toggleMenu() {
     gsap.to(mobileMenu, {
       yPercent: 0,
       opacity: 1,
-      duration: 0.4,
+  
       ease: "power2.out",
     });
     
@@ -326,10 +326,9 @@ function toggleMenu() {
     gsap.from(menuLinks, {
       x: -30,
       opacity: 0,
-      duration: 0.4,
+
       stagger: 0.08,
       ease: "power2.out",
-      delay: 0.1,
     });
   } else {
     closeMenu();
