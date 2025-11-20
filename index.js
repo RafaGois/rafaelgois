@@ -229,10 +229,14 @@ function aboutMeAnimations() {
   const aboutMeImage = document.querySelector(".about-me-image");
 
   if (!aboutMeImage) return;
-
   gsap.set(aboutMeImage, { scale: 0.5 });
-  gsap.set(aboutMeTextLeft, { x: 90 }); 
-  gsap.set(aboutMeTextRight, { x: -90 }); 
+  if(window.innerWidth >= 1024) {
+    gsap.set(aboutMeTextLeft, { x: 90 });
+    gsap.set(aboutMeTextRight, { x: -90 });
+  } else {
+    gsap.set(aboutMeTextLeft, { y: 70 });
+    gsap.set(aboutMeTextRight, { y: -70 });
+  }
 
   const tl = gsap.timeline({
     scrollTrigger: {
@@ -241,20 +245,115 @@ function aboutMeAnimations() {
       end: "bottom 30%",
       scrub: true,
     },
-  }); 
-  
+  });
+
   tl.to(aboutMeImage, {
     scale: 1,
     ease: "power2.out",
   })
-  .to(aboutMeTextLeft, {
-    x: -50,
-    ease: "power2.out",
-  }, 0) 
-  .to(aboutMeTextRight, {
-    x: 50,
-    ease: "power2.out",
-  }, 0);
+
+if(window.innerWidth >= 1024) {
+
+  tl.to(
+    aboutMeTextLeft,
+    {
+      x: -50,
+      ease: "power2.out",
+    },
+    0
+  )
+  .to(
+    aboutMeTextRight,
+    {
+      x: 50,
+        ease: "power2.out",
+      },
+      0
+    )
+  } else {
+    tl.to(
+      aboutMeTextLeft,
+      {
+        y: 0,
+      },
+      0
+    )
+  }
+  tl.to(
+    aboutMeTextRight,
+    {
+      y: 0,
+    },
+    0
+  )
+}
+
+function toggleMenu() {
+  const mobileMenu = document.getElementById("mobileMenu");
+  
+  if (!mobileMenu) return;
+
+  if (mobileMenu.classList.contains("hidden")) {
+    // Mostrar o menu
+    mobileMenu.classList.remove("hidden");
+    mobileMenu.classList.add("flex");
+    document.body.classList.add("overflow-hidden");
+    
+    // Resetar posição e opacidade
+    gsap.set(mobileMenu, { 
+      yPercent: -100,
+      opacity: 0,
+      display: "flex"
+    });
+    
+    // Resetar itens para visíveis
+    const menuLinks = mobileMenu.querySelectorAll(".mobile-menu-link");
+    gsap.set(menuLinks, { 
+      opacity: 1,
+      x: 0,
+      display: "block"
+    });
+    
+    // Animar menu descendo
+    gsap.to(mobileMenu, {
+      yPercent: 0,
+      opacity: 1,
+      duration: 0.4,
+      ease: "power2.out",
+    });
+    
+    // Animar itens com stagger
+    gsap.from(menuLinks, {
+      x: -30,
+      opacity: 0,
+      duration: 0.4,
+      stagger: 0.08,
+      ease: "power2.out",
+      delay: 0.1,
+    });
+  } else {
+    closeMenu();
+  }
+}
+
+function closeMenu() {
+  const mobileMenu = document.getElementById("mobileMenu");
+  
+  if (!mobileMenu) return;
+  
+  document.body.classList.remove("overflow-hidden");
+
+  // Animar menu subindo
+  gsap.to(mobileMenu, {
+    yPercent: -100,
+    opacity: 0,
+    duration: 0.3,
+    ease: "power2.in",
+    onComplete: () => {
+      mobileMenu.classList.add("hidden");
+      mobileMenu.classList.remove("flex");
+    },
+  });
 }
 
 function initTestimonialsNavigation() {
@@ -262,7 +361,7 @@ function initTestimonialsNavigation() {
   const prevBtn = document.querySelector(".prev-btn");
   const nextBtn = document.querySelector(".next-btn");
   const dots = document.querySelectorAll(".dot");
-  
+
   if (testimonialItems.length === 0) return;
 
   let currentPage = 0;
@@ -293,7 +392,7 @@ function initTestimonialsNavigation() {
     // Update buttons
     prevBtn.disabled = page === 0;
     nextBtn.disabled = page === totalPages - 1;
-    
+
     if (page === 0) {
       prevBtn.style.opacity = "0.5";
       prevBtn.style.cursor = "not-allowed";
@@ -301,7 +400,7 @@ function initTestimonialsNavigation() {
       prevBtn.style.opacity = "1";
       prevBtn.style.cursor = "pointer";
     }
-    
+
     if (page === totalPages - 1) {
       nextBtn.style.opacity = "0.5";
       nextBtn.style.cursor = "not-allowed";
@@ -338,33 +437,33 @@ function initTestimonialsNavigation() {
 
 function initContactForm() {
   const contactForm = document.querySelector("#contact form");
-  
+
   if (!contactForm) return;
 
   contactForm.addEventListener("submit", (e) => {
     e.preventDefault();
-    
+
     // Aqui você pode adicionar a lógica de envio do formulário
     // Por exemplo, usando um serviço como Formspree, EmailJS, ou seu próprio backend
-    
+
     const formData = new FormData(contactForm);
     const data = Object.fromEntries(formData);
-    
+
     // Exemplo de feedback visual
     const submitButton = contactForm.querySelector("button[type='submit']");
     const originalText = submitButton.innerHTML;
-    
+
     submitButton.innerHTML = "Enviando...";
     submitButton.disabled = true;
-    
+
     // Simular envio (substitua por sua lógica real)
     setTimeout(() => {
       submitButton.innerHTML = originalText;
       submitButton.disabled = false;
-      
+
       // Limpar formulário
       contactForm.reset();
-      
+
       // Feedback visual (você pode melhorar isso)
       alert("Mensagem enviada com sucesso! Entrarei em contato em breve.");
     }, 1500);

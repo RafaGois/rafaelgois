@@ -221,3 +221,26 @@ footer a {
 footer a:hover {
   letter-spacing: 0.3px;
 }
+
+/* Mobile Menu Styles */
+.mobile-menu {
+  background-color: #EDEDED;
+  overflow-y: auto;
+}
+
+.mobile-menu-link {
+  opacity: 1 !important;
+  display: block !important;
+}
+
+.mobile-menu-line {
+  transition: width 0.5s ease;
+}
+
+.mobile-menu-link:hover .mobile-menu-line {
+  width: 3rem;
+}
+
+.mobile-menu-link h3 {
+  transition: letter-spacing 0.3s ease;
+}

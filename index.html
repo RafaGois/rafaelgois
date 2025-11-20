@@ -16,8 +16,8 @@
   </head>
   <body class="bg-[#EDEDED] text-[#4F4A4A]">
     <header class="flex flex-col min-h-screen relative">
-      <div class="flex items-center justify-between px-10 py-6">
-        <p>Rafael Gois</p>
+      <div class="hidden md:flex items-center justify-between px-10 py-6">
+        <p cla>Rafael Gois</p>
           <ul class="flex gap-16">
             <li><a href="#about">Sobre mim</a></li>
             <li><a href="#skills">Habilidades</a></li>
@@ -30,6 +30,10 @@
         >
           <a href="#contact">Contato</a>
         </div>
+      </div>
+      <div class="flex justify-between items-center md:hidden px-10 py-6">
+        <p>Rafael Gois</p>
+        <i class="fa-solid fa-bars text-2xl" onclick="toggleMenu()"></i>
       </div>
       <div class="flex-1 flex flex-col items-center justify-center">
         <h1 class="text-7xl">Rafael Gois</h1>
@@ -55,12 +59,12 @@
     <main>
       <section id="about" class="min-h-screen flex flex-col">
         <h2 class="text-4xl text-center mb-4">Sobre mim</h2>
-        <p class="text-sm text-wrap text-center max-w-xl mx-auto">
+        <p class="text-sm text-wrap text-center max-w-xl mx-auto px-4">
           Sou um desenvolvedor de software com uma paixão por criar soluções que
           impactam a vida das pessoas. Resolvo problemas complexos e crio
           experiências incríveis.
         </p>
-        <div class="flex-1 flex items-center justify-center gap-4">
+        <div class="flex-1 flex flex-col md:flex-row items-center justify-center gap-4">
           <p
             class="text-sm text-wrap text-center max-w-xs 2xl:max-w-xl about-me-text-left"
           >
@@ -74,7 +78,7 @@
           <img
             src="/boblioteca-3.PNG"
             alt="Sobre mim"
-            class="w-1/4 h-1/4 about-me-image"
+            class="w-1/2 md:w-1/4 h-1/4 about-me-image"
           />
           <p
             class="text-sm text-wrap text-center max-w-xs 2xl:max-w-xl about-me-text-right"
@@ -700,7 +704,7 @@
             class="services-container grid grid-cols-1 lg:grid-cols-3 gap-16 lg:gap-20"
           >
             <!-- Service 1: Desenvolvimento Full Stack -->
-            <div class="service-item" data-service="fullstack">
+            <div class="service-item cursor-pointer" data-service="fullstack" onclick="window.location.href='/devfullstack.html'">
               <div class="text-center">
                 <div class="flex items-center justify-center gap-4 mb-8">
                   <div
@@ -735,7 +739,7 @@
             </div>
 
             <!-- Service 2: Sites Institucionais -->
-            <div class="service-item" data-service="institutional">
+            <div class="service-item cursor-pointer" data-service="institutional" onclick="window.location.href='/institutional.html'">
               <div class="text-center">
                 <div class="flex items-center justify-center gap-4 mb-8">
                   <div
@@ -770,7 +774,7 @@
             </div>
 
             <!-- Service 3: Consultoria e Suporte -->
-            <div class="service-item" data-service="consulting">
+            <div class="service-item cursor-pointer" data-service="consulting" onclick="window.location.href='/consulting.html'">
               <div class="text-center">
                 <div class="flex items-center justify-center gap-4 mb-8">
                   <div
@@ -791,15 +795,15 @@
                 <p
                   class="text-base text-[#4F4A4A]/70 leading-relaxed mb-4 px-4"
                 >
-                  Correções em sites existentes
+                  Digitalização da sua empresa
                 </p>
                 <p
                   class="text-base text-[#4F4A4A]/70 leading-relaxed mb-4 px-4"
                 >
-                  Otimizações de performance
+                  Correções em sites existentes
                 </p>
                 <p class="text-base text-[#4F4A4A]/70 leading-relaxed px-4">
-                  SEO básico
+                   
                 </p>
               </div>
             </div>
@@ -1398,6 +1402,133 @@
         </div>
       </div>
     </footer>
+    <div
+      id="mobileMenu"
+      class="mobile-menu w-full h-screen bg-[#EDEDED] fixed flex-col top-0 left-0 z-[99999] hidden"
+    >
+      <!-- Header do Menu -->
+      <div class="flex justify-between items-center w-full px-6 py-6 border-b border-[#4F4A4A]/10">
+        <p class="text-xl text-[#4F4A4A]">Rafael Gois</p>
+        <button
+          id="mobileCloseButton"
+          onclick="closeMenu()"
+          class="cursor-pointer w-10 h-10 border border-[#4F4A4A]/20 hover:border-[#4F4A4A] rounded-sm flex items-center justify-center transition-colors duration-300"
+        >
+          <i class="fa-solid fa-xmark text-[#4F4A4A] text-sm"></i>
+        </button>
+      </div>
+
+      <!-- Links de Navegação -->
+      <div class="flex-1 flex flex-col justify-center items-center px-6 py-12 gap-4 overflow-y-auto">
+        <a
+          href="#about"
+          onclick="closeMenu()"
+          class="mobile-menu-link group w-full max-w-sm border border-[#4F4A4A]/10 hover:border-[#4F4A4A]/30 p-6 transition-all duration-300"
+        >
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div class="mobile-menu-line h-px w-8 bg-[#4F4A4A] transition-all duration-300"></div>
+              <div>
+                <h3 class="text-xl text-[#4F4A4A] group-hover:tracking-wider transition-all duration-300">
+                  Sobre mim
+                </h3>
+              </div>
+            </div>
+            <span class="text-[#4F4A4A]/50 group-hover:text-[#4F4A4A] group-hover:translate-x-1 transition-all duration-300">→</span>
+          </div>
+        </a>
+
+        <a
+          href="#skills"
+          onclick="closeMenu()"
+          class="mobile-menu-link group w-full max-w-sm border border-[#4F4A4A]/10 hover:border-[#4F4A4A]/30 p-6 transition-all duration-300"
+        >
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div class="mobile-menu-line h-px w-8 bg-[#4F4A4A] transition-all duration-300"></div>
+              <div>
+                <h3 class="text-xl text-[#4F4A4A] group-hover:tracking-wider transition-all duration-300">
+                  Habilidades
+                </h3>
+              </div>
+            </div>
+            <span class="text-[#4F4A4A]/50 group-hover:text-[#4F4A4A] group-hover:translate-x-1 transition-all duration-300">→</span>
+          </div>
+        </a>
+
+        <a
+          href="#projects"
+          onclick="closeMenu()"
+          class="mobile-menu-link group w-full max-w-sm border border-[#4F4A4A]/10 hover:border-[#4F4A4A]/30 p-6 transition-all duration-300"
+        >
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div class="mobile-menu-line h-px w-8 bg-[#4F4A4A] transition-all duration-300"></div>
+              <div>
+                <h3 class="text-xl text-[#4F4A4A] group-hover:tracking-wider transition-all duration-300">
+                  Projetos
+                </h3>
+              </div>
+            </div>
+            <span class="text-[#4F4A4A]/50 group-hover:text-[#4F4A4A] group-hover:translate-x-1 transition-all duration-300">→</span>
+          </div>
+        </a>
+
+        <a
+          href="#services"
+          onclick="closeMenu()"
+          class="mobile-menu-link group w-full max-w-sm border border-[#4F4A4A]/10 hover:border-[#4F4A4A]/30 p-6 transition-all duration-300"
+        >
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div class="mobile-menu-line h-px w-8 bg-[#4F4A4A] transition-all duration-300"></div>
+              <div>
+                <h3 class="text-xl text-[#4F4A4A] group-hover:tracking-wider transition-all duration-300">
+                  Serviços
+                </h3>
+              </div>
+            </div>
+            <span class="text-[#4F4A4A]/50 group-hover:text-[#4F4A4A] group-hover:translate-x-1 transition-all duration-300">→</span>
+          </div>
+        </a>
+
+        <a
+          href="#testimonials"
+          onclick="closeMenu()"
+          class="mobile-menu-link group w-full max-w-sm border border-[#4F4A4A]/10 hover:border-[#4F4A4A]/30 p-6 transition-all duration-300"
+        >
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div class="mobile-menu-line h-px w-8 bg-[#4F4A4A] transition-all duration-300"></div>
+              <div>
+                <h3 class="text-xl text-[#4F4A4A] group-hover:tracking-wider transition-all duration-300">
+                  Depoimentos
+                </h3>
+              </div>
+            </div>
+            <span class="text-[#4F4A4A]/50 group-hover:text-[#4F4A4A] group-hover:translate-x-1 transition-all duration-300">→</span>
+          </div>
+        </a>
+
+        <a
+          href="#contact"
+          onclick="closeMenu()"
+          class="mobile-menu-link group w-full max-w-sm border border-[#4F4A4A] p-6 transition-all duration-300 hover:bg-[#4F4A4A] hover:text-[#EDEDED]"
+        >
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div class="mobile-menu-line h-px w-8 bg-[#4F4A4A] group-hover:bg-[#EDEDED] transition-all duration-300"></div>
+              <div>
+                <h3 class="text-xl text-[#4F4A4A] group-hover:text-[#EDEDED] group-hover:tracking-wider transition-all duration-300">
+                  Contato
+                </h3>
+              </div>
+            </div>
+            <span class="text-[#4F4A4A] group-hover:text-[#EDEDED] group-hover:translate-x-1 transition-all duration-300">→</span>
+          </div>
+        </a>
+      </div>
+    </div>
     <script src="index.js"></script>
   </body>
 </html>
