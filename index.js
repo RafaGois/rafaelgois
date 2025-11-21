@@ -48,8 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Testimonials Section Navigation
   initTestimonialsNavigation();
 
-  // Contact Form
-  initContactForm();
+  titlesScrollAnimations();
 
   // Footer - Update year
   updateFooterYear();
@@ -230,7 +229,7 @@ function aboutMeAnimations() {
 
   if (!aboutMeImage) return;
   gsap.set(aboutMeImage, { scale: 0.5 });
-  if(window.innerWidth >= 1024) {
+  if (window.innerWidth >= 1024) {
     gsap.set(aboutMeTextLeft, { x: 90 });
     gsap.set(aboutMeTextRight, { x: -90 });
   } else {
@@ -250,26 +249,24 @@ function aboutMeAnimations() {
   tl.to(aboutMeImage, {
     scale: 1,
     ease: "power2.out",
-  })
+  });
 
-if(window.innerWidth >= 1024) {
-
-  tl.to(
-    aboutMeTextLeft,
-    {
-      x: -50,
-      ease: "power2.out",
-    },
-    0
-  )
-  .to(
-    aboutMeTextRight,
-    {
-      x: 50,
+  if (window.innerWidth >= 1024) {
+    tl.to(
+      aboutMeTextLeft,
+      {
+        x: -50,
         ease: "power2.out",
       },
       0
-    )
+    ).to(
+      aboutMeTextRight,
+      {
+        x: 50,
+        ease: "power2.out",
+      },
+      0
+    );
   } else {
     tl.to(
       aboutMeTextLeft,
@@ -277,7 +274,7 @@ if(window.innerWidth >= 1024) {
         y: 0,
       },
       0
-    )
+    );
   }
   tl.to(
     aboutMeTextRight,
@@ -285,12 +282,12 @@ if(window.innerWidth >= 1024) {
       y: 0,
     },
     0
-  )
+  );
 }
 
 function toggleMenu() {
   const mobileMenu = document.getElementById("mobileMenu");
-  
+
   if (!mobileMenu) return;
 
   if (mobileMenu.classList.contains("hidden")) {
@@ -298,33 +295,37 @@ function toggleMenu() {
     mobileMenu.classList.remove("hidden");
     mobileMenu.classList.add("flex");
     document.body.classList.add("overflow-hidden");
-    
+
     // Resetar posição e opacidade
-    gsap.set(mobileMenu, { 
+    gsap.set(mobileMenu, {
       yPercent: -100,
       opacity: 0,
-      display: "flex"
+      display: "flex",
     });
-    
+
     // Resetar itens para visíveis
     const menuLinks = mobileMenu.querySelectorAll(".mobile-menu-link");
-/*     gsap.set(menuLinks, { 
+    /*     gsap.set(menuLinks, { 
       opacity: 1,
       x: 0,
       display: "block"
     }); */
-    
-    const tl = gsap.timeline(); 
+
+    const tl = gsap.timeline();
     tl.to(mobileMenu, {
       yPercent: 0,
       opacity: 1,
       ease: "power2.out",
     });
-    tl.from(menuLinks, {
-      yPercent: -100,
-      opacity: 0,
-      stagger: 0.08,
-    }, "<");
+    tl.from(
+      menuLinks,
+      {
+        yPercent: -100,
+        opacity: 0,
+        stagger: 0.08,
+      },
+      "<"
+    );
   } else {
     closeMenu();
   }
@@ -332,9 +333,9 @@ function toggleMenu() {
 
 function closeMenu() {
   const mobileMenu = document.getElementById("mobileMenu");
-  
+
   if (!mobileMenu) return;
-  
+
   document.body.classList.remove("overflow-hidden");
 
   // Animar menu subindo
@@ -429,46 +430,42 @@ function initTestimonialsNavigation() {
   showPage(0);
 }
 
-function initContactForm() {
-  /* const contactForm = document.querySelector("#contact form");
-
-  if (!contactForm) return;
-
-  contactForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    // Aqui você pode adicionar a lógica de envio do formulário
-    // Por exemplo, usando um serviço como Formspree, EmailJS, ou seu próprio backend
-
-    const formData = new FormData(contactForm);
-    const data = Object.fromEntries(formData);
-
-    // Exemplo de feedback visual
-    const submitButton = contactForm.querySelector("button[type='submit']");
-    const originalText = submitButton.innerHTML;
-
-    emailjs.sendForm("SEU_SERVICE_ID", "SEU_TEMPLATE_ID", this)
-    .then(() => {
-      alert("Mensagem enviada!");
-    }, (err) => {
-      alert(JSON.stringify(err));
+function titlesScrollAnimations() {
+  const sections = document.querySelectorAll(".section-title");
+  sections.forEach((section, index) => {
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: section,
+        start: "top 60%",
+        toggleActions: "play none none none",
+        scrub: true,
+      },
     });
 
-    submitButton.innerHTML = "Enviando...";
-    submitButton.disabled = true;
+    tl.to(section.querySelector("#bar"), {
+  
+      width: "0%",
+      duration: 0.8,
+      delay: index * 0.2,
+      ease: "power2.out",
+    });
 
-    // Simular envio (substitua por sua lógica real)
-    setTimeout(() => {
-      submitButton.innerHTML = originalText;
-      submitButton.disabled = false;
+    tl.from(section.querySelector("h2"), {
+      opacity: 0,
+      y: -30,
+      duration: 0.8,
+      delay: index * 0.2,
+      ease: "power2.out",
+    });
 
-      // Limpar formulário
-      contactForm.reset();
-
-      // Feedback visual (você pode melhorar isso)
-      alert("Mensagem enviada com sucesso! Entrarei em contato em breve.");
-    }, 1500);
-  }); */
+    tl.from(section.querySelector(".section-description"), {
+      opacity: 0,
+      y: 30,
+      duration: 0.8,
+      delay: index * 0.2,
+      ease: "power2.out",
+    });
+  });
 }
 
 function updateFooterYear() {
