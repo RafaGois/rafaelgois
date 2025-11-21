@@ -36,6 +36,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  headerInitAnimations();
+
   // Skills Section Animations
   initSkillsAnimations();
 
@@ -430,15 +432,46 @@ function initTestimonialsNavigation() {
   showPage(0);
 }
 
+function headerInitAnimations() {
+  const header = document.querySelector("header");
+  const headerBars = header.querySelectorAll(".header-bar");
+  const headerLetter = header.querySelector(".header-letter");
+
+  const tl = gsap.timeline();
+  tl.from(headerLetter, {
+    scale: 0,
+    transformOrigin: "center center",
+    duration: 1.5,
+    ease: "power2.out",
+  });
+
+  tl.from(headerBars[0], {
+    scaleX: 0,
+    transformOrigin: "left center",
+    duration: 1.5,
+    ease: "power2.out",
+  }, "<0.4");
+
+  tl.from(headerBars[1], {
+    scaleX: 0,
+    transformOrigin: "right center",
+    duration: 1.5,
+    ease: "power2.out",
+  }, "<");
+
+}
+
+
 function titlesScrollAnimations() {
   const sections = document.querySelectorAll(".section-title");
   sections.forEach((section, index) => {
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: section,
-        start: "top 60%",
+        start: "top 78%",
         toggleActions: "play none none none",
         scrub: true,
+        markers: true,
       },
     });
 
