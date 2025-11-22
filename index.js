@@ -437,8 +437,6 @@ function headerInitAnimations() {
   const header = document.querySelector("header");
   const headerBars = header.querySelectorAll(".header-bar");
   const headerLetter = header.querySelector(".header-letter");
-  const headerSubtitle = header.querySelector(".header-subtitle");
-  const headerDescription = header.querySelector(".header-description");
   const headerButton = header.querySelector(".header-button");
 
   const tl = gsap.timeline();
@@ -514,7 +512,7 @@ function titlesScrollAnimations() {
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: section,
-        start: "top 78%",
+        start: "top 85%",
         toggleActions: "play none none none",
         scrub: true,
         markers: true,
@@ -528,21 +526,28 @@ function titlesScrollAnimations() {
       ease: "power2.out",
     });
 
-    tl.from(section.querySelector("h2"), {
-      opacity: 0,
-      y: -30,
-      duration: 0.8,
-      delay: index * 0.2,
-      ease: "power2.out",
+
+    const splitTitle = new SplitText(section.querySelector("h2"), {
+      type: "lines",
+      mask: "lines",
     });
 
-    tl.from(section.querySelector(".section-description"), {
+    tl.from(splitTitle.lines, {
+      yPercent: -100,
       opacity: 0,
-      y: 30,
-      duration: 0.8,
-      delay: index * 0.2,
-      ease: "power2.out",
+      ease: "expo.out",
+    }, "<0.3");
+
+    const splitDescription = new SplitText(section.querySelector(".section-description"), {
+      type: "lines",
+      mask: "lines",
     });
+
+    tl.from(splitDescription.lines, {
+      yPercent: -100,
+      opacity: 0,
+      ease: "expo.out",
+    }, "<0.2");
   });
 }
 
