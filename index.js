@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   // Registrar ScrollTrigger plugin
   gsap.registerPlugin(ScrollTrigger);
+  gsap.registerPlugin(SplitText);
 
   const icons = document.querySelectorAll(".icon");
   const iconContainer = document.querySelector(".absolute");
@@ -436,8 +437,20 @@ function headerInitAnimations() {
   const header = document.querySelector("header");
   const headerBars = header.querySelectorAll(".header-bar");
   const headerLetter = header.querySelector(".header-letter");
+  const headerSubtitle = header.querySelector(".header-subtitle");
+  const headerDescription = header.querySelector(".header-description");
+  const headerButton = header.querySelector(".header-button");
 
   const tl = gsap.timeline();
+
+  tl.from(header.querySelectorAll("li"), {
+    scale: 0.3,
+    //transformOrigin: "left bottom",
+    duration: 0.8,
+    ease: "power2.out",
+    stagger: 0.1,
+  });
+
   tl.from(headerLetter, {
     scale: 0,
     transformOrigin: "center center",
@@ -445,22 +458,55 @@ function headerInitAnimations() {
     ease: "power2.out",
   });
 
-  tl.from(headerBars[0], {
-    scaleX: 0,
-    transformOrigin: "left center",
-    duration: 1.5,
-    ease: "power2.out",
+  tl.from(
+    headerBars[0],
+    {
+      scaleX: 0,
+      transformOrigin: "left center",
+      duration: 1.5,
+      ease: "power2.out",
+    },
+    "<0.4"
+  );
+
+  tl.from(
+    headerBars[1],
+    {
+      scaleX: 0,
+      transformOrigin: "right center",
+      duration: 1.5,
+      ease: "power2.out",
+    },
+    "<"
+  );
+
+  const split = new SplitText(".header-subtitle", {
+    type: "lines, words",
+    mask: "lines",
+  });
+  tl.from(split.lines, {
+    yPercent: -100,
+    opacity: 0,
+    ease: "expo.out",
   }, "<0.4");
 
-  tl.from(headerBars[1], {
-    scaleX: 0,
-    transformOrigin: "right center",
-    duration: 1.5,
-    ease: "power2.out",
-  }, "<");
+  const splitDescription = new SplitText(".header-description", {
+    type: "lines, words",
+    mask: "lines",
+  });
+  tl.from(splitDescription.lines, {
+    yPercent: -100,
+    opacity: 0,
+    ease: "expo.out",
+  }, "<0.3");
 
+
+  tl.from(headerButton, {
+    scale: 0,
+    transformOrigin: "center center",
+    ease: "power2.inOut",
+  }, "<0.2");
 }
-
 
 function titlesScrollAnimations() {
   const sections = document.querySelectorAll(".section-title");
@@ -476,7 +522,6 @@ function titlesScrollAnimations() {
     });
 
     tl.to(section.querySelector("#bar"), {
-  
       width: "0%",
       duration: 0.8,
       delay: index * 0.2,
