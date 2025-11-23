@@ -1,49 +1,34 @@
-document.addEventListener("DOMContentLoaded", () => {
+// Com scripts defer, eles executam antes do DOMContentLoaded
+// Mas adicionamos verificações de segurança
+function initApp() {
+  // Verificar se GSAP está carregado
+  if (typeof gsap === "undefined") {
+    console.warn("GSAP ainda não carregou, tentando novamente...");
+    setTimeout(initApp, 100);
+    return;
+  }
+
   // Registrar ScrollTrigger plugin
-  gsap.registerPlugin(ScrollTrigger);
-  gsap.registerPlugin(SplitText);
+  if (typeof ScrollTrigger !== "undefined") {
+    gsap.registerPlugin(ScrollTrigger);
+  }
+  
+  // Registrar SplitText plugin se disponível
+  if (typeof SplitText !== "undefined") {
+    gsap.registerPlugin(SplitText);
+  }
 
   const icons = document.querySelectorAll(".icon");
   const iconContainer = document.querySelector(".absolute");
 
   aboutMeAnimations();
 
-  if (iconContainer && icons.length > 0) {
-    // Obter posição do container
-    const containerRect = iconContainer.getBoundingClientRect();
-
-    // Calcular centro da tela relativo ao container
-    const centerX = window.innerWidth / 2 - containerRect.left;
-    const centerY = window.innerHeight / 2 - containerRect.top;
-
-    icons.forEach((icon, index) => {
-      // Posição inicial: centro da tela
-      gsap.set(icon, {
-        x: centerX,
-        y: centerY,
-        opacity: 0,
-        scale: 0,
-        transformOrigin: "center center",
-      });
-    });
-
-    icons.forEach((icon, index) => {
-      initIconsAnimation(
-        icon,
-        Math.random() * window.innerWidth - 200,
-        Math.random() * window.innerHeight - 200,
-        index
-      );
-    });
-  }
-
   headerInitAnimations();
 
   // Skills Section Animations
   initSkillsAnimations();
 
-  // Projects Section Animations
-  initProjectsAnimations();
+  scrollProjectsAnimations();
 
   // Services Section Animations
   initServicesAnimations();
@@ -55,7 +40,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Footer - Update year
   updateFooterYear();
-});
+}
+
+// Inicializar quando DOM estiver pronto
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initApp);
+} else {
+  // DOM já está pronto
+  initApp();
+}
 
 function initIconsAnimation(element, x, y) {
   gsap.to(element, {
@@ -65,6 +58,25 @@ function initIconsAnimation(element, x, y) {
     ease: "power2.out",
     scale: 1,
     opacity: 1,
+  });
+}
+
+function scrollProjectsAnimations() {
+  const projects = document.querySelectorAll(".project-item");
+  projects.forEach((project, index) => {
+    gsap.from(project, {
+      opacity: 0,
+      x: () => index % 2 == 0 ? -100 : 100,
+      duration: 1.4,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: project,
+        start: "top 70%",
+        end: "bottom 30%",
+        toggleActions: "play none none none",
+        scrub: true,
+      },
+    });
   });
 }
 
@@ -119,58 +131,6 @@ function initSkillsAnimations() {
       );
     });
   });
-}
-
-function initProjectsAnimations() {
-  const projectItems = document.querySelectorAll(".project-item");
-  const projectHighlight = document.querySelector(".project-highlight");
-
-  if (projectItems.length === 0) return;
-
-  projectItems.forEach((item, index) => {
-    gsap.fromTo(
-      item,
-      {
-        opacity: 0,
-        y: 40,
-      },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 1,
-        delay: index * 0.15,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: item,
-          start: "top 85%",
-          end: "top 60%",
-          toggleActions: "play none none none",
-        },
-      }
-    );
-  });
-
-  // Animar bloco de destaque
-  if (projectHighlight) {
-    gsap.fromTo(
-      projectHighlight,
-      {
-        opacity: 0,
-        y: 30,
-      },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: projectHighlight,
-          start: "top 85%",
-          toggleActions: "play none none none",
-        },
-      }
-    );
-  }
 }
 
 function initServicesAnimations() {
@@ -482,28 +442,39 @@ function headerInitAnimations() {
     type: "lines, words",
     mask: "lines",
   });
-  tl.from(split.lines, {
-    yPercent: -100,
-    opacity: 0,
-    ease: "expo.out",
-  }, "<0.4");
+  tl.from(
+    split.lines,
+    {
+      yPercent: -100,
+      opacity: 0,
+      ease: "expo.out",
+    },
+    "<0.4"
+  );
 
   const splitDescription = new SplitText(".header-description", {
     type: "lines, words",
     mask: "lines",
   });
-  tl.from(splitDescription.lines, {
-    yPercent: -100,
-    opacity: 0,
-    ease: "expo.out",
-  }, "<0.3");
+  tl.from(
+    splitDescription.lines,
+    {
+      yPercent: -100,
+      opacity: 0,
+      ease: "expo.out",
+    },
+    "<0.3"
+  );
 
-
-  tl.from(headerButton, {
-    scale: 0,
-    transformOrigin: "center center",
-    ease: "power2.inOut",
-  }, "<0.2");
+  tl.from(
+    headerButton,
+    {
+      scale: 0,
+      transformOrigin: "center center",
+      ease: "power2.inOut",
+    },
+    "<0.2"
+  );
 }
 
 function titlesScrollAnimations() {
@@ -526,28 +497,38 @@ function titlesScrollAnimations() {
       ease: "power2.out",
     });
 
-
     const splitTitle = new SplitText(section.querySelector("h2"), {
       type: "lines",
       mask: "lines",
     });
 
-    tl.from(splitTitle.lines, {
-      yPercent: -100,
-      opacity: 0,
-      ease: "expo.out",
-    }, "<0.3");
+    tl.from(
+      splitTitle.lines,
+      {
+        yPercent: -100,
+        opacity: 0,
+        ease: "expo.out",
+      },
+      "<0.3"
+    );
 
-    const splitDescription = new SplitText(section.querySelector(".section-description"), {
-      type: "lines",
-      mask: "lines",
-    });
+    const splitDescription = new SplitText(
+      section.querySelector(".section-description"),
+      {
+        type: "lines",
+        mask: "lines",
+      }
+    );
 
-    tl.from(splitDescription.lines, {
-      yPercent: -100,
-      opacity: 0,
-      ease: "expo.out",
-    }, "<0.2");
+    tl.from(
+      splitDescription.lines,
+      {
+        yPercent: -100,
+        opacity: 0,
+        ease: "expo.out",
+      },
+      "<0.2"
+    );
   });
 }
 

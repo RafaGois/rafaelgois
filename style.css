@@ -77,34 +77,18 @@ p, small, li, span, a{
   height: 4.5rem;
 }
 
-/* Projects Section Styles */
-.project-item {
-  opacity: 0;
-  transform: translateY(40px);
-}
-
 .project-line {
   transition: width 0.5s ease;
-}
-
-.project-item:hover .project-line {
-  width: 5rem;
 }
 
 .project-visual {
   transition: transform 0.4s ease;
 }
 
-.project-item:hover .project-visual {
-  transform: translateY(-8px);
-}
+
 
 .project-content h3 {
   transition: letter-spacing 0.3s ease;
-}
-
-.project-item:hover .project-content h3 {
-  letter-spacing: 1px;
 }
 
 .project-highlight {
