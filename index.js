@@ -3,7 +3,6 @@
 function initApp() {
   // Verificar se GSAP está carregado
   if (typeof gsap === "undefined") {
-    console.warn("GSAP ainda não carregou, tentando novamente...");
     setTimeout(initApp, 100);
     return;
   }
@@ -50,17 +49,6 @@ if (document.readyState === "loading") {
   initApp();
 }
 
-function initIconsAnimation(element, x, y) {
-  gsap.to(element, {
-    x: x,
-    y: y,
-    duration: 1,
-    ease: "power2.out",
-    scale: 1,
-    opacity: 1,
-  });
-}
-
 function scrollProjectsAnimations() {
   const projects = document.querySelectorAll(".project-item");
   projects.forEach((project, index) => {
@@ -71,7 +59,7 @@ function scrollProjectsAnimations() {
       ease: "power2.out",
       scrollTrigger: {
         trigger: project,
-        start: "top 70%",
+        start: "top 85%",
         end: "bottom 30%",
         toggleActions: "play none none none",
         scrub: true,
