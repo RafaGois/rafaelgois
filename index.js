@@ -17,12 +17,9 @@ function initApp() {
     gsap.registerPlugin(SplitText);
   }
 
-  const icons = document.querySelectorAll(".icon");
-  const iconContainer = document.querySelector(".absolute");
+  headerInitAnimations();
 
   aboutMeAnimations();
-
-  headerInitAnimations();
 
   // Skills Section Animations
   initSkillsAnimations();
@@ -122,55 +119,31 @@ function initSkillsAnimations() {
 }
 
 function initServicesAnimations() {
+  const serviceContainer = document.querySelector("#services");
   const serviceItems = document.querySelectorAll(".service-item");
-  const serviceCta = document.querySelector(".service-cta");
 
-  if (serviceItems.length === 0) return;
-
-  serviceItems.forEach((item, index) => {
-    gsap.fromTo(
-      item,
+  
+    gsap.from(
+      serviceItems,
       {
         opacity: 0,
         y: 40,
-      },
-      {
-        opacity: 1,
-        y: 0,
         duration: 1,
-        delay: index * 0.25,
+        stagger: {
+          amount: 0.2,
+          from: "center",
+        },
         ease: "power2.out",
         scrollTrigger: {
-          trigger: item,
-          start: "top 85%",
-          end: "top 60%",
+          trigger: serviceContainer,
+          start: "top 70%",
+          end: "bottom 60%",
           toggleActions: "play none none none",
+          scrub: true,
         },
       }
     );
-  });
-
-  // Animar bloco CTA
-  if (serviceCta) {
-    gsap.fromTo(
-      serviceCta,
-      {
-        opacity: 0,
-        y: 20,
-      },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: serviceCta,
-          start: "top 85%",
-          toggleActions: "play none none none",
-        },
-      }
-    );
-  }
+  
 }
 
 function aboutMeAnimations() {
@@ -390,11 +363,13 @@ function headerInitAnimations() {
   const tl = gsap.timeline();
 
   tl.from(header.querySelectorAll("li"), {
-    scale: 0.3,
-    //transformOrigin: "left bottom",
+    scale: 0,
     duration: 0.8,
     ease: "power2.out",
-    stagger: 0.1,
+    stagger: {
+      amount: 0.5,
+      from: "edges",
+    },
   });
 
   tl.from(headerLetter, {
