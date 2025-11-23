@@ -511,8 +511,8 @@ function titlesScrollAnimations() {
   sections.forEach((section, index) => {
     const tl = gsap.timeline({
       scrollTrigger: {
-        trigger: section,
-        start: "top 85%",
+        trigger: section.querySelector("h2"),
+        start: "top 95%",
         toggleActions: "play none none none",
         scrub: true,
         markers: true,
