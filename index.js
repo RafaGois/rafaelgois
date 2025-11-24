@@ -179,15 +179,11 @@ function aboutMeAnimations() {
   const aboutMeImage = document.querySelector(".about-me-image");
 
   if (!aboutMeImage) return;
-  gsap.set(aboutMeImage, { scale: 0.5 });
-  if (window.innerWidth >= 1024) {
-    gsap.set(aboutMeTextLeft, { x: 90 });
-    gsap.set(aboutMeTextRight, { x: -90 });
-  } else {
-    gsap.set(aboutMeTextLeft, { y: 70 });
-    gsap.set(aboutMeTextRight, { y: -70 });
-  }
-
+  
+  const isDesktop = window.innerWidth >= 1024;
+  
+  // Usar immediateRender: false para evitar layout shift inicial
+  // Os elementos começam em suas posições finais e só animam quando o scroll trigger ativa
   const tl = gsap.timeline({
     scrollTrigger: {
       trigger: aboutMeImage,
@@ -197,43 +193,80 @@ function aboutMeAnimations() {
     },
   });
 
-  tl.to(aboutMeImage, {
-    scale: 1,
-    ease: "power2.out",
-  });
+  // Animar imagem (scale não causa layout shift)
+  tl.fromTo(
+    aboutMeImage,
+    { 
+      scale: 0.5, 
+      transformOrigin: "center center",
+      immediateRender: false 
+    },
+    { 
+      scale: 1, 
+      ease: "power2.out" 
+    }
+  );
 
-  if (window.innerWidth >= 1024) {
-    tl.to(
+  // Animar textos - usar immediateRender: false para evitar shift inicial
+  if (isDesktop) {
+    tl.fromTo(
       aboutMeTextLeft,
-      {
-        x: -50,
-        ease: "power2.out",
+      { 
+        x: 90, 
+        opacity: 0,
+        immediateRender: false 
+      },
+      { 
+        x: -50, 
+        opacity: 1, 
+        ease: "power2.out" 
       },
       0
-    ).to(
+    );
+    tl.fromTo(
       aboutMeTextRight,
-      {
-        x: 50,
-        ease: "power2.out",
+      { 
+        x: -90, 
+        opacity: 0,
+        immediateRender: false 
+      },
+      { 
+        x: 50, 
+        opacity: 1, 
+        ease: "power2.out" 
       },
       0
     );
   } else {
-    tl.to(
+    tl.fromTo(
       aboutMeTextLeft,
-      {
-        y: 0,
+      { 
+        y: 70, 
+        opacity: 0,
+        immediateRender: false 
+      },
+      { 
+        y: 0, 
+        opacity: 1, 
+        ease: "power2.out" 
+      },
+      0
+    );
+    tl.fromTo(
+      aboutMeTextRight,
+      { 
+        y: -70, 
+        opacity: 0,
+        immediateRender: false 
+      },
+      { 
+        y: 0, 
+        opacity: 1, 
+        ease: "power2.out" 
       },
       0
     );
   }
-  tl.to(
-    aboutMeTextRight,
-    {
-      y: 0,
-    },
-    0
-  );
 }
 
 function toggleMenu() {
