@@ -17,8 +17,29 @@ function initApp() {
     gsap.registerPlugin(SplitText);
   }
 
-  headerInitAnimations();
+  // Aguardar carregamento das fontes antes de usar SplitText
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => {
+      initAnimationsWithSplitText();
+      initOtherAnimations();
+    });
+  } else {
+    // Fallback para navegadores que não suportam Font Loading API
+    setTimeout(() => {
+      initAnimationsWithSplitText();
+      initOtherAnimations();
+    }, 500);
+  }
+}
 
+// Animações que usam SplitText (precisam aguardar fontes)
+function initAnimationsWithSplitText() {
+  headerInitAnimations();
+  titlesScrollAnimations();
+}
+
+// Animações que não usam SplitText
+function initOtherAnimations() {
   aboutMeAnimations();
 
   // Skills Section Animations
@@ -31,8 +52,6 @@ function initApp() {
 
   // Testimonials Section Navigation
   initTestimonialsNavigation();
-
-  titlesScrollAnimations();
 
   // Footer - Update year
   updateFooterYear();
@@ -409,33 +428,53 @@ function headerInitAnimations() {
     "<"
   );
 
-  const split = new SplitText(".header-subtitle", {
-    type: "lines, words",
-    mask: "lines",
-  });
-  tl.from(
-    split.lines,
-    {
-      yPercent: -100,
-      opacity: 0,
-      ease: "expo.out",
-    },
-    "<0.4"
-  );
+  // Verificar se SplitText está disponível e se o elemento existe
+  const headerSubtitle = document.querySelector(".header-subtitle");
+  if (headerSubtitle && typeof SplitText !== "undefined") {
+    try {
+      const split = new SplitText(".header-subtitle", {
+        type: "lines, words",
+        mask: "lines",
+      });
+      if (split && split.lines) {
+        tl.from(
+          split.lines,
+          {
+            yPercent: -100,
+            opacity: 0,
+            ease: "expo.out",
+          },
+          "<0.4"
+        );
+      }
+    } catch (error) {
+      console.warn("Erro ao criar SplitText para header-subtitle:", error);
+    }
+  }
 
-  const splitDescription = new SplitText(".header-description", {
-    type: "lines, words",
-    mask: "lines",
-  });
-  tl.from(
-    splitDescription.lines,
-    {
-      yPercent: -100,
-      opacity: 0,
-      ease: "expo.out",
-    },
-    "<0.3"
-  );
+  // Verificar se SplitText está disponível e se o elemento existe
+  const headerDescription = document.querySelector(".header-description");
+  if (headerDescription && typeof SplitText !== "undefined") {
+    try {
+      const splitDescription = new SplitText(".header-description", {
+        type: "lines, words",
+        mask: "lines",
+      });
+      if (splitDescription && splitDescription.lines) {
+        tl.from(
+          splitDescription.lines,
+          {
+            yPercent: -100,
+            opacity: 0,
+            ease: "expo.out",
+          },
+          "<0.3"
+        );
+      }
+    } catch (error) {
+      console.warn("Erro ao criar SplitText para header-description:", error);
+    }
+  }
 
   tl.from(
     headerButton,
@@ -467,38 +506,54 @@ function titlesScrollAnimations() {
       ease: "power2.out",
     });
 
-    const splitTitle = new SplitText(section.querySelector("h2"), {
-      type: "lines",
-      mask: "lines",
-    });
+    const h2Element = section.querySelector("h2");
+    const descriptionElement = section.querySelector(".section-description");
 
-    tl.from(
-      splitTitle.lines,
-      {
-        yPercent: -100,
-        opacity: 0,
-        ease: "expo.out",
-      },
-      "<0.3"
-    );
-
-    const splitDescription = new SplitText(
-      section.querySelector(".section-description"),
-      {
-        type: "lines",
-        mask: "lines",
+    // SplitText para o título
+    if (h2Element && typeof SplitText !== "undefined") {
+      try {
+        const splitTitle = new SplitText(h2Element, {
+          type: "lines",
+          mask: "lines",
+        });
+        if (splitTitle && splitTitle.lines) {
+          tl.from(
+            splitTitle.lines,
+            {
+              yPercent: -100,
+              opacity: 0,
+              ease: "expo.out",
+            },
+            "<0.3"
+          );
+        }
+      } catch (error) {
+        console.warn("Erro ao criar SplitText para título:", error);
       }
-    );
+    }
 
-    tl.from(
-      splitDescription.lines,
-      {
-        yPercent: -100,
-        opacity: 0,
-        ease: "expo.out",
-      },
-      "<0.2"
-    );
+    // SplitText para a descrição
+    if (descriptionElement && typeof SplitText !== "undefined") {
+      try {
+        const splitDescription = new SplitText(descriptionElement, {
+          type: "lines",
+          mask: "lines",
+        });
+        if (splitDescription && splitDescription.lines) {
+          tl.from(
+            splitDescription.lines,
+            {
+              yPercent: -100,
+              opacity: 0,
+              ease: "expo.out",
+            },
+            "<0.2"
+          );
+        }
+      } catch (error) {
+        console.warn("Erro ao criar SplitText para descrição:", error);
+      }
+    }
   });
 }
 
