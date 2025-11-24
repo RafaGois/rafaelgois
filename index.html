@@ -69,7 +69,7 @@
       content="D7fo_xbVUnamiCsRG-JdkYOzPonYhJPyY6n_H8vYxJ4"
     />
   </head>
-  <body class="bg-[#EDEDED] text-[#4F4A4A]">
+  <body class="bg-[#EDEDED] text-[#4F4A4A] overflow-x-hidden">
     <header class="flex flex-col min-h-screen relative">
       <div class="hidden md:flex items-center justify-between px-10 py-6">
         <p cla>Rafael Gois</p>
@@ -171,7 +171,7 @@
           </p>
         </div>
       </section>
-      <section id="skills" class="min-h-screen flex flex-col">
+      <section id="skills" class="min-h-screen flex flex-col p-8">
         <div
           class="section-title flex w-full flex-col items-center justify-center my-24"
         >
@@ -537,7 +537,7 @@
           </div>
         </div>
       </section>
-      <section id="projects" class="min-h-screen flex flex-col">
+      <section id="projects" class="min-h-screen flex flex-col p-8">
         <div
           class="section-title flex w-full flex-col items-center justify-center my-24"
         >
@@ -796,7 +796,7 @@
           </div>
         </div>
       </section>
-      <section id="services" class="min-h-screen flex flex-col py-16">
+      <section id="services" class="min-h-screen flex flex-col py-16 p-8">
         <div
           class="section-title flex w-full flex-col items-center justify-center pt-32 pb-16"
         >
@@ -989,7 +989,7 @@
           </div>
         </div>
       </section>
-      <section id="testimonials" class="min-h-screen flex flex-col">
+      <section id="testimonials" class="min-h-screen flex flex-col p-8">
         <div
           class="section-title flex w-full flex-col items-center justify-center pt-32 pb-16"
         >
@@ -1265,7 +1265,7 @@
           </div>
         </div>
       </section>
-      <section id="contact" class="min-h-screen flex flex-col pt-32">
+      <section id="contact" class="min-h-screen flex flex-col pt-32 p-8">
         <div
           class="section-title flex w-full flex-col items-center justify-center mb-32"
         >
@@ -1642,7 +1642,7 @@
     </footer>
     <div
       id="mobileMenu"
-      class="mobile-menu w-full h-screen bg-[#EDEDED] fixed flex-col top-0 left-0 z-[99999] hidden"
+      class="mobile-menu w-full h-svh bg-[#EDEDED] fixed flex-col top-0 left-0 z-[99999] hidden"
     >
       <!-- Header do Menu -->
       <div
@@ -1811,6 +1811,42 @@
             >
           </div>
         </a>
+      </div>
+
+      <!-- Footer com Redes Sociais -->
+      <div class="border-t border-[#4F4A4A]/10 px-6 py-6">
+        <div class="flex items-center justify-center gap-6">
+          <a
+            href="https://br.linkedin.com/in/rafaelfbgois"
+            target="_blank"
+            rel="noopener noreferrer"
+            onclick="closeMenu()"
+            class="w-12 h-12 border border-[#4F4A4A]/20 rounded-sm flex items-center justify-center hover:border-[#4F4A4A] hover:bg-[#4F4A4A] hover:text-[#EDEDED] transition-all duration-300 group"
+            aria-label="LinkedIn"
+          >
+            <i class="fa-brands fa-linkedin-in text-lg group-hover:scale-110 transition-transform"></i>
+          </a>
+          <a
+            href="https://github.com/RafaGois"
+            target="_blank"
+            rel="noopener noreferrer"
+            onclick="closeMenu()"
+            class="w-12 h-12 border border-[#4F4A4A]/20 rounded-sm flex items-center justify-center hover:border-[#4F4A4A] hover:bg-[#4F4A4A] hover:text-[#EDEDED] transition-all duration-300 group"
+            aria-label="GitHub"
+          >
+            <i class="fa-brands fa-github text-lg group-hover:scale-110 transition-transform"></i>
+          </a>
+          <a
+            href="https://www.instagram.com/_rgoiss"
+            target="_blank"
+            rel="noopener noreferrer"
+            onclick="closeMenu()"
+            class="w-12 h-12 border border-[#4F4A4A]/20 rounded-sm flex items-center justify-center hover:border-[#4F4A4A] hover:bg-[#4F4A4A] hover:text-[#EDEDED] transition-all duration-300 group"
+            aria-label="Instagram"
+          >
+            <i class="fa-brands fa-instagram text-lg group-hover:scale-110 transition-transform"></i>
+          </a>
+        </div>
       </div>
     </div>
     

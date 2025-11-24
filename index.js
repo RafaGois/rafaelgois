@@ -48,10 +48,23 @@ if (document.readyState === "loading") {
 
 function scrollProjectsAnimations() {
   const projects = document.querySelectorAll(".project-item");
+  const isMobile = window.innerWidth < 1024; // lg breakpoint do Tailwind
+  
   projects.forEach((project, index) => {
+    // No mobile, usar animação vertical para evitar scroll horizontal
+    // No desktop, usar animação horizontal alternada
+    const animationProps = isMobile
+      ? {
+          opacity: 0,
+          y: 50, // Animação vertical no mobile
+        }
+      : {
+          opacity: 0,
+          x: index % 2 === 0 ? -100 : 100, // Animação horizontal no desktop
+        };
+
     gsap.from(project, {
-      opacity: 0,
-      x: () => (index % 2 == 0 ? -100 : 100),
+      ...animationProps,
       duration: 1.4,
       ease: "power2.out",
       scrollTrigger: {
