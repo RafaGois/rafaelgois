@@ -11,7 +11,7 @@ function initApp() {
   if (typeof ScrollTrigger !== "undefined") {
     gsap.registerPlugin(ScrollTrigger);
   }
-  
+
   // Registrar SplitText plugin se disponível
   if (typeof SplitText !== "undefined") {
     gsap.registerPlugin(SplitText);
@@ -51,7 +51,7 @@ function scrollProjectsAnimations() {
   projects.forEach((project, index) => {
     gsap.from(project, {
       opacity: 0,
-      x: () => index % 2 == 0 ? -100 : 100,
+      x: () => (index % 2 == 0 ? -100 : 100),
       duration: 1.4,
       ease: "power2.out",
       scrollTrigger: {
@@ -122,28 +122,23 @@ function initServicesAnimations() {
   const serviceContainer = document.querySelector("#services");
   const serviceItems = document.querySelectorAll(".service-item");
 
-  
-    gsap.from(
-      serviceItems,
-      {
-        opacity: 0,
-        y: 40,
-        duration: 1,
-        stagger: {
-          amount: 0.2,
-          from: "center",
-        },
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: serviceContainer,
-          start: "top 70%",
-          end: "bottom 60%",
-          toggleActions: "play none none none",
-          scrub: true,
-        },
-      }
-    );
-  
+  gsap.from(serviceItems, {
+    opacity: 0,
+    y: 40,
+    duration: 1,
+    stagger: {
+      amount: 0.2,
+      from: "center",
+    },
+    ease: "power2.out",
+    scrollTrigger: {
+      trigger: serviceContainer,
+      start: "top 70%",
+      end: "bottom 60%",
+      toggleActions: "play none none none",
+      scrub: true,
+    },
+  });
 }
 
 function aboutMeAnimations() {
@@ -449,7 +444,6 @@ function titlesScrollAnimations() {
         start: "top 95%",
         toggleActions: "play none none none",
         scrub: true,
-        markers: true,
       },
     });
 
