@@ -36,43 +36,26 @@ p, small, li, span, a{
 }
 
 .skill-item {
-  cursor: pointer;
-  transition: transform 0.3s ease;
-  padding: 0.5rem;
-  border-radius: 2px;
+  transition: all 0.3s ease;
+  padding: 0.25rem 0;
+  cursor: default;
+  font-weight: 400;
+  display: block;
 }
 
 .skill-item:hover {
-  transform: translateX(6px);
-}
-
-.skill-item h4 {
-  transition: letter-spacing 0.3s ease;
-}
-
-.skill-item:hover h4 {
+  transform: translateX(8px);
+  font-weight: 500;
   letter-spacing: 0.5px;
 }
 
-.skill-indicator {
-  transition: height 0.5s ease, background-color 0.5s ease, width 0.3s ease;
+/* Skill Info Panel */
+#skill-info-panel {
+  box-shadow: 0 4px 24px rgba(79, 74, 74, 0.1);
 }
 
-.skill-item:hover .skill-indicator {
-  height: 2.5rem;
-  width: 2px;
-}
-
-.skill-bar {
-  transition: height 0.5s ease;
-}
-
-.skill-category h3 {
-  position: relative;
-}
-
-.skill-category:hover .skill-bar {
-  height: 4.5rem;
+#skill-info-panel.opacity-100 {
+  pointer-events: auto;
 }
 
 .project-line {
