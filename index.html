@@ -110,21 +110,9 @@
           Sobre Mim
         </button>
       </div>
-      <!--         <div class="absolute w-full h-full flex items-center justify-center">
-          <i class="fa-solid fa-computer icon"></i>
-          <i class="fa-solid fa-computer-mouse icon"></i>
-          <i class="fa-solid fa-database icon"></i>
-          <i class="fa-solid fa-laptop icon"></i>
-          <i class="fa-solid fa-code icon"></i>
-          <i class="fa-solid fa-code-fork icon"></i>
-          <i class="fa-solid fa-file-code icon"></i>
-          <i class="fa-brands fa-html5 icon"></i>
-          <i class="fa-brands fa-css3-alt icon"></i>
-          <i class="fa-brands fa-square-js icon"></i>
-        </div>  -->
     </header>
     <main>
-      <section id="about" class="min-h-screen flex flex-col">
+      <section id="about" class="min-h-screen flex flex-col z-10 pb-32">
         <div
           class="section-title flex w-full flex-col items-center justify-center"
         >
@@ -169,7 +157,20 @@
           </p>
         </div>
       </section>
-      <section id="skills" class="min-h-screen flex flex-col p-8">
+      <section id="box" class="h-[120svh] flex flex-col items-center justify-center relative p-8 overflow-hidden">
+        <div id="box-frames" class="absolute inset-0 z-0 min-h-screen overflow-hidden">
+          <img id="box-frame-img" src="/frames/01.png" alt="" class="absolute inset-0 w-full h-full object-cover">
+        </div>
+        <div class="sticky top-0 z-10 flex items-center justify-center w-full min-h-screen p-16">
+          <p id="box-text" class="z-50 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[clamp(1.75rem,6vw,5rem)] font-bold text-white uppercase text-center rotate-[-5deg] leading-[1.25] max-w-[90vw] text-nowrap">Desenvolvendo soluções<br>fora da caixa</p>
+          <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(500px,85vw)] h-[min(420px,85vw)]  bg-[#2f2f2f] p-4 flex items-center justify-center">
+            <div class="w-full h-full border-4 border-white p-1">
+              <div class="w-full h-full border-2 border-white"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section id="skills" class="flex flex-col p-8 overflow-hidden">
         <div
           class="section-title flex w-full flex-col items-center justify-center my-24"
         >
@@ -184,125 +185,61 @@
             cada solução é pensada com cuidado.
           </p>
         </div>
-        <div class="max-w-6xl mx-auto w-full relative">
-          <div class="skills-container grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-12">
-            <!-- Frontend -->
-            <div class="skill-category" data-category="frontend">
-              <div class="flex items-start gap-6 md:gap-8">
-                <h2 class="text-5xl md:text-7xl font-bold text-[#4F4A4A] leading-none">01</h2>
-                <div class="flex-1">
-                  <h3 class="text-3xl md:text-4xl font-bold mb-6 md:mb-8">Frontend</h3>
-                  <div class="space-y-2 md:space-y-3 pl-0 md:pl-4">
-                    <p 
-                      class="skill-item text-sm md:text-base hover:text-orange-600 hover:font-bold transition-all duration-700 cursor-pointer"
-                    >
-                      React
-                    </p>
-                    <p 
-                      class="skill-item text-sm md:text-base hover:text-emerald-600 hover:font-bold transition-all duration-700 cursor-pointer"
-                    >
-                      Next.js
-                    </p>
-                    <p 
-                      class="skill-item text-sm md:text-base hover:text-red-600 hover:font-bold transition-all duration-700 cursor-pointer"
-                    >
-                      JavaScript
-                    </p>
-                    <p 
-                      class="skill-item text-sm md:text-base hover:text-[#4287f5] hover:font-bold transition-all duration-700 cursor-pointer"
-                    >
-                      React Native
-                    </p>
-                    <p 
-                      class="skill-item text-sm md:text-base hover:text-orange-600 hover:font-bold transition-all duration-700 cursor-pointer"
-                    >
-                      GSAP
-                    </p>
-                    <p 
-                      class="skill-item text-sm md:text-base hover:text-blue-600 hover:font-bold transition-all duration-700 cursor-pointer"
-                    >
-                      HTML5 & CSS3
-                    </p>
+        <div id="skills-path-wrapper" class="relative max-w-6xl mx-auto w-full">
+          <svg id="skills-svg" class="absolute top-0 left-0 w-full h-full pointer-events-none z-0" fill="none" xmlns="http://www.w3.org/2000/svg"></svg>
+          <div class="relative z-10 py-16 lg:py-24">
+            <!-- 01 Frontend -->
+            <div class="skill-node mb-40 lg:mb-64" data-align="left">
+              <div class="lg:w-[50%]">
+                <div class="flex items-start gap-4 md:gap-8 group">
+                  <span class="text-7xl md:text-[8rem] font-bold text-[#4F4A4A]/[0.06] leading-none select-none group-hover:text-[#4F4A4A]/50 transition-all duration-500 cursor-default">01</span>
+                  <div>
+                    <h3 class="text-3xl md:text-5xl font-bold mb-6 md:mb-10">Frontend</h3>
+                    <div class="space-y-3 pl-1">
+                      <p class="skill-item text-sm md:text-base text-[#4F4A4A]/60 hover:text-[#4F4A4A] transition-all duration-500 cursor-default">React</p>
+                      <p class="skill-item text-sm md:text-base text-[#4F4A4A]/60 hover:text-[#4F4A4A] transition-all duration-500 cursor-default">Next.js</p>
+                      <p class="skill-item text-sm md:text-base text-[#4F4A4A]/60 hover:text-[#4F4A4A] transition-all duration-500 cursor-default">JavaScript</p>
+                      <p class="skill-item text-sm md:text-base text-[#4F4A4A]/60 hover:text-[#4F4A4A] transition-all duration-500 cursor-default">React Native</p>
+                      <p class="skill-item text-sm md:text-base text-[#4F4A4A]/60 hover:text-[#4F4A4A] transition-all duration-500 cursor-default">GSAP</p>
+                      <p class="skill-item text-sm md:text-base text-[#4F4A4A]/60 hover:text-[#4F4A4A] transition-all duration-500 cursor-default">HTML5 & CSS3</p>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-
-            <!-- Backend -->
-            <div class="skill-category flex justify-center" data-category="backend">
-              <div class="flex items-start gap-6 md:gap-8">
-                <h3 class="text-5xl md:text-7xl font-bold text-[#4F4A4A] leading-none">02</h3>
-                <div class="flex-1">
-                  <h3 class="text-3xl md:text-4xl font-bold mb-6 md:mb-8">Backend</h3>
-                  <div class="space-y-2 md:space-y-3 pl-0 md:pl-4">
-                    <p 
-                      class="skill-item text-sm md:text-base hover:text-orange-600 hover:font-bold transition-all duration-700 cursor-pointer"
-                    >
-                      Node.js
-                    </p>
-                    <p 
-                      class="skill-item text-sm md:text-base hover:text-emerald-600 hover:font-bold transition-all duration-700 cursor-pointer"
-                    >
-                      Prisma
-                    </p>
-                    <p 
-                      class="skill-item text-sm md:text-base hover:text-red-600 hover:font-bold transition-all duration-700 cursor-pointer"
-                    >
-                      SQL Server
-                    </p>
-                    <p 
-                      class="skill-item text-sm md:text-base hover:text-[#4F4A4A] hover:font-bold transition-all duration-700 cursor-pointer"
-                    >
-                      Express.js
-                    </p>
-                    <p se
-                      class="skill-item text-sm md:text-base hover:text-orange-600 hover:font-bold transition-all duration-700 cursor-pointer"
-                    >
-                      JWT & Auth
-                    </p>
-                    <p 
-                      class="skill-item text-sm md:text-base hover:text-blue-600 hover:font-bold transition-all duration-700 cursor-pointer"
-                    >
-                      TypeScript
-                    </p>
+            <!-- 02 Backend -->
+            <div class="skill-node mb-40 lg:mb-64 lg:ml-auto" data-align="right">
+              <div class="lg:w-[50%]">
+                <div class="flex items-start gap-4 md:gap-8 group">
+                  <span class="text-7xl md:text-[8rem] font-bold text-[#4F4A4A]/[0.06] leading-none select-none group-hover:text-[#4F4A4A]/50 transition-all duration-500 cursor-default">02</span>
+                  <div>
+                    <h3 class="text-3xl md:text-5xl font-bold mb-6 md:mb-10">Backend</h3>
+                    <div class="space-y-3 pl-1">
+                      <p class="skill-item text-sm md:text-base text-[#4F4A4A]/60 hover:text-[#4F4A4A] transition-all duration-500 cursor-default">Node.js</p>
+                      <p class="skill-item text-sm md:text-base text-[#4F4A4A]/60 hover:text-[#4F4A4A] transition-all duration-500 cursor-default">Prisma</p>
+                      <p class="skill-item text-sm md:text-base text-[#4F4A4A]/60 hover:text-[#4F4A4A] transition-all duration-500 cursor-default">SQL Server</p>
+                      <p class="skill-item text-sm md:text-base text-[#4F4A4A]/60 hover:text-[#4F4A4A] transition-all duration-500 cursor-default">Express.js</p>
+                      <p class="skill-item text-sm md:text-base text-[#4F4A4A]/60 hover:text-[#4F4A4A] transition-all duration-500 cursor-default">JWT & Auth</p>
+                      <p class="skill-item text-sm md:text-base text-[#4F4A4A]/60 hover:text-[#4F4A4A] transition-all duration-500 cursor-default">TypeScript</p>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-
-
-            <!-- Outros -->
-            <div class="skill-category lg:col-start-1" data-category="others">
-              <div class="flex items-start gap-6 md:gap-8">
-                <h2 class="text-5xl md:text-7xl font-bold text-[#4F4A4A] leading-none">03</h2>
-                <div class="flex-1">
-                  <h3 class="text-3xl md:text-4xl font-bold mb-6 md:mb-8">Outros</h3>
-                  <div class="space-y-2 md:space-y-3 pl-0 md:pl-4">
-                    <p 
-                      class="skill-item text-sm md:text-base hover:text-red-600 hover:font-bold transition-all duration-700 cursor-pointer"
-                    >
-                      UI/UX Design
-                    </p>
-                    <p 
-                      class="skill-item text-sm md:text-base hover:text-emerald-600 hover:font-bold transition-all duration-700 cursor-pointer"
-                    >
-                      Performance
-                    </p>
-                    <p 
-                      class="skill-item text-sm md:text-base hover:text-blue-600 hover:font-bold transition-all duration-700 cursor-pointer"
-                    >
-                      Responsividade
-                    </p>
-                    <p 
-                      class="skill-item text-sm md:text-base hover:text-red-600 hover:font-bold transition-all duration-700 cursor-pointer"
-                    >
-                      SEO
-                    </p>
-                    <p 
-                      class="skill-item text-sm md:text-base hover:text-orange-600 hover:font-bold transition-all duration-700 cursor-pointer"
-                    >
-                      Git & Versionamento
-                    </p>
+            <!-- 03 Outros -->
+            <div class="skill-node" data-align="left">
+              <div class="lg:w-[50%]">
+                <div class="flex items-start gap-4 md:gap-8 group">
+                  <span class="text-7xl md:text-[8rem] font-bold text-[#4F4A4A]/[0.06] leading-none select-none group-hover:text-[#4F4A4A]/50 transition-all duration-500 cursor-default">03</span>
+                  <div>
+                    <h3 class="text-3xl md:text-5xl font-bold mb-6 md:mb-10">Outros</h3>
+                    <div class="space-y-3 pl-1">
+                      <p class="skill-item text-sm md:text-base text-[#4F4A4A]/60 hover:text-[#4F4A4A] transition-all duration-500 cursor-default">UI/UX Design</p>
+                      <p class="skill-item text-sm md:text-base text-[#4F4A4A]/60 hover:text-[#4F4A4A] transition-all duration-500 cursor-default">Performance</p>
+                      <p class="skill-item text-sm md:text-base text-[#4F4A4A]/60 hover:text-[#4F4A4A] transition-all duration-500 cursor-default">Responsividade</p>
+                      <p class="skill-item text-sm md:text-base text-[#4F4A4A]/60 hover:text-[#4F4A4A] transition-all duration-500 cursor-default">SEO</p>
+                      <p class="skill-item text-sm md:text-base text-[#4F4A4A]/60 hover:text-[#4F4A4A] transition-all duration-500 cursor-default">Git & Versionamento</p>
+                    </div>
                   </div>
                 </div>
               </div>
