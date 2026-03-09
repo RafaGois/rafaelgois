@@ -328,6 +328,26 @@ function initSkillsAnimations() {
 
   buildPath();
 
+  var skillNumbers = wrapper.querySelectorAll(".skill-number");
+  gsap.set(skillNumbers, { opacity: 0.06 });
+
+  nodes.forEach(function (node, i) {
+    var numberEl = node.querySelector(".skill-number");
+    if (numberEl) {
+      gsap.to(numberEl, {
+        opacity: 1,
+        duration: 0.6,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: node,
+          start: "top 70%",
+          end: "top 45%",
+          toggleActions: "play none none reverse",
+        },
+      });
+    }
+  });
+
   var isDesktopLayout = window.innerWidth >= 1024;
   nodes.forEach(function (node) {
     var align = node.dataset.align;
