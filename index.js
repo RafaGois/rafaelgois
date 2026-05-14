@@ -43,6 +43,7 @@ function initOtherAnimations() {
   initBoxFrameSequence();
   initBoxAnimations();
   initBoxSideImages();
+  initBoxIcaro();
   aboutMeAnimations();
 
   // Skills Section Animations
@@ -559,7 +560,7 @@ function initBoxSideImages() {
   gsap.fromTo(rightImg,
     { xPercent: 120, yPercent: -50, opacity: 0 },
     {
-      xPercent: -160,  // avança até bem próximo do centro
+      xPercent: -230,
       yPercent: -50,
       opacity: 0.78,
       ease: "power2.out",
@@ -579,6 +580,36 @@ function initBoxSideImages() {
             rightImg.src = "1.png";
           }
         },
+      },
+    }
+  );
+}
+
+// ─── Box — Ícaro sobe de baixo do box central ─────────────────────────────────
+function initBoxIcaro() {
+  var icaro = document.querySelector("#box-icaro");
+  if (!icaro) return;
+
+  // Começa centrada atrás da moldura (top:50% + yPercent:-50 = centro exato),
+  // desce conforme o scroll emergindo pela borda inferior da moldura.
+  // z-index 35 < moldura z-40 → sempre atrás enquanto ainda sobreposta.
+  // Posição inicial: centrada atrás da moldura (xPercent -50 + yPercent -50)
+  // A imagem desce em unidades de viewport para garantir que sai visivelmente
+  // por baixo da moldura independente do tamanho do elemento.
+  // Dispara uma vez quando as laterais terminam (center center do box)
+  // Sem scrub — animação livre com duração e easing próprios.
+  gsap.fromTo(icaro,
+    { xPercent: -50, yPercent: -50, opacity: 0 },
+    {
+      xPercent: -50,
+      y: "42vh",
+      opacity: 0.92,
+      duration: 2.2,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: "#box",
+        start:        "center center",
+        toggleActions: "play none none reverse",
       },
     }
   );

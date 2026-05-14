@@ -284,8 +284,6 @@ function setupScrollAnimations() {
       stagger: { amount: 0.6, from: 'random' },
     }, 0);
 
-    // Fade individual de cada tecla — começa um pouco depois do lift para
-    // a tecla ser vista subindo antes de desaparecer
     const materials = keyMeshes
       .map((k) => k.material)
       .flatMap((m) => (Array.isArray(m) ? m : [m]))
@@ -303,76 +301,166 @@ function setupScrollAnimations() {
   // (mantido como noop intencional para clareza do mapa de transições)
 
   // ─── Box → Skills ─────────────────────────────────────────────────────────
-  // Reset das keycaps quando #skills chega no centro da viewport (bem dentro
-  // da seção, longe do final de #box).
-  ScrollTrigger.create({
-    trigger: '#skills',
-    start:   'top center',
-    onEnter:     () => resetKeycaps(),
-    onEnterBack: () => {},
-  });
-
-  // Teclado só começa a aparecer quando #skills está no centro da tela,
-  // terminando quando chega ao topo — completamente dentro da seção.
+  // Teclado entra vindo da direita enquanto as teclas se remontam com scrub.
+  // NÃO fazemos resetKeycaps() no enter — as teclas chegam já dispersas e
+  // a própria timeline as recoloca nas posições originais conforme o scroll.
   gsap.fromTo(pose,
     { rotY: rad(-30), rotX: rad(22), posX: 2.5,  posY: 0.3,  posZ: -0.8, scale: 0.52, opacity: 0 },
     { rotY: rad(-30), rotX: rad(22), posX: 1.6,  posY: 0.3,  posZ: -0.8, scale: 0.58, opacity: 1,
       immediateRender: false,
       scrollTrigger: {
         trigger: '#skills',
-        start:   'top center',  // começa quando skills está no meio da tela
+        start:   'top center',
         end:     'top top',
         scrub:   1,
       },
     }
   );
 
+  // ─── Remontagem das keycaps em Skills ──────────────────────────────────────
+  // Ao entrar em Skills: coloca as teclas no estado espalhado via gsap.set()
+  // e dispara uma animação livre (sem scrub) que as remonta.
+  // Sem fromTo → sem conflito com a desmontagem do Hero.
+  if (keyMeshes.length > 0) {
+    const assemblyMats = keyMeshes
+      .map((k) => k.material)
+      .flatMap((m) => (Array.isArray(m) ? m : [m]))
+      .filter(Boolean);
+
+    let assemblyPlayed = false;
+
+    ScrollTrigger.create({
+      trigger: '#skills',
+      start:   'top center',
+      onEnter() {
+        // Posiciona as teclas no estado espalhado (silenciosamente)
+        keyMeshes.forEach((k) => {
+          gsap.set(k.position, {
+            x: k.userData.initialPos.x + k.userData.driftX,
+            y: k.userData.initialPos.y + k.userData.lift,
+            z: k.userData.initialPos.z + k.userData.driftZ,
+          });
+          gsap.set(k.rotation, {
+            x: k.userData.initialRot.x + k.userData.tiltX,
+            y: k.userData.initialRot.y + k.userData.tiltY,
+            z: k.userData.initialRot.z + k.userData.tiltZ,
+          });
+        });
+        assemblyMats.forEach((m) => { if (m) m.opacity = 0; });
+
+        // Remonta com stagger aleatório
+        const tl = gsap.timeline();
+        tl.to(keyMeshes.map((k) => k.position), {
+          x: (i) => keyMeshes[i].userData.initialPos.x,
+          y: (i) => keyMeshes[i].userData.initialPos.y,
+          z: (i) => keyMeshes[i].userData.initialPos.z,
+          duration: 1.6,
+          ease:     'power3.out',
+          stagger:  { amount: 0.7, from: 'random' },
+        }, 0);
+        tl.to(keyMeshes.map((k) => k.rotation), {
+          x: (i) => keyMeshes[i].userData.initialRot.x,
+          y: (i) => keyMeshes[i].userData.initialRot.y,
+          z: (i) => keyMeshes[i].userData.initialRot.z,
+          duration: 1.6,
+          ease:     'power2.out',
+          stagger:  { amount: 0.7, from: 'random' },
+        }, 0);
+        tl.to(assemblyMats, {
+          opacity:  1,
+          duration: 1.2,
+          ease:     'power1.out',
+          stagger:  { amount: 0.7, from: 'random' },
+        }, 0);
+      },
+      onLeave() {
+        // ao sair de skills para baixo, reseta para quando voltar
+        resetKeycaps();
+      },
+      onEnterBack() {
+        // ao voltar de projetos, remonta de novo
+        keyMeshes.forEach((k) => {
+          gsap.set(k.position, {
+            x: k.userData.initialPos.x + k.userData.driftX,
+            y: k.userData.initialPos.y + k.userData.lift,
+            z: k.userData.initialPos.z + k.userData.driftZ,
+          });
+          gsap.set(k.rotation, {
+            x: k.userData.initialRot.x + k.userData.tiltX,
+            y: k.userData.initialRot.y + k.userData.tiltY,
+            z: k.userData.initialRot.z + k.userData.tiltZ,
+          });
+        });
+        assemblyMats.forEach((m) => { if (m) m.opacity = 0; });
+        const tl = gsap.timeline();
+        tl.to(keyMeshes.map((k) => k.position), {
+          x: (i) => keyMeshes[i].userData.initialPos.x,
+          y: (i) => keyMeshes[i].userData.initialPos.y,
+          z: (i) => keyMeshes[i].userData.initialPos.z,
+          duration: 1.4, ease: 'power3.out',
+          stagger: { amount: 0.6, from: 'random' },
+        }, 0);
+        tl.to(keyMeshes.map((k) => k.rotation), {
+          x: (i) => keyMeshes[i].userData.initialRot.x,
+          y: (i) => keyMeshes[i].userData.initialRot.y,
+          z: (i) => keyMeshes[i].userData.initialRot.z,
+          duration: 1.4, ease: 'power2.out',
+          stagger: { amount: 0.6, from: 'random' },
+        }, 0);
+        tl.to(assemblyMats, {
+          opacity: 1, duration: 1.0, ease: 'power1.out',
+          stagger: { amount: 0.6, from: 'random' },
+        }, 0);
+      },
+    });
+  }
+
   // ─── Skills parte 1 → parte 2 (Backend) ──────────────────────────────────
-  // Antes de chegar no bloco Backend: teclado desliza para a esquerda e gira
-  // no eixo Y para ficar voltado para a direita (alinhado ao conteúdo da direita).
+  // Desliza para a esquerda girando no Y (mostra lateral) e inclinando para frente.
   gsap.fromTo(pose,
-    { rotY: rad(-30), rotX: rad(22), posX: 1.6,  posY: 0.3,  posZ: -0.8, scale: 0.58, opacity: 1 },
-    { rotY: rad(18),  rotX: rad(24), posX: -0.88, posY: 0.55, posZ: -0.56, scale: 0.58, opacity: 1,
-      ease: 'power1.inOut',
+    { rotY: rad(-30), rotX: rad(22), posX: 1.6,   posY: 0.3,  posZ: -0.8,  scale: 0.58, opacity: 1 },
+    { rotY: rad(55),  rotX: rad(10), posX: -1.35, posY: 0.55, posZ: -0.3,  scale: 0.64, opacity: 1,
+      ease: 'power2.inOut',
       immediateRender: false,
       scrollTrigger: {
         trigger: '#skills-backend',
-        start:   'top 90%',  // ainda na área do Frontend; Backend longe abaixo
-        end:     'top 52%',  // Backend entra; pose já estabilizada
-        scrub:   1.1,
+        start:   'top 90%',
+        end:     'top 52%',
+        scrub:   1.2,
       },
     }
   );
 
-  // ─── Skills parte 3 (Outros) ──────────────────────────────────────────────
-  // Teclado volta para a direita, alinhado ao bloco de texto à esquerda.
+  // ─── Skills parte 2 → parte 3 (Outros) ───────────────────────────────────
+  // Da pose lateral vira para overhead e desliza para a direita — como
+  // uma peça que flutua de um lado para o outro passando por cima da cena.
   gsap.fromTo(pose,
-    { rotY: rad(18),  rotX: rad(24), posX: -0.88, posY: 0.55, posZ: -0.56, scale: 0.58, opacity: 1 },
-    { rotY: rad(-24), rotX: rad(22), posX: 1.85,  posY: 0.38, posZ: -0.75, scale: 0.58, opacity: 1,
+    { rotY: rad(55),  rotX: rad(10), posX: -1.35, posY: 0.55, posZ: -0.3,  scale: 0.64, opacity: 1 },
+    { rotY: rad(-22), rotX: rad(52), posX: 1.85,  posY: 0.3,  posZ: -0.75, scale: 0.58, opacity: 1,
       ease: 'power1.inOut',
       immediateRender: false,
       scrollTrigger: {
         trigger: '#skills-outros',
         start:   'top 88%',
         end:     'top 38%',
-        scrub:   1.05,
+        scrub:   1.1,
       },
     }
   );
 
   // ─── Skills → Projects — desmontagem ─────────────────────────────────────
   // Mesma lógica do Hero: teclas voam com stagger aleatório enquanto o canvas
-  // some. resetKeycaps() é chamado ao rolar de volta para skills.
+  // some. Ao voltar de Projetos para Skills, a timeline de remontagem acima
+  // (scrub reverso) cuida de recolocar as teclas — não precisa de resetKeycaps().
   ScrollTrigger.create({
     trigger: '#projects',
     start:   'top 52%',
-    onEnterBack: () => resetKeycaps(),
   });
 
   // Pose some com zoom leve enquanto as teclas explodem
   gsap.fromTo(pose,
-    { rotY: rad(-24), rotX: rad(22), posX: 1.85,  posY: 0.38, posZ: -0.75, scale: 0.58, opacity: 1 },
-    { rotY: rad(-20), rotX: rad(26), posX: 1.85,  posY: 0.18, posZ: -0.75, scale: 0.72, opacity: 0,
+    { rotY: rad(-22), rotX: rad(52), posX: 1.85,  posY: 0.3,  posZ: -0.75, scale: 0.58, opacity: 1 },
+    { rotY: rad(-18), rotX: rad(56), posX: 1.85,  posY: 0.1,  posZ: -0.75, scale: 0.72, opacity: 0,
       ease: 'power1.inOut',
       immediateRender: false,
       scrollTrigger: {

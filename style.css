@@ -45,6 +45,16 @@ body {
   will-change: transform, opacity;
 }
 
+#box-icaro {
+  position: absolute;
+  top: 50%;           /* ancora no centro vertical do box */
+  left: 50%;
+  max-height: clamp(14rem, 38vh, 28rem);
+  width: auto;
+  z-index: 35;        /* atrás da moldura (z-40) — fica escondida atrás dela */
+  will-change: transform, opacity;
+}
+
 
 h1, h2, h3, h4, h5, h6 {
   font-family: "Italiana", serif;
