@@ -119,7 +119,9 @@ function initSkillsAnimations() {
 
     const points = [];
     nodes.forEach(function (node) {
-      var nRect = node.getBoundingClientRect();
+      var anchor =
+        node.querySelector(".skill-node-content") || node;
+      var nRect = anchor.getBoundingClientRect();
       var nScrollTop = nRect.top + window.scrollY;
       var y = nScrollTop - wScrollTop + nRect.height / 2;
       var align = node.dataset.align;
