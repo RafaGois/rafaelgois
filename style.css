@@ -6,9 +6,11 @@
   box-sizing: border-box;
 }
 
-/* ─── Hero 3D ──────────────────────────────────────────────────────────────── */
+/* ─── Scene 3D — fixa em todo o viewport ─────────────────────────────────── */
 #hero-3d-container {
-  /* absolute inset-0 via Tailwind: preenche o header inteiro */
+  position: fixed;
+  inset: 0;
+  z-index: 0;
 }
 
 #hero-canvas {
@@ -16,11 +18,6 @@
   width: 100%;
   height: 100%;
   opacity: 0;
-  transition: opacity 1.8s ease;
-}
-
-#hero-canvas.hero-canvas--loaded {
-  opacity: 1;
 }
 
 body {

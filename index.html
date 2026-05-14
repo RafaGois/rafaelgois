@@ -6,7 +6,7 @@
     <title>Rafael Gois - Programador</title>
     <meta
       name="description"
-      content="Rafael Gois - Software Engineer e desenvolvedor de soluções em Curitibanos. Especialista em desenvolvimento Full Stack, automação industrial, planejamento e controle de processos. Criando soluções que impactam a vida das pessoas."
+      content="Rafael Gois - Engenheiro de Software e desenvolvedor de soluções em Curitibanos. Especialista em desenvolvimento Full Stack, automação industrial, planejamento e controle de processos. Criando soluções que impactam a vida das pessoas."
     />
     <meta name="msvalidate.01" content="6523E775852365B9B33CB8AAE8789143" />
     <meta
@@ -72,7 +72,16 @@
     </script>
   </head>
   <body class="bg-[#EDEDED] text-[#4F4A4A] overflow-x-hidden">
-    <header class="flex flex-col min-h-screen relative">
+    <!-- 3D Canvas: fixed, persiste em todas as dobras do site -->
+    <div
+      id="hero-3d-container"
+      class="hidden md:block pointer-events-none"
+      aria-hidden="true"
+    >
+      <canvas id="hero-canvas"></canvas>
+    </div>
+
+    <header class="flex flex-col min-h-screen relative z-10">
       <div class="hidden md:flex items-center justify-between px-10 py-6">
         <p cla>Rafael Gois</p>
         <ul class="flex gap-16">
@@ -106,16 +115,7 @@
           </svg>
         </button>
       </div>
-      <!-- 3D Canvas: absolute, cobre o hero inteiro no desktop -->
-      <div
-        id="hero-3d-container"
-        class="hidden md:block absolute inset-0 pointer-events-none"
-        aria-hidden="true"
-      >
-        <canvas id="hero-canvas"></canvas>
-      </div>
-
-      <!-- Texto: sobre o canvas, centralizado -->
+      <!-- Texto: centralizado sobre o canvas fixo -->
       <div class="flex-1 flex flex-col items-center justify-center relative z-10">
         <div
           class="flex items-center justify-center gap-2 w-full max-w-xs mb-8"
@@ -143,7 +143,7 @@
         </button>
       </div>
     </header>
-    <main>
+    <main class="relative z-10">
       <section id="about" class="min-h-screen flex flex-col z-10 pb-32">
         <div
           class="section-title flex w-full flex-col items-center justify-center"
