@@ -24,6 +24,28 @@ body {
   font-family: "Italiana", serif;
 }
 
+/* ─── Box — imagens laterais "Criação de Adão" ───────────────────────────── */
+#box-left-img {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  max-height: clamp(22rem, 58vh, 42rem);
+  width: auto;
+  z-index: 30;
+  will-change: transform, opacity;
+}
+
+#box-right-img {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  max-height: clamp(7rem, 18vh, 13rem);
+  width: auto;
+  z-index: 50;
+  will-change: transform, opacity;
+}
+
+
 h1, h2, h3, h4, h5, h6 {
   font-family: "Italiana", serif;
 

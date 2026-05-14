@@ -42,6 +42,7 @@ function initAnimationsWithSplitText() {
 function initOtherAnimations() {
   initBoxFrameSequence();
   initBoxAnimations();
+  initBoxSideImages();
   aboutMeAnimations();
 
   // Skills Section Animations
@@ -530,6 +531,57 @@ function initBoxAnimations() {
       });
     },
   });
+}
+
+// ─── Box — imagens laterais "Criação de Adão" ─────────────────────────────────
+function initBoxSideImages() {
+  var leftImg  = document.querySelector("#box-left-img");
+  var rightImg = document.querySelector("#box-right-img");
+  var frame    = document.querySelector("#box-moldura");
+  if (!leftImg || !rightImg || !frame) return;
+
+  // Esquerda — animação independente
+  gsap.fromTo(leftImg,
+    { xPercent: -120, yPercent: -50, opacity: 0 },
+    {
+      xPercent: 0, yPercent: -50, opacity: 0.78,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: "#box-text",
+        start:   "top 95%",
+        end:     "bottom 32%",
+        scrub:   2.4,
+      },
+    }
+  );
+
+  // Direita — animação independente, termina mais tarde para dar tempo de avançar bastante
+  gsap.fromTo(rightImg,
+    { xPercent: 120, yPercent: -50, opacity: 0 },
+    {
+      xPercent: -160,  // avança até bem próximo do centro
+      yPercent: -50,
+      opacity: 0.78,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: "#box",
+        start:   "top bottom",   // começa quando a seção entra na tela
+        end:     "center center", // termina quando o box está no centro — src muda aqui
+        scrub:   1.8,
+        onUpdate: function () {
+          var fr = frame.getBoundingClientRect();
+          var ir = rightImg.getBoundingClientRect();
+          var atFrame = ir.left <= fr.right + 8;
+          var src = rightImg.src || "";
+          if (atFrame && src.indexOf("2.png") === -1) {
+            rightImg.src = "2.png";
+          } else if (!atFrame && src.indexOf("1.png") === -1) {
+            rightImg.src = "1.png";
+          }
+        },
+      },
+    }
+  );
 }
 
 function initServicesAnimations() {
