@@ -1,0 +1,55 @@
+---
+description: Bio, experiência, stack e direção visual do portfólio de Rafael Gois
+alwaysApply: true
+---
+
+# Portfólio — contexto do projeto
+
+Este repositório é o **site portfólio** de **Rafael Gois**, desenvolvedor há **mais de 5 anos**, com forte base em **planejamento e controle de processos (PCP)** e **engenharia de automação**, criando soluções para a **indústria**. Localização de atuação recente: **Curitibanos, Santa Catarina, Brasil** (presencial quando indicado).
+
+## Narrativa e foco atual
+
+- **Hoje**: criar e estudar **design de interfaces** orientado à **experiência do usuário** — desde **HTML e CSS** até **React** e **Next.js**, sem abandonar o **back end** (**TypeScript**, **Prisma** e demais ferramentas que domina).
+- **Filosofia de produto**: software **simples** da lógica do back end à interface; tudo com **intenção** (nada decorativo ou genérico sem propósito).
+
+## Stack e superfícies (referência)
+
+- **Front**: HTML/CSS, React, Next.js; atenção a UX/UI e clareza visual.
+- **Back**: TypeScript, Node, Prisma; APIs e dados com modelo claro.
+- **Legado / outras experiências profissionais**: JavaScript, React, Java / Java EE (ERP), conforme histórico abaixo.
+- **Mobile**: **React Native** e APIs com **Express** quando o portfólio ou o código do repo mencionarem essas camadas.
+
+## Experiência profissional (fonte para textos do site)
+
+| Período | Empresa | Papel | Modal / local | Destaques |
+|--------|---------|--------|----------------|-----------|
+| **set/2025 – atual** (~9 meses) | **Elevate Pro Media** | Programador | Integral, **presencial**, Curitibanos | — |
+| **fev/2024 – ago/2025** (1a 7m) | **Mendes Máquinas** | Programador de sistemas de informação | Integral, **presencial**, Curitibanos | Plataforma **full stack** para **gestão da produção em serraria**: status em **tempo real**, relatórios personalizados, fluxo ágil para identificar e corrigir problemas, **manutenção preventiva e preditiva**, desempenho por máquina; visão do processo produtivo para decisão estratégica. **TypeScript**, **Next.js** (+ outras competências). |
+| **jun/2023 – fev/2024** (9 meses) | **Mendes Máquinas** | Estagiário de automação | **Presencial**, Curitibanos | Sistemas de **controle** dentro e fora da empresa: estoque, **despacho** de mercadorias, pendências de campo, **apontamento de horas de máquina**, etc. **JavaScript**, **React.js** (+ outras). |
+| **jun/2022 – jun/2023** (1a 1m) | **Mendes Máquinas** | Estagiário de PCP | **Remoto** | Apps **full stack** para otimização e controle industrial; app para **ordens de fabricação até entrega**, progresso em **tempo real** para gestão. **JavaScript**, **Node.js** (+ outras). |
+| **fev/2021 – fev/2022** (1a 1m) | **GOIS Inc** | Estagiário de desenvolvimento de software | **Remoto**, Joinville (SC) | Manutenção e evolução de **ERP**: entidades/tabelas, funções auxiliares, **relatórios em PDF**. **Java**, **Java EE** (+ outras). |
+
+**Resumo de trajetória**: indústria, PCP, automação e sistemas de informação; evolução de estágios para programador; projeto emblemático na Mendes — plataforma de produção para serraria.
+
+## Direção de design (obrigatória)
+
+- Estilo **clássico**, **elegante** e **minimalista**: respiro, hierarquia tipográfica clara, sem excesso “SaaS genérico”.
+- **Site atual**: HTML/CSS/JS, Tailwind via CDN; **Italiana** (títulos) + **Manrope** (corpo); neutros (ex.: `#EDEDED`, `#4F4A4A`). Ao migrar ou refatorar (ex.: Next), **manter** essa identidade.
+- Conteúdo principal em **pt-BR**; respeitar **SEO e meta tags** existentes ao alterar títulos ou páginas.
+
+## Ao gerar ou editar conteúdo
+
+- Tratar esta regra como **fonte da narrativa** de bio, CV e cases no portfólio; **não inventar** empresas, datas ou stacks além do aqui descrito (competências “+N” do LinkedIn podem ser citadas genericamente só se o usuário confirmar).
+- Alinhar tom à filosofia: **simplicidade** e **intenção** em copy e em estrutura de interface.
+
+## Exemplo visual alinhado
+
+```html
+<!-- ✅ Serif título, sans corpo, paleta neutra -->
+<h1 class="font-serif text-[#4F4A4A]">Rafael Gois</h1>
+<p class="font-sans text-[#4F4A4A]/90">Soluções industriais e interfaces com intenção.</p>
+```
+
+```html
+<!-- ❌ Evitar: hero barulhento, glassmorphism pesado, stock 3D genérico -->
+```
