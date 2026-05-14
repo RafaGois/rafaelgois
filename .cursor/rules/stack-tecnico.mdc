@@ -1,0 +1,52 @@
+---
+description: Stack técnica do projeto — HTML, CSS, JS vanilla, Three.js e GSAP
+alwaysApply: true
+---
+
+# Stack técnica do portfólio
+
+Este projeto é um site estático em **HTML/CSS/JS vanilla**. Sem framework JS, sem bundler, sem build step.
+
+## Dependências (via CDN)
+
+| Lib | Versão | Uso |
+|-----|--------|-----|
+| **Tailwind CSS** | CDN | Classes utilitárias de estilo |
+| **Three.js** | `0.169.0` (importmap) | Cenas e objetos 3D |
+| **GSAP** | `3.13.0` | Animações e transições |
+| **GSAP ScrollTrigger** | `3.13.0` | Animações acionadas por scroll |
+| **GSAP SplitText** | `3.13.0` | Animações de texto letra a letra |
+
+## Regras de uso
+
+### Three.js
+- Importar via `importmap` já declarado no `<head>` de cada página:
+  ```js
+  import * as THREE from 'three';
+  import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+  ```
+- Modelos 3D: formato `.glb` com **DRACOLoader** para compressão.
+- Renderer: `alpha: true`, `antialias: true`, pixel ratio limitado a `2`.
+- Preferir `SRGBColorSpace` e `ACESFilmicToneMapping`.
+
+### GSAP
+- Disponível como global (`window.gsap`) — não importar via módulo.
+- `ScrollTrigger` e `SplitText` já carregados; registrar quando necessário:
+  ```js
+  gsap.registerPlugin(ScrollTrigger, SplitText);
+  ```
+- Animações de entrada: `gsap.from()` ou `gsap.timeline()`.
+- Scroll-linked: usar `ScrollTrigger` com `scrub` e `trigger`.
+
+### CSS / Tailwind
+- Tailwind via CDN apenas para utilitários; estilos customizados em `style.css`.
+- Paleta e tipografia definidas em `style.css` (fonte **Italiana** nos títulos, **Manrope** no corpo).
+
+### HTML
+- Idioma `pt-BR`; manter meta tags SEO e Open Graph ao alterar títulos.
+- Estrutura semântica: `<header>`, `<main>`, `<section>`, `<footer>`.
+
+## O que evitar
+- Não instalar bundlers (Vite, Webpack) nem adicionar `package.json` sem necessidade explícita.
+- Não usar frameworks JS (React, Vue) neste projeto; ele é vanilla por decisão de design.
+- Não adicionar dependências além das listadas sem confirmar com o usuário.

@@ -61,6 +61,15 @@
       name="google-site-verification"
       content="D7fo_xbVUnamiCsRG-JdkYOzPonYhJPyY6n_H8vYxJ4"
     />
+
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+        }
+      }
+    </script>
   </head>
   <body class="bg-[#EDEDED] text-[#4F4A4A] overflow-x-hidden">
     <header class="flex flex-col min-h-screen relative">
@@ -97,7 +106,17 @@
           </svg>
         </button>
       </div>
-      <div class="flex-1 flex flex-col items-center justify-center">
+      <!-- 3D Canvas: absolute, cobre o hero inteiro no desktop -->
+      <div
+        id="hero-3d-container"
+        class="hidden md:block absolute inset-0 pointer-events-none"
+        aria-hidden="true"
+      >
+        <canvas id="hero-canvas"></canvas>
+      </div>
+
+      <!-- Texto: sobre o canvas, centralizado -->
+      <div class="flex-1 flex flex-col items-center justify-center relative z-10">
         <div
           class="flex items-center justify-center gap-2 w-full max-w-xs mb-8"
         >
@@ -111,7 +130,8 @@
         </div>
         <h1 class="text-7xl">Rafael Gois</h1>
         <p class="text-2xl mb-4 header-subtitle">Software Engineer</p>
-        <small class="text-sm text-wrap text-center max-w-xl header-description"
+        <small
+          class="text-sm text-wrap text-center max-w-xl header-description"
           >Criando soluções que impactam a vida das pessoas, resolvendo
           problemas complexos e criando experiências incríveis</small
         >
@@ -1710,5 +1730,6 @@
       defer
     ></script>
     <script src="index.js" defer></script>
+    <script type="module" src="hero-3d.js"></script>
   </body>
 </html>
