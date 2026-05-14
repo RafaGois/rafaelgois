@@ -83,6 +83,8 @@ const modelGroup = new THREE.Group();
 scene.add(modelGroup);
 
 let modelLoaded = false;
+let keyMeshes   = [];   // todas as keycaps, populadas após carregar o GLB
+let baseMeshes  = [];   // case/PCB, ficam fixos
 
 const draco = new DRACOLoader();
 draco.setDecoderPath(
@@ -105,11 +107,62 @@ loader.load(
     model.scale.setScalar(3.2 / maxDim);
     model.rotation.z = rad(-14);
 
+    // ─── Coletar todas as meshes e classificar por volume ───────────────────
+    // O case do teclado é a(s) mesh(es) com maior bounding box; o resto são keycaps.
+    const meshes = [];
     model.traverse((child) => {
       if (child.isMesh) {
         child.castShadow    = true;
         child.receiveShadow = true;
+        meshes.push(child);
       }
+    });
+
+    const withVolume = meshes.map((m) => {
+      const b = new THREE.Box3().setFromObject(m);
+      const s = b.getSize(new THREE.Vector3());
+      return { mesh: m, volume: s.x * s.y * s.z };
+    });
+    withVolume.sort((a, b) => a.volume - b.volume);
+
+    // Heurística: se há muitas meshes (típico teclado 60+), as 2 maiores são o case.
+    // Senão, considera a maior como case.
+    const baseCount = withVolume.length > 30 ? 2 : 1;
+    keyMeshes  = withVolume.slice(0, withVolume.length - baseCount).map((v) => v.mesh);
+    baseMeshes = withVolume.slice(withVolume.length - baseCount).map((v) => v.mesh);
+
+    // Unidade de referência: dimensão típica de uma keycap (mediana) em
+    // coordenadas LOCAIS do model — k.position é local, então lift/drift
+    // também precisam ser locais para o efeito visual ficar proporcional.
+    let unit = 1;
+    if (keyMeshes.length > 0) {
+      const mid = keyMeshes[Math.floor(keyMeshes.length / 2)];
+      if (!mid.geometry.boundingBox) mid.geometry.computeBoundingBox();
+      const midSize = mid.geometry.boundingBox.getSize(new THREE.Vector3());
+      unit = Math.max(midSize.x, midSize.y, midSize.z) || 1;
+    }
+
+    // Cada keycap precisa de material próprio (transparência independente)
+    // e parâmetros aleatórios para o "desencaixe".
+    keyMeshes.forEach((k) => {
+      if (k.material) {
+        k.material = Array.isArray(k.material)
+          ? k.material.map((m) => m.clone())
+          : k.material.clone();
+        const mats = Array.isArray(k.material) ? k.material : [k.material];
+        mats.forEach((m) => {
+          m.transparent = true;
+          m.depthWrite  = true;
+        });
+      }
+      k.userData.initialPos = k.position.clone();
+      k.userData.initialRot = k.rotation.clone();
+      k.userData.lift   = THREE.MathUtils.randFloat(3, 8) * unit;     // 3-8 keycaps de altura
+      k.userData.driftX = THREE.MathUtils.randFloatSpread(2) * unit;  // ±1 keycap
+      k.userData.driftZ = THREE.MathUtils.randFloatSpread(2) * unit;
+      k.userData.tiltX  = THREE.MathUtils.randFloatSpread(1.2);       // ~±35°
+      k.userData.tiltZ  = THREE.MathUtils.randFloatSpread(1.2);
+      k.userData.tiltY  = THREE.MathUtils.randFloatSpread(1.6);       // spin Y maior
     });
 
     modelGroup.add(model);
@@ -167,10 +220,10 @@ function animate() {
 animate();
 
 // ─── Scroll animations ────────────────────────────────────────────────────────
-// Aguarda GSAP + ScrollTrigger serem carregados (scripts defer no HTML)
-// e o modelo estar pronto, depois registra todas as animações.
+// Aguarda GSAP + ScrollTrigger (scripts defer no HTML) E o GLB estar pronto
+// antes de registrar — caso contrário keyMeshes estaria vazio.
 function setupScrollAnimations() {
-  if (!window.gsap || !window.ScrollTrigger) {
+  if (!window.gsap || !window.ScrollTrigger || !modelLoaded) {
     requestAnimationFrame(setupScrollAnimations);
     return;
   }
@@ -178,12 +231,8 @@ function setupScrollAnimations() {
   const { gsap, ScrollTrigger } = window;
   gsap.registerPlugin(ScrollTrigger);
 
-  // Fade de entrada: aguarda o modelo e então sobe opacity de 0 → 1
-  const waitEntry = () => {
-    if (!modelLoaded) { requestAnimationFrame(waitEntry); return; }
-    gsap.to(pose, { opacity: 1, duration: 1.8, ease: 'power2.out' });
-  };
-  waitEntry();
+  // Fade de entrada
+  gsap.to(pose, { opacity: 1, duration: 1.8, ease: 'power2.out' });
 
   // Configuração padrão para as transições entre seções
   const trigger = (id, scrub = 1.5) => ({
@@ -194,30 +243,77 @@ function setupScrollAnimations() {
   });
 
   // ─── Hero → About ─────────────────────────────────────────────────────────
-  // Teclado desliza para a direita e fica menos inclinado
+  // Pose: teclado inteiro flutua levemente para trás (sem girar para a direita
+  // — queremos foco no efeito de desmontagem)
   gsap.fromTo(pose,
-    { rotY: rad(48),  rotX: rad(55),  posX: 0,    posY: 0,    posZ: 0,    scale: 1.00 },
-    { rotY: rad(15),  rotX: rad(-18), posX: 1.8,  posY: -0.3, posZ: -1.2, scale: 0.88,
+    { rotY: rad(48),  rotX: rad(55),  posX: 0,   posY: 0,    posZ: 0,    scale: 1.00, opacity: 1 },
+    { rotY: rad(38),  rotX: rad(60),  posX: 0,   posY: -0.4, posZ: -1.0, scale: 0.92, opacity: 0,
       immediateRender: false,
-      scrollTrigger: trigger('#about'),
+      scrollTrigger: { ...trigger('#about', 1.2) },
     }
   );
+
+  // ─── Desmontagem das keycaps ──────────────────────────────────────────────
+  // Cada tecla flutua para cima com offset aleatório, gira em ângulos próprios,
+  // e desaparece — stagger aleatório para criar a sensação de desencaixe
+  // orgânico em vez de "uma por uma".
+  if (keyMeshes.length > 0) {
+    const keysTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: '#about',
+        start:   'top bottom',
+        end:     'top 30%',     // termina cedo — antes do pose acabar de sumir
+        scrub:   1.2,
+      },
+    });
+
+    keysTl.to(keyMeshes.map((k) => k.position), {
+      x: (i) => keyMeshes[i].userData.initialPos.x + keyMeshes[i].userData.driftX,
+      y: (i) => keyMeshes[i].userData.initialPos.y + keyMeshes[i].userData.lift,
+      z: (i) => keyMeshes[i].userData.initialPos.z + keyMeshes[i].userData.driftZ,
+      ease:    'power2.in',
+      stagger: { amount: 0.6, from: 'random' },
+    }, 0);
+
+    keysTl.to(keyMeshes.map((k) => k.rotation), {
+      x: (i) => keyMeshes[i].userData.initialRot.x + keyMeshes[i].userData.tiltX,
+      y: (i) => keyMeshes[i].userData.initialRot.y + keyMeshes[i].userData.tiltY,
+      z: (i) => keyMeshes[i].userData.initialRot.z + keyMeshes[i].userData.tiltZ,
+      ease:    'power1.in',
+      stagger: { amount: 0.6, from: 'random' },
+    }, 0);
+
+    // Fade individual de cada tecla — começa um pouco depois do lift para
+    // a tecla ser vista subindo antes de desaparecer
+    const materials = keyMeshes
+      .map((k) => k.material)
+      .flatMap((m) => (Array.isArray(m) ? m : [m]))
+      .filter(Boolean);
+
+    keysTl.to(materials, {
+      opacity: 0,
+      ease:    'power2.in',
+      stagger: { amount: 0.6, from: 'random' },
+    }, 0.2);
+  }
 
   // ─── About → Box ──────────────────────────────────────────────────────────
-  // Teclado some para a direita (seção "box" é puramente visual)
-  gsap.fromTo(pose,
-    { rotY: rad(15),  rotX: rad(-18), posX: 1.8,  posY: -0.3, posZ: -1.2, scale: 0.88, opacity: 1 },
-    { rotY: rad(10),  rotX: rad(-12), posX: 2.5,  posY: -0.5, posZ: -2.0, scale: 0.80, opacity: 0,
-      immediateRender: false,
-      scrollTrigger: trigger('#box', 1),
-    }
-  );
+  // Teclado já está desmontado/invisível — segue invisível, sem custo visual.
+  // (mantido como noop intencional para clareza do mapa de transições)
 
   // ─── Box → Skills ─────────────────────────────────────────────────────────
-  // Teclado reaparece pela esquerda em pose overhead (invisível → visível)
+  // Antes de reaparecer, reseta as keycaps para a posição original (instantâneo,
+  // fora da viewport — o usuário não vê) e o teclado entra inteiro pela esquerda.
+  ScrollTrigger.create({
+    trigger: '#skills',
+    start:   'top bottom',
+    onEnter: () => resetKeycaps(),
+    onEnterBack: () => {}, // ao voltar do skills para box, não toca nas teclas
+  });
+
   gsap.fromTo(pose,
-    { rotY: rad(-30), rotX: rad(-48), posX: -2.5, posY: 0.3,  posZ: -0.8, scale: 0.82, opacity: 0 },
-    { rotY: rad(-30), rotX: rad(-48), posX: -1.6, posY: 0.3,  posZ: -0.8, scale: 0.82, opacity: 1,
+    { rotY: rad(-30), rotX: rad(48), posX: -2.5, posY: 0.3,  posZ: -0.8, scale: 0.82, opacity: 0 },
+    { rotY: rad(-30), rotX: rad(48), posX: -1.6, posY: 0.3,  posZ: -0.8, scale: 0.82, opacity: 1,
       immediateRender: false,
       scrollTrigger: trigger('#skills', 1),
     }
@@ -226,8 +322,8 @@ function setupScrollAnimations() {
   // ─── Skills → Projects ────────────────────────────────────────────────────
   // Teclado centraliza em perspectiva mais baixa
   gsap.fromTo(pose,
-    { rotY: rad(-30), rotX: rad(-48), posX: -1.6, posY: 0.3,  posZ: -0.8, scale: 0.82, opacity: 1 },
-    { rotY: rad(5),   rotX: rad(-22), posX: 0.6,  posY: -0.6, posZ: -1.0, scale: 0.78, opacity: 1,
+    { rotY: rad(-30), rotX: rad(48), posX: -1.6, posY: 0.3,  posZ: -0.8, scale: 0.82, opacity: 1 },
+    { rotY: rad(5),   rotX: rad(40), posX: 0.6,  posY: -0.6, posZ: -1.0, scale: 0.78, opacity: 1,
       immediateRender: false,
       scrollTrigger: trigger('#projects'),
     }
@@ -236,12 +332,23 @@ function setupScrollAnimations() {
   // ─── Projects → Services ──────────────────────────────────────────────────
   // Teclado recua e desvanece — não distrai nas seções finais
   gsap.fromTo(pose,
-    { rotY: rad(5),  rotX: rad(-22), posX: 0.6, posY: -0.6, posZ: -1.0, scale: 0.78, opacity: 1 },
-    { rotY: rad(5),  rotX: rad(-22), posX: 0.6, posY: -0.6, posZ: -3.0, scale: 0.70, opacity: 0,
+    { rotY: rad(5),  rotX: rad(40), posX: 0.6, posY: -0.6, posZ: -1.0, scale: 0.78, opacity: 1 },
+    { rotY: rad(5),  rotX: rad(40), posX: 0.6, posY: -0.6, posZ: -3.0, scale: 0.70, opacity: 0,
       immediateRender: false,
       scrollTrigger: trigger('#services', 1),
     }
   );
+}
+
+// ─── Reset das keycaps — usado quando o teclado reaparece após o "Sobre mim" ─
+function resetKeycaps() {
+  if (keyMeshes.length === 0) return;
+  keyMeshes.forEach((k) => {
+    k.position.copy(k.userData.initialPos);
+    k.rotation.copy(k.userData.initialRot);
+    const mats = Array.isArray(k.material) ? k.material : [k.material];
+    mats.forEach((m) => { if (m) m.opacity = 1; });
+  });
 }
 
 setupScrollAnimations();
