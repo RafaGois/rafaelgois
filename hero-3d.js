@@ -62,9 +62,9 @@ scene.add(rim);
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 const rad = THREE.MathUtils.degToRad;
 
-// Pose inicial: diagonal pronunciada, teclas visíveis sem ficar reto
+// Pose inicial: diagonal pronunciada, parte traseira (ESC/números) mais recuada
 const BASE_ROT_Y = rad(48);
-const BASE_ROT_X = rad(55);
+const BASE_ROT_X = rad(64);
 
 // ─── Estado animado ───────────────────────────────────────────────────────────
 // GSAP tweena estes valores; o RAF do Three.js lê e aplica a cada frame.
@@ -105,7 +105,7 @@ loader.load(
 
     model.position.sub(center);
     model.scale.setScalar(3.2 / maxDim);
-    model.rotation.z = rad(-14);
+    model.rotation.z = rad(-22);
 
     // ─── Coletar todas as meshes e classificar por volume ───────────────────
     // O case do teclado é a(s) mesh(es) com maior bounding box; o resto são keycaps.
@@ -243,11 +243,12 @@ function setupScrollAnimations() {
   });
 
   // ─── Hero → About ─────────────────────────────────────────────────────────
-  // Pose: teclado inteiro flutua levemente para trás (sem girar para a direita
-  // — queremos foco no efeito de desmontagem)
+  // Zoom in durante a desmontagem: teclado cresce enquanto as teclas voam,
+  // dando sensação de câmera se aproximando antes de tudo desaparecer.
   gsap.fromTo(pose,
-    { rotY: rad(48),  rotX: rad(55),  posX: 0,   posY: 0,    posZ: 0,    scale: 1.00, opacity: 1 },
-    { rotY: rad(38),  rotX: rad(60),  posX: 0,   posY: -0.4, posZ: -1.0, scale: 0.92, opacity: 0,
+    { rotY: rad(48),  rotX: rad(64),  posX: 0,   posY: 0,    posZ: 0,    scale: 1.00, opacity: 1 },
+    { rotY: rad(42),  rotX: rad(58),  posX: 0,   posY: -0.2, posZ: 0,    scale: 1.55, opacity: 0,
+      ease: 'power1.inOut',
       immediateRender: false,
       scrollTrigger: { ...trigger('#about', 1.2) },
     }
