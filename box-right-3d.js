@@ -75,7 +75,7 @@ const potGroup   = new THREE.Group();
 // Posições base — distribuídas para cobrir o lado direito ao redor do box central
 cubeGroup.position.set( 0.5,  1.8, 0);
 blockGroup.position.set(-0.5,  0.1, 0);
-potGroup.position.set( -0.2, -1.1, 0);
+potGroup.position.set( -0.5, -0.6, 0);
 
 scene.add(cubeGroup);
 scene.add(blockGroup);
@@ -139,7 +139,7 @@ loader.load('./diamond.glb', (gltf) => {
   const ctr   = box.getCenter(new THREE.Vector3());
   const size  = box.getSize(new THREE.Vector3());
   model.position.sub(ctr);
-  model.scale.setScalar(1.1 / Math.max(size.x, size.y, size.z));
+  model.scale.setScalar(0.85 / Math.max(size.x, size.y, size.z));
 
   model.traverse((c) => { if (c.isMesh) c.castShadow = c.receiveShadow = true; });
 
@@ -245,8 +245,8 @@ function animate() {
     potGroup.rotation.x = rad(8)  + sY * 0.12 + Math.sin(t * 0.41) * 0.020;
     potGroup.rotation.y = rad(20) + scrollRotY - sX * 0.16 + Math.sin(t * 0.22) * 0.026;
     potGroup.rotation.z = rad(-4) - sX * 0.03;
-    potGroup.position.y = -1.1 + Math.sin(t * 0.46 + Math.PI) * 0.09;
-    potGroup.position.x = -0.2 + Math.sin(t * 0.35 + 1.0) * 0.06;
+    potGroup.position.y = -0.6 + Math.sin(t * 0.46 + Math.PI) * 0.09;
+    potGroup.position.x = -0.5 + Math.sin(t * 0.35 + 1.0) * 0.06;
   }
 
   renderer.render(scene, camera);

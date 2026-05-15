@@ -1,6 +1,8 @@
 /**
  * box-right-mouse.js — lado direito da dobra "Pensando fora da caixa"
- * Exibe mouse_arrow.glb flutuando, com rotação por scroll e mouse parallax.
+ * Superior: mouse_arrow.glb   (1.1 u, y ≈ +1.6)
+ * Meio:     my_computer.glb   (1.8 u, y ≈  0.0)
+ * Inferior: code.glb          (2.0 u, y ≈ -1.6)
  */
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
@@ -60,12 +62,20 @@ const rim = new THREE.DirectionalLight(0xfff8f0, 1.0);
 rim.position.set(0, -4, 5);
 scene.add(rim);
 
-// ─── Grupo ────────────────────────────────────────────────────────────────────
+// ─── Grupos ───────────────────────────────────────────────────────────────────
 const mouseGroup = new THREE.Group();
-mouseGroup.position.set(0, 1.6, 0);
+const compGroup  = new THREE.Group();
+const pcGroup    = new THREE.Group();
+mouseGroup.position.set( 0.0,  1.6, 0);
+compGroup.position.set(  0.3,  0.0, 0);
+pcGroup.position.set(    0.2, -1.6, 0);
 scene.add(mouseGroup);
+scene.add(compGroup);
+scene.add(pcGroup);
 
 let mouseLoaded = false;
+let compLoaded  = false;
+let pcLoaded    = false;
 const rad    = THREE.MathUtils.degToRad;
 const loader = new GLTFLoader();
 
@@ -83,6 +93,36 @@ loader.load('./mouse_arrow.glb', (gltf) => {
   mouseGroup.add(model);
   mouseLoaded = true;
 }, undefined, (e) => console.error('[box-right-mouse] mouse_arrow:', e));
+
+loader.load('./my_computer.glb', (gltf) => {
+  const model = gltf.scene;
+  const box   = new THREE.Box3().setFromObject(model);
+  const ctr   = box.getCenter(new THREE.Vector3());
+  const size  = box.getSize(new THREE.Vector3());
+  model.position.sub(ctr);
+  model.scale.setScalar(1.8 / Math.max(size.x, size.y, size.z));
+
+  model.traverse((c) => { if (c.isMesh) c.castShadow = c.receiveShadow = true; });
+
+  compGroup.rotation.set(rad(12), rad(-20), rad(0));
+  compGroup.add(model);
+  compLoaded = true;
+}, undefined, (e) => console.error('[box-right-mouse] my_computer:', e));
+
+loader.load('./code.glb', (gltf) => {
+  const model = gltf.scene;
+  const box   = new THREE.Box3().setFromObject(model);
+  const ctr   = box.getCenter(new THREE.Vector3());
+  const size  = box.getSize(new THREE.Vector3());
+  model.position.sub(ctr);
+  model.scale.setScalar(2.0 / Math.max(size.x, size.y, size.z));
+
+  model.traverse((c) => { if (c.isMesh) c.castShadow = c.receiveShadow = true; });
+
+  pcGroup.rotation.set(rad(15), rad(-30), rad(0));
+  pcGroup.add(model);
+  pcLoaded = true;
+}, undefined, (e) => console.error('[box-right-mouse] code:', e));
 
 // ─── Scroll progress ──────────────────────────────────────────────────────────
 let scrollProgress = 0;
@@ -149,6 +189,24 @@ function animate() {
     mouseGroup.rotation.y = rad(25)  + scrollRotY - sX * 0.20 + Math.sin(t * 0.27) * 0.030;
     mouseGroup.rotation.z = rad(-6)  - sX * 0.04;
     mouseGroup.position.y = 1.6 + Math.sin(t * 0.48) * 0.09;
+  }
+
+  if (compLoaded) {
+    const scrollRotY = scrollProgress * rad(160);
+    compGroup.rotation.x = rad(12) + sY * 0.10 + Math.sin(t * 0.32) * 0.018;
+    compGroup.rotation.y = rad(-20) + scrollRotY - sX * 0.14 + Math.sin(t * 0.25) * 0.022;
+    compGroup.rotation.z = sX * 0.02;
+    compGroup.position.y = 0.0 + Math.sin(t * 0.48 + Math.PI * 0.5) * 0.07;
+    compGroup.position.x = 0.3 + Math.sin(t * 0.29) * 0.05;
+  }
+
+  if (pcLoaded) {
+    const scrollRotY = scrollProgress * rad(-150);
+    pcGroup.rotation.x = rad(15)  + sY * 0.12 + Math.sin(t * 0.30) * 0.020;
+    pcGroup.rotation.y = rad(-30) + scrollRotY - sX * 0.16 + Math.sin(t * 0.23) * 0.025;
+    pcGroup.rotation.z = sX * 0.03;
+    pcGroup.position.y = -1.6 + Math.sin(t * 0.48 + Math.PI) * 0.08;
+    pcGroup.position.x =  0.2 + Math.sin(t * 0.33) * 0.05;
   }
 
   renderer.render(scene, camera);
