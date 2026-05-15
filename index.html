@@ -165,7 +165,7 @@
             class="text-sm text-wrap text-center max-w-xs 2xl:max-w-xl about-me-text-left"
           >
             Me chamo <span class="font-bold">Rafael Gois</span>, e sou
-            desenvolvedor a mais de 4 anos, boa parte da minha experiencia
+            desenvolvedor há mais de 5 anos. Boa parte da minha experiência
             envolveram as áreas de <span class="font-bold">planejamento</span> e
             <span class="font-bold">controle de processos</span> e
             <span class="font-bold">engenharia de automaçao</span>, com foco em
@@ -217,6 +217,20 @@
           aria-hidden="true"
           class="absolute hidden md:block pointer-events-none select-none"
         />
+
+        <!-- ─── Lado esquerdo: modelos 3D flutuantes ── -->
+        <div
+          id="box-left-3d"
+          class="box-left-3d-panel hidden md:block"
+          aria-hidden="true"
+        ></div>
+
+        <!-- ─── Lado direito: mouse_arrow 3D ── -->
+        <div
+          id="box-right-3d"
+          class="box-right-3d-panel hidden md:block"
+          aria-hidden="true"
+        ></div>
 
         <img
           id="box-moldura"
@@ -1115,9 +1129,22 @@
           </div>
         </div>
       </section>
-      <section id="contact" class="min-h-screen flex flex-col pt-32 p-8">
+      <section id="contact" class="relative min-h-screen flex flex-col pt-20 px-8 pb-8 overflow-hidden">
+        <video
+          id="contact-video"
+          class="contact-bg-video"
+          src="eye-motion.mp4"
+          muted
+          playsinline
+          preload="auto"
+          aria-hidden="true"
+          tabindex="-1"
+          disablepictureinpicture
+          disableremoteplayback
+        ></video>
+        <div class="contact-content relative z-10 flex flex-col w-full flex-1">
         <div
-          class="section-title flex w-full flex-col items-center justify-center mb-32"
+          class="section-title flex w-full flex-col items-center justify-center mb-10"
         >
           <div id="bar" class="h-px w-full bg-[#4F4A4A]/20"></div>
           <h2 class="text-5xl text-center mb-4">Contato</h2>
@@ -1129,8 +1156,8 @@
             colaborações.
           </p>
         </div>
-        <div class="max-w-6xl mx-auto w-full py-32">
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20">
+        <div class="max-w-6xl mx-auto w-full py-4">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
             <!-- Contact Form -->
             <div class="contact-form">
               <div class="flex items-center gap-3 mb-8">
@@ -1199,7 +1226,7 @@
                   <textarea
                     id="message"
                     name="message"
-                    rows="6"
+                    rows="4"
                     required
                     class="w-full px-4 py-3 border border-[#4F4A4A]/20 bg-transparent text-[#4F4A4A] focus:outline-none focus:border-[#4F4A4A] transition-colors resize-none"
                     placeholder="Conte-me mais sobre sua ideia..."
@@ -1225,7 +1252,7 @@
                   >Informações</span
                 >
               </div>
-              <div class="space-y-8">
+              <div class="space-y-6">
                 <div class="contact-item">
                   <div class="flex items-start gap-4 mb-4">
                     <div
@@ -1306,7 +1333,7 @@
               </div>
 
               <!-- Decorative Element -->
-              <div class="mt-16 pt-8 border-t border-[#4F4A4A]/20">
+              <div class="mt-8 pt-4 border-t border-[#4F4A4A]/20">
                 <div class="flex items-center justify-center gap-4">
                   <div class="h-px w-16 bg-[#4F4A4A]/30"></div>
                   <div
@@ -1317,6 +1344,7 @@
               </div>
             </div>
           </div>
+        </div>
         </div>
       </section>
     </main>
@@ -1760,5 +1788,7 @@
     ></script>
     <script src="index.js" defer></script>
     <script type="module" src="hero-3d.js"></script>
+    <script type="module" src="box-right-3d.js"></script>
+    <script type="module" src="box-right-mouse.js"></script>
   </body>
 </html>

@@ -57,6 +57,9 @@ function initOtherAnimations() {
   // Testimonials Section Navigation
   initTestimonialsNavigation();
 
+  // Contact - Scroll-scrubbed background video
+  initContactScrollVideo();
+
   // Footer - Update year
   updateFooterYear();
 }
@@ -1059,5 +1062,112 @@ function updateFooterYear() {
   const yearElement = document.getElementById("current-year");
   if (yearElement) {
     yearElement.textContent = new Date().getFullYear();
+  }
+}
+
+/**
+ * Dobra de contato: vídeo `eye-motion.mp4` ao fundo, scrub controlado por scroll.
+ *
+ * Sequência (tudo em um único ScrollTrigger para evitar conflitos de posição):
+ *  0–72% do scroll → vídeo avança/recua; conteúdo invisível.
+ *  72–100%         → vídeo faz fade-out; conteúdo faz fade-in sobre fundo neutro.
+ *  Fim do pin      → scroll normal retoma com formulário visível.
+ */
+function initContactScrollVideo() {
+  const section = document.getElementById("contact");
+  const video   = document.getElementById("contact-video");
+  const content = section ? section.querySelector(".contact-content") : null;
+
+  if (!section || !video || !content) return;
+  if (typeof ScrollTrigger === "undefined") return;
+  if (typeof gsap === "undefined") return;
+
+  video.muted      = true;
+  video.playsInline = true;
+
+  // CSS sabe que JS está no controle — esconde conteúdo via .is-scroll-driven.
+  content.classList.add("is-scroll-driven");
+
+  const setup = () => {
+    if (section.dataset.scrollReady === "true") return;
+    section.dataset.scrollReady = "true";
+
+    video.classList.add("is-ready");
+
+    const duration = Number.isFinite(video.duration) && video.duration > 0
+      ? video.duration
+      : 4;
+
+    // 72% do scroll total é usado pelo scrub; 28% para a transição.
+    const VIDEO_RATIO = 0.72;
+
+    // Distância total mantida pinada.
+    const totalDistance = () =>
+      Math.max(window.innerHeight * 0.8, duration * window.innerHeight * 0.3) / VIDEO_RATIO;
+
+    // quickSetters: mais rápido que gsap.set() dentro de onUpdate.
+    const setVideoOpacity   = gsap.quickSetter(video,   "opacity");
+    const setContentOpacity = gsap.quickSetter(content, "opacity");
+    const setContentY       = gsap.quickSetter(content, "y", "px");
+
+    gsap.set(video,   { opacity: 1 });
+    gsap.set(content, { opacity: 0, y: 24 });
+
+    let lastT = -1;
+    const minStep = 1 / 60; // evita seeks redundantes
+
+    ScrollTrigger.create({
+      trigger: section,
+      start: "top top",
+      end: () => "+=" + totalDistance(),
+      pin: true,
+      pinSpacing: true,
+      scrub: 0.5,          // lag suave; scrub é aplicado ao progresso, não ao onUpdate
+      anticipatePin: 1,
+      invalidateOnRefresh: true,
+      onUpdate: (self) => {
+        const p = self.progress; // já suavizado pelo scrub
+
+        // ── Fase 1: scrub do vídeo ──────────────────────────────────────────
+        const videoT = Math.min(p / VIDEO_RATIO, 1) * duration;
+        if (Math.abs(videoT - lastT) > minStep) {
+          lastT = videoT;
+          try { video.currentTime = videoT; } catch (_) {}
+        }
+
+        // ── Fase 2: transição (começa quando vídeo chega ao fim) ───────────
+        if (p <= VIDEO_RATIO) {
+          setVideoOpacity(1);
+          setContentOpacity(0);
+          setContentY(24);
+        } else {
+          const t = (p - VIDEO_RATIO) / (1 - VIDEO_RATIO); // 0→1
+          setVideoOpacity(1 - t);
+          setContentOpacity(t);
+          setContentY(24 * (1 - t));
+        }
+      },
+    });
+  };
+
+  // iOS Safari só decodifica o primeiro frame após play(). Kick silencioso.
+  const kickFirstFrame = () => {
+    const p = video.play();
+    if (p && typeof p.then === "function") {
+      p.then(() => video.pause()).catch(() => {});
+    } else {
+      try { video.pause(); } catch (_) {}
+    }
+  };
+
+  if (video.readyState >= 1 && Number.isFinite(video.duration)) {
+    kickFirstFrame();
+    setup();
+  } else {
+    video.addEventListener("loadedmetadata", () => {
+      kickFirstFrame();
+      setup();
+    }, { once: true });
+    setTimeout(setup, 1500);
   }
 }
