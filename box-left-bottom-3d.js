@@ -1,19 +1,17 @@
 /**
- * box-right-mouse.js — lado direito da dobra "Pensando fora da caixa"
- * Meio: code.glb (2.0 u, y ≈ -1.55)
+ * box-left-bottom-3d.js — elemento inferior esquerdo da dobra "Pensando fora da caixa"
  *
- * mouse_arrow.glb → box-right-top-3d.js
- * retro_computer__low.glb → box-right-bottom-3d.js
+ * pokebola.glb (antes em box-right-3d.js / potGroup). Painel próprio, mesmo
+ * comportamento: posição, rotação base, scroll, parallax e materiais GLB.
  */
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { GLTFLoader }  from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { configureGltfSceneMaterials } from './configure-gltf-materials.js';
 
-const container = document.getElementById('box-right-3d');
-if (!container) throw new Error('[box-right-mouse] container não encontrado');
+const container = document.getElementById('box-left-bottom-3d');
+if (!container) throw new Error('[box-left-bottom-3d] container não encontrado');
 
-// ─── Canvas & Renderer ────────────────────────────────────────────────────────
 const canvas = document.createElement('canvas');
 canvas.style.display = 'block';
 canvas.style.width   = '100%';
@@ -26,10 +24,9 @@ renderer.outputColorSpace    = THREE.SRGBColorSpace;
 renderer.toneMapping         = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.1;
 
-// ─── Scene & Camera ───────────────────────────────────────────────────────────
 const scene  = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(48, 1, 0.1, 100);
-camera.position.set(0, 0, 8);
+camera.position.set(0, 0, 6);
 camera.lookAt(0, 0, 0);
 
 function applyResize() {
@@ -50,7 +47,6 @@ resize();
 window.addEventListener('resize', resize);
 if (window.ResizeObserver) new ResizeObserver(resize).observe(container);
 
-// ─── Iluminação ───────────────────────────────────────────────────────────────
 scene.add(new THREE.AmbientLight(0xf5f2ee, 2.0));
 
 const key = new THREE.DirectionalLight(0xffffff, 4.0);
@@ -65,36 +61,43 @@ const rim = new THREE.DirectionalLight(0xfff8f0, 1.0);
 rim.position.set(0, -4, 5);
 scene.add(rim);
 
-// ─── Grupos ───────────────────────────────────────────────────────────────────
-const pcGroup = new THREE.Group();
-pcGroup.position.set(0.2, -1.55, 0);
-scene.add(pcGroup);
+function fitModel(model, targetSize) {
+  const box0   = new THREE.Box3().setFromObject(model);
+  const size   = box0.getSize(new THREE.Vector3());
+  const maxDim = Math.max(size.x, size.y, size.z);
+  if (!maxDim || !isFinite(maxDim)) return;
 
-let pcLoaded = false;
-const rad    = THREE.MathUtils.degToRad;
-const draco  = new DRACOLoader();
+  model.scale.setScalar(targetSize / maxDim);
+
+  const box1 = new THREE.Box3().setFromObject(model);
+  const ctr  = box1.getCenter(new THREE.Vector3());
+  model.position.set(-ctr.x, -ctr.y, -ctr.z);
+}
+
+const potGroup = new THREE.Group();
+/** Mais pequeno, ligeiramente à esquerda e mais abaixo (composição na caixa). */
+potGroup.position.set(-0.92, -1.88, 0);
+scene.add(potGroup);
+
+let potLoaded = false;
+
+const rad   = THREE.MathUtils.degToRad;
+const draco = new DRACOLoader();
 draco.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/libs/draco/');
 const loader = new GLTFLoader();
 loader.setDRACOLoader(draco);
 
-loader.load('./code.glb', (gltf) => {
+loader.load('./pokebola.glb', (gltf) => {
   const model = gltf.scene;
-  const box   = new THREE.Box3().setFromObject(model);
-  const ctr   = box.getCenter(new THREE.Vector3());
-  const size  = box.getSize(new THREE.Vector3());
-  model.position.sub(ctr);
-  model.scale.setScalar(2.0 / Math.max(size.x, size.y, size.z));
-
+  fitModel(model, 0.72);
   configureGltfSceneMaterials(model);
 
-  pcGroup.rotation.set(rad(15), rad(-30), rad(0));
-  pcGroup.add(model);
-  pcLoaded = true;
-}, undefined, (e) => console.error('[box-right-mouse] code:', e));
+  potGroup.rotation.set(rad(8), rad(34), rad(-4));
+  potGroup.add(model);
+  potLoaded = true;
+}, undefined, (e) => console.error('[box-left-bottom-3d] pokebola:', e));
 
-// ─── Scroll progress ──────────────────────────────────────────────────────────
 let scrollProgress = 0;
-
 canvas.style.opacity = '1';
 
 function setupScroll() {
@@ -129,15 +132,12 @@ function setupScroll() {
 
 setupScroll();
 
-// ─── Mouse parallax ───────────────────────────────────────────────────────────
 let tX = 0, tY = 0, sX = 0, sY = 0;
-
 document.addEventListener('mousemove', (e) => {
   tX = (e.clientX / window.innerWidth  - 0.5) * 2;
   tY = (e.clientY / window.innerHeight - 0.5) * 2;
 });
 
-// ─── Render loop ──────────────────────────────────────────────────────────────
 const clock = new THREE.Clock();
 
 function animate() {
@@ -147,13 +147,15 @@ function animate() {
   sX += (tX - sX) * 0.05;
   sY += (tY - sY) * 0.05;
 
-  if (pcLoaded) {
-    const scrollRotY = scrollProgress * rad(-150);
-    pcGroup.rotation.x = rad(15)  + sY * 0.12 + Math.sin(t * 0.30) * 0.020;
-    pcGroup.rotation.y = rad(-30) + scrollRotY - sX * 0.16 + Math.sin(t * 0.23) * 0.025;
-    pcGroup.rotation.z = sX * 0.03;
-    pcGroup.position.y = -1.55 + Math.sin(t * 0.48 + Math.PI) * 0.08;
-    pcGroup.position.x =  0.2 + Math.sin(t * 0.33) * 0.05;
+  const p = scrollProgress;
+
+  if (potLoaded) {
+    potGroup.rotation.x = rad(8)  + sY * 0.08 + Math.sin(t * 0.28) * 0.015;
+    potGroup.rotation.y = rad(34) - sX * 0.10 + Math.sin(t * 0.20) * 0.018;
+    potGroup.rotation.z = rad(-4) - sX * 0.02;
+    potGroup.position.x = -0.92 + p * 1.4 + Math.sin(t * 0.35 + 1.0) * 0.06;
+    potGroup.position.y = -1.88 + p * 1.8 + Math.sin(t * 0.46 + Math.PI) * 0.09;
+    potGroup.position.z =        p * 0.6 + Math.sin(t * 0.22) * 0.04;
   }
 
   renderer.render(scene, camera);

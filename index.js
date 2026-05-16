@@ -544,6 +544,20 @@ function initBoxSideImages() {
   var frame    = document.querySelector("#box-moldura");
   if (!leftImg || !rightImg || !frame) return;
 
+  var rightCursorClickTl = null;
+  var rightCursorClickStarted = false;
+  var prefersReducedMotion =
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function killRightCursorClickPulse() {
+    if (rightCursorClickTl) {
+      rightCursorClickTl.kill();
+      rightCursorClickTl = null;
+    }
+    gsap.set(rightImg, { scale: 1 });
+  }
+
   // Esquerda — animação independente
   gsap.fromTo(leftImg,
     { xPercent: -120, yPercent: -50, opacity: 0 },
@@ -572,7 +586,7 @@ function initBoxSideImages() {
         start:   "top bottom",   // começa quando a seção entra na tela
         end:     "center center", // termina quando o box está no centro — src muda aqui
         scrub:   1.8,
-        onUpdate: function () {
+        onUpdate: function (self) {
           var fr = frame.getBoundingClientRect();
           var ir = rightImg.getBoundingClientRect();
           var atFrame = ir.left <= fr.right + 8;
@@ -581,6 +595,31 @@ function initBoxSideImages() {
             rightImg.src = "2.png";
           } else if (!atFrame && src.indexOf("1.png") === -1) {
             rightImg.src = "1.png";
+          }
+
+          var p = self.progress;
+          if (p >= 0.995 && !rightCursorClickStarted && !prefersReducedMotion) {
+            rightCursorClickStarted = true;
+            killRightCursorClickPulse();
+            var tipOrigin = "14% 18%";
+            rightCursorClickTl = gsap.timeline({ repeat: -1 });
+            rightCursorClickTl
+              .to(rightImg, {
+                scale: 0.86,
+                duration: 0.22,
+                ease: "power2.in",
+                transformOrigin: tipOrigin,
+              })
+              .to(rightImg, {
+                scale: 1,
+                duration: 0.28,
+                ease: "power2.out",
+                transformOrigin: tipOrigin,
+              })
+              .to({}, { duration: 1.35 });
+          } else if (p < 0.9 && rightCursorClickStarted) {
+            rightCursorClickStarted = false;
+            killRightCursorClickPulse();
           }
         },
       },
@@ -1072,6 +1111,8 @@ function updateFooterYear() {
  *  0–72% do scroll → vídeo avança/recua; conteúdo invisível.
  *  72–100%         → vídeo faz fade-out; conteúdo faz fade-in sobre fundo neutro.
  *  Fim do pin      → scroll normal retoma com formulário visível.
+ *
+ * Distância de scrub do vídeo propositalmente mais curta (menos scroll para o fim).
  */
 function initContactScrollVideo() {
   const section = document.getElementById("contact");
@@ -1101,16 +1142,20 @@ function initContactScrollVideo() {
     // 72% do scroll total é usado pelo scrub; 28% para a transição.
     const VIDEO_RATIO = 0.72;
 
-    // Distância total mantida pinada.
+    // Menos scroll para percorrer o vídeo: base menor (antes 0.8·vh e 0.3·vh·s).
     const totalDistance = () =>
-      Math.max(window.innerHeight * 0.8, duration * window.innerHeight * 0.3) / VIDEO_RATIO;
+      Math.max(window.innerHeight * 0.52, duration * window.innerHeight * 0.2) /
+      VIDEO_RATIO;
+
+    // Opacidade máxima < 1: o vídeo tem fundo branco e o bloco usa #EDEDED — mistura melhor.
+    const VIDEO_BLEND_OPACITY = 0.76;
 
     // quickSetters: mais rápido que gsap.set() dentro de onUpdate.
     const setVideoOpacity   = gsap.quickSetter(video,   "opacity");
     const setContentOpacity = gsap.quickSetter(content, "opacity");
     const setContentY       = gsap.quickSetter(content, "y", "px");
 
-    gsap.set(video,   { opacity: 1 });
+    gsap.set(video,   { opacity: VIDEO_BLEND_OPACITY });
     gsap.set(content, { opacity: 0, y: 24 });
 
     let lastT = -1;
@@ -1122,7 +1167,7 @@ function initContactScrollVideo() {
       end: () => "+=" + totalDistance(),
       pin: true,
       pinSpacing: true,
-      scrub: 0.5,          // lag suave; scrub é aplicado ao progresso, não ao onUpdate
+      scrub: 0.35,          // um pouco mais rápido a acompanhar o scroll
       anticipatePin: 1,
       invalidateOnRefresh: true,
       onUpdate: (self) => {
@@ -1137,12 +1182,12 @@ function initContactScrollVideo() {
 
         // ── Fase 2: transição (começa quando vídeo chega ao fim) ───────────
         if (p <= VIDEO_RATIO) {
-          setVideoOpacity(1);
+          setVideoOpacity(VIDEO_BLEND_OPACITY);
           setContentOpacity(0);
           setContentY(24);
         } else {
           const t = (p - VIDEO_RATIO) / (1 - VIDEO_RATIO); // 0→1
-          setVideoOpacity(1 - t);
+          setVideoOpacity(VIDEO_BLEND_OPACITY * (1 - t));
           setContentOpacity(t);
           setContentY(24 * (1 - t));
         }
