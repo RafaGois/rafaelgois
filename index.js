@@ -658,25 +658,81 @@ function initBoxIcaro() {
 }
 
 function initServicesAnimations() {
-  const serviceContainer = document.querySelector("#services");
-  const serviceItems = document.querySelectorAll(".service-item");
+  var serviceContainer = document.querySelector("#services");
+  var items = gsap.utils.toArray(".service-item");
 
-  gsap.from(serviceItems, {
-    opacity: 0,
-    y: 40,
-    duration: 1,
-    stagger: {
-      amount: 0.2,
-      from: "center",
-    },
-    ease: "power2.out",
+  if (!serviceContainer || !items.length) return;
+
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    return;
+  }
+
+  var cardsRow =
+    serviceContainer.querySelector(".services-container") || serviceContainer;
+
+  var tlKeys = gsap.timeline({
     scrollTrigger: {
-      trigger: serviceContainer,
-      start: "top 70%",
-      end: "bottom 60%",
+      trigger: cardsRow,
+      start: "top 52%",
       toggleActions: "play none none none",
-      scrub: true,
     },
+    defaults: { ease: "power2.out" },
+  });
+
+  items.forEach(function (card, i) {
+    var img = card.querySelector(".service-card-peek__img");
+    var body = card.querySelector(":scope > div");
+    if (!img) return;
+
+    gsap.set(img, { transformOrigin: "50% 88%", force3D: true });
+
+    var t0 = i * 0.18;
+
+    // Surge levemente, depois "pressiona" como tecla
+    tlKeys.fromTo(
+      img,
+      {
+        opacity: 0,
+        y: -26,
+        scale: 0.88,
+      },
+      {
+        opacity: 1,
+        y: 8,
+        scaleX: 1.04,
+        scaleY: 0.91,
+        duration: 0.11,
+        ease: "power2.in",
+        immediateRender: false,
+      },
+      t0,
+    ).to(
+      img,
+      {
+        y: 0,
+        scaleX: 1,
+        scaleY: 1,
+        duration: 0.52,
+        ease: "elastic.out(1.15)",
+        immediateRender: false,
+      },
+      t0 + 0.11,
+    );
+
+    if (body) {
+      tlKeys.fromTo(
+        body,
+        { opacity: 0, y: 18 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          ease: "power2.out",
+          immediateRender: false,
+        },
+        t0 + 0.05,
+      );
+    }
   });
 }
 

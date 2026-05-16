@@ -216,12 +216,81 @@ p, small, li, span, a{
   transition: letter-spacing 0.3s ease;
 }
 
-.service-icon-line {
-  transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease, background-color 0.5s ease;
+/* ─── Serviços redesign ─────────────────────────────────────────────────────── */
+
+.service-item {
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow:
+    0 2px 16px rgba(79, 74, 74, 0.07),
+    0 1px 3px rgba(79, 74, 74, 0.04);
+  transition:
+    box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.service-item h3 {
-  transition: letter-spacing 0.3s ease;
+.service-item:hover {
+  box-shadow:
+    0 12px 40px rgba(79, 74, 74, 0.13),
+    0 2px 6px rgba(79, 74, 74, 0.05);
+  transform: translateY(-3px);
+}
+
+/* Ornamento pontinho sob o título */
+.service-section-ornament {
+  width: 4px;
+  height: 4px;
+  background: rgba(79, 74, 74, 0.3);
+  border-radius: 50%;
+  margin: 0.5rem auto 1.25rem;
+}
+
+/* Badge de letra interno */
+.service-letter-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 1px solid rgba(79, 74, 74, 0.22);
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 500;
+  color: rgba(79, 74, 74, 0.5);
+  margin-bottom: 0.625rem;
+  letter-spacing: 0.02em;
+}
+
+/* Label de categoria */
+.service-category-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(79, 74, 74, 0.38);
+  font-family: 'Manrope', sans-serif;
+  font-weight: 500;
+}
+
+/* Botão "Saiba mais" */
+.service-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 1.25rem;
+  border: 1px solid rgba(79, 74, 74, 0.25);
+  border-radius: 4px;
+  font-size: 0.78rem;
+  color: rgba(79, 74, 74, 0.5);
+  font-family: 'Manrope', sans-serif;
+  transition:
+    border-color 0.3s ease,
+    color 0.3s ease;
+  cursor: pointer;
+}
+
+.service-item:hover .service-cta-btn {
+  border-color: rgba(79, 74, 74, 0.55);
+  color: rgba(79, 74, 74, 0.85);
 }
 
 /* ─── Serviços — cards com arte no topo (peek): três colunas ───────────────── */
@@ -238,10 +307,10 @@ p, small, li, span, a{
   left: 50%;
   top: 0;
   z-index: 2;
-  width: min(46%, 12.5rem);
+  width: min(60%, 14rem);
   margin: 0;
   padding: 0;
-  transform: translate(-50%, -44%);
+  transform: translate(-50%, -48%);
   pointer-events: none;
   transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -253,22 +322,96 @@ p, small, li, span, a{
   width: 100%;
   height: auto;
   object-fit: contain;
-  filter: drop-shadow(0 14px 28px rgba(79, 74, 74, 0.16));
-  transition:
-    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
-    filter 0.55s ease;
+  filter: drop-shadow(0 18px 32px rgba(79, 74, 74, 0.18));
+  transition: filter 0.55s ease;
 }
 
 .service-item--fullstack.group:hover .service-card-peek,
 .service-item--institutional.group:hover .service-card-peek,
 .service-item--consulting.group:hover .service-card-peek {
-  transform: translate(-50%, calc(-44% - 0.4rem));
+  transform: translate(-50%, calc(-48% - 0.5rem));
 }
 
 .service-item--fullstack.group:hover .service-card-peek__img,
 .service-item--institutional.group:hover .service-card-peek__img,
 .service-item--consulting.group:hover .service-card-peek__img {
-  filter: drop-shadow(0 22px 40px rgba(79, 74, 74, 0.22));
+  filter: drop-shadow(0 28px 48px rgba(79, 74, 74, 0.26));
+}
+
+/* ─── Faixa de atributos (glass — mais estreita que os cards) ───────────────── */
+.service-features-strip-wrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.service-features-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  width: min(60rem, 84%);
+  max-width: 100%;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.92);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    0 4px 28px rgba(79, 74, 74, 0.06);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+}
+
+.service-feature-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.9rem 1rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.service-feature-item:last-child {
+  border-right: none;
+}
+
+.service-feature-icon {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  color: rgba(79, 74, 74, 0.45);
+}
+
+.service-feature-item strong {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #4F4A4A;
+  margin-bottom: 0.2rem;
+  font-family: 'Manrope', sans-serif;
+  letter-spacing: 0.01em;
+}
+
+.service-feature-item p {
+  font-size: 0.63rem;
+  color: rgba(79, 74, 74, 0.5);
+  font-family: 'Manrope', sans-serif;
+  line-height: 1.45;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .service-features-strip {
+    width: min(100%, 28rem);
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .service-feature-item:nth-child(2) {
+    border-right: none;
+  }
+
+  .service-feature-item:nth-child(1),
+  .service-feature-item:nth-child(2) {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -284,7 +427,7 @@ p, small, li, span, a{
   .service-item--fullstack.group:hover .service-card-peek,
   .service-item--institutional.group:hover .service-card-peek,
   .service-item--consulting.group:hover .service-card-peek {
-    transform: translate(-50%, -44%);
+    transform: translate(-50%, -48%);
   }
 }
 
