@@ -7,6 +7,30 @@ const canvas    = document.getElementById('hero-canvas');
 
 if (!container || !canvas) throw new Error('[hero-3d] elements not found');
 
+/**
+ * Teclado fixo: some na dobra “Pensando fora da caixa” (#box) e daí em diante
+ * (#projects…), mas permanece visível em Hero, Sobre e Habilidades (#skills).
+ * Ordem no DOM: #about → #box → #skills → #projects — por isso não dá para
+ * usar só #box como limite (em Habilidades o #box já está acima da tela).
+ */
+function syncHero3dSuppressed() {
+  const box = document.querySelector('#box');
+  const skills = document.querySelector('#skills');
+  const projects = document.querySelector('#projects');
+  if (!box || !skills || !projects) return;
+
+  const vh = window.innerHeight;
+  // Não usar só `top < vh`: com Projetos só “encostando” no rodapé (ex.: em 03 Outros)
+  // o teclado sumia. Alinhar ao início da animação de Projetos (`top 52%` no ScrollTrigger).
+  const projectsEntered = projects.getBoundingClientRect().top < vh * 0.52;
+  const skillsEntered = skills.getBoundingClientRect().top < vh;
+  const boxEntered = box.getBoundingClientRect().top < vh;
+  const inBoxFoldOnly = boxEntered && !skillsEntered;
+
+  const suppressed = projectsEntered || inBoxFoldOnly;
+  container.classList.toggle('hero-3d-suppressed', suppressed);
+}
+
 // ─── Renderer ─────────────────────────────────────────────────────────────────
 const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -450,14 +474,8 @@ function setupScrollAnimations() {
 
   // ─── Skills → Projects — desmontagem ─────────────────────────────────────
   // Mesma lógica do Hero: teclas voam com stagger aleatório enquanto o canvas
-  // some. Ao voltar de Projetos para Skills, a timeline de remontagem acima
-  // (scrub reverso) cuida de recolocar as teclas — não precisa de resetKeycaps().
-  ScrollTrigger.create({
-    trigger: '#projects',
-    start:   'top 52%',
-  });
-
-  // Pose some com zoom leve enquanto as teclas explodem
+  // some (pose com zoom leve). Ao voltar de Projetos para Skills, a timeline
+  // de remontagem acima (scrub reverso) recoloca as teclas — sem resetKeycaps().
   gsap.fromTo(pose,
     { rotY: rad(-22), rotX: rad(52), posX: 1.85,  posY: 0.3,  posZ: -0.75, scale: 0.58, opacity: 1 },
     { rotY: rad(-18), rotX: rad(56), posX: 1.85,  posY: 0.1,  posZ: -0.75, scale: 0.72, opacity: 0,
@@ -509,6 +527,14 @@ function setupScrollAnimations() {
       stagger: { amount: 0.55, from: 'random' },
     }, 0.18);
   }
+
+  if (!container.dataset.hero3dSuppressBound) {
+    container.dataset.hero3dSuppressBound = '1';
+    ScrollTrigger.addEventListener('refresh', syncHero3dSuppressed);
+    window.addEventListener('scroll', syncHero3dSuppressed, { passive: true });
+  }
+  syncHero3dSuppressed();
+  ScrollTrigger.refresh();
 }
 
 // ─── Reset das keycaps — usado quando o teclado reaparece após o "Sobre mim" ─

@@ -10,7 +10,13 @@
 #hero-3d-container {
   position: fixed;
   inset: 0;
-  z-index: 0;
+  /* Mantém abaixo de header/main; 0 às vezes perde para camadas GPU das dobras */
+  z-index: 1;
+}
+
+/* Canvas fixo: some na dobra #box e a partir de #projects; visível em #skills (ordem DOM: box → skills → projects). */
+#hero-3d-container.hero-3d-suppressed {
+  visibility: hidden;
 }
 
 #hero-canvas {
@@ -18,6 +24,17 @@
   width: 100%;
   height: 100%;
   opacity: 0;
+}
+
+/* Acima do canvas fixo do hero (teclado 3D). Hero, Sobre e Habilidades não entram aqui. */
+#box,
+#projects,
+#services,
+#testimonials,
+#contact,
+body > footer {
+  position: relative;
+  z-index: 30;
 }
 
 body {
