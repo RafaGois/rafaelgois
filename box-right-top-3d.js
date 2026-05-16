@@ -2,12 +2,20 @@
  * box-right-top-3d.js — canto superior direito da dobra "Pensando fora da caixa"
  *
  * mouse_arrow — parallax do cursor, sway forte na rotação e deriva ampla na posição
- * (prefers-reduced-motion desliga a deriva).
+ * (prefers-reduced-motion elimina só a deriva idle de posição; parallax já é atenuado).
  */
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { configureGltfSceneMaterials } from './configure-gltf-materials.js';
+import {
+  PointerSmoother,
+  animationMixerMaybeUpdate,
+  createOptionalAnimationMixer,
+  motionIdleAmp,
+  motionPointerAmp,
+} from './three-motion-helpers.js';
+import { setupBoxFoldScrollTriggers } from './three-box-scroll.js';
 
 const container = document.getElementById('box-right-top-3d');
 if (!container) throw new Error('[box-right-top-3d] container não encontrado');
@@ -68,6 +76,8 @@ mouseGroup.position.set(mouseBaseX, mouseBaseY, 0);
 scene.add(mouseGroup);
 
 let mouseLoaded = false;
+/** @type {THREE.AnimationMixer | null} */
+let gltfMixer = null;
 const rad   = THREE.MathUtils.degToRad;
 const draco = new DRACOLoader();
 draco.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/libs/draco/');
@@ -86,68 +96,52 @@ loader.load('./mouse_arrow.glb', (gltf) => {
 
   mouseGroup.rotation.set(rad(-12), rad(25 + 180), rad(-6));
   mouseGroup.add(model);
+  gltfMixer = createOptionalAnimationMixer(model, gltf.animations);
   mouseLoaded = true;
 }, undefined, (e) => console.error('[box-right-top-3d] mouse_arrow:', e));
 
 canvas.style.opacity = '1';
 
-function setupScroll() {
-  if (!window.gsap || !window.ScrollTrigger) {
-    requestAnimationFrame(setupScroll);
-    return;
-  }
-  const { gsap, ScrollTrigger } = window;
-  gsap.registerPlugin(ScrollTrigger);
+setupBoxFoldScrollTriggers({ canvas, bindScrollScrub: false });
 
-  const fadeIn  = () => gsap.to(canvas, { opacity: 1, duration: 0.9, ease: 'power2.out' });
-  const fadeOut = () => gsap.to(canvas, { opacity: 0, duration: 0.4, ease: 'power1.in'  });
+let pointerTargetX = 0;
+let pointerTargetY = 0;
+const pointerSmoother = new PointerSmoother();
 
-  ScrollTrigger.create({
-    trigger:     '#box',
-    start:       'top 85%',
-    end:         'bottom 15%',
-    onEnter:     fadeIn,
-    onLeave:     fadeOut,
-    onEnterBack: fadeIn,
-    onLeaveBack: fadeOut,
-  });
-}
-
-setupScroll();
-
-let tX = 0, tY = 0, sX = 0, sY = 0;
 document.addEventListener('mousemove', (e) => {
-  tX = (e.clientX / window.innerWidth  - 0.5) * 2;
-  tY = (e.clientY / window.innerHeight - 0.5) * 2;
+  pointerTargetX = (e.clientX / window.innerWidth  - 0.5) * 2;
+  pointerTargetY = (e.clientY / window.innerHeight - 0.5) * 2;
 });
 
 const clock = new THREE.Clock();
 
-const cursorIdleDrift =
-  typeof window.matchMedia === 'undefined' ||
-  !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
 function animate() {
   requestAnimationFrame(animate);
-  const t = clock.getElapsedTime();
+  const dt = clock.getDelta();
+  const t  = clock.getElapsedTime();
 
-  sX += (tX - sX) * 0.05;
-  sY += (tY - sY) * 0.05;
+  animationMixerMaybeUpdate(gltfMixer, dt);
+  pointerSmoother.update(pointerTargetX, pointerTargetY, dt);
+
+  const idleA = motionIdleAmp();
+  const ptrA  = motionPointerAmp();
+  const sX = pointerSmoother.x * ptrA;
+  const sY = pointerSmoother.y * ptrA;
 
   if (mouseLoaded) {
     mouseGroup.rotation.x =
-      rad(-12) + sY * 0.15 + Math.sin(t * 0.58) * 0.11;
+      rad(-12) + sY * 0.15 + Math.sin(t * 0.58) * 0.11 * idleA;
     mouseGroup.rotation.y =
       rad(25 + 180) -
       sX * 0.2 +
-      Math.sin(t * 0.48) * 0.11 +
-      Math.cos(t * 0.39 + 1.1) * 0.062;
+      Math.sin(t * 0.48) * 0.11 * idleA +
+      Math.cos(t * 0.39 + 1.1) * 0.062 * idleA;
     mouseGroup.rotation.z =
-      rad(-6) - sX * 0.04 + Math.sin(t * 0.44 + 0.7) * 0.055;
+      rad(-6) - sX * 0.04 + Math.sin(t * 0.44 + 0.7) * 0.055 * idleA;
 
     let driftX = 0;
     let driftY = 0;
-    if (cursorIdleDrift) {
+    if (idleA > 0) {
       driftX =
         Math.sin(t * 0.52) * 0.46 +
         Math.sin(t * 0.92 + 1.95) * 0.22 +

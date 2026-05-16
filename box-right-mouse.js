@@ -9,6 +9,14 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { configureGltfSceneMaterials } from './configure-gltf-materials.js';
+import {
+  PointerSmoother,
+  animationMixerMaybeUpdate,
+  createOptionalAnimationMixer,
+  motionIdleAmp,
+  motionPointerAmp,
+} from './three-motion-helpers.js';
+import { setupBoxFoldScrollTriggers } from './three-box-scroll.js';
 
 const container = document.getElementById('box-right-3d');
 if (!container) throw new Error('[box-right-mouse] container não encontrado');
@@ -71,6 +79,8 @@ pcGroup.position.set(0.62, -1.55, 0);
 scene.add(pcGroup);
 
 let pcLoaded = false;
+/** @type {THREE.AnimationMixer | null} */
+let gltfMixer = null;
 const rad    = THREE.MathUtils.degToRad;
 const draco  = new DRACOLoader();
 draco.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/libs/draco/');
@@ -89,52 +99,24 @@ loader.load('./code.glb', (gltf) => {
 
   pcGroup.rotation.set(rad(15), rad(-30), rad(0));
   pcGroup.add(model);
+  gltfMixer = createOptionalAnimationMixer(model, gltf.animations);
   pcLoaded = true;
 }, undefined, (e) => console.error('[box-right-mouse] code:', e));
 
 // ─── Scroll progress ──────────────────────────────────────────────────────────
-let scrollProgress = 0;
-
+const scrollState = { progress: 0 };
 canvas.style.opacity = '1';
 
-function setupScroll() {
-  if (!window.gsap || !window.ScrollTrigger) {
-    requestAnimationFrame(setupScroll);
-    return;
-  }
-  const { gsap, ScrollTrigger } = window;
-  gsap.registerPlugin(ScrollTrigger);
-
-  ScrollTrigger.create({
-    trigger:  '#box',
-    start:    'top bottom',
-    end:      'bottom top',
-    scrub:    true,
-    onUpdate: (self) => { scrollProgress = self.progress; },
-  });
-
-  const fadeIn  = () => gsap.to(canvas, { opacity: 1, duration: 0.9, ease: 'power2.out' });
-  const fadeOut = () => gsap.to(canvas, { opacity: 0, duration: 0.4, ease: 'power1.in'  });
-
-  ScrollTrigger.create({
-    trigger:     '#box',
-    start:       'top 85%',
-    end:         'bottom 15%',
-    onEnter:     fadeIn,
-    onLeave:     fadeOut,
-    onEnterBack: fadeIn,
-    onLeaveBack: fadeOut,
-  });
-}
-
-setupScroll();
+setupBoxFoldScrollTriggers({ canvas, bindScrollScrub: true, scrollState });
 
 // ─── Mouse parallax ───────────────────────────────────────────────────────────
-let tX = 0, tY = 0, sX = 0, sY = 0;
+let pointerTargetX = 0;
+let pointerTargetY = 0;
+const pointerSmoother = new PointerSmoother();
 
 document.addEventListener('mousemove', (e) => {
-  tX = (e.clientX / window.innerWidth  - 0.5) * 2;
-  tY = (e.clientY / window.innerHeight - 0.5) * 2;
+  pointerTargetX = (e.clientX / window.innerWidth  - 0.5) * 2;
+  pointerTargetY = (e.clientY / window.innerHeight - 0.5) * 2;
 });
 
 // ─── Render loop ──────────────────────────────────────────────────────────────
@@ -142,18 +124,25 @@ const clock = new THREE.Clock();
 
 function animate() {
   requestAnimationFrame(animate);
-  const t = clock.getElapsedTime();
+  const dt = clock.getDelta();
+  const t  = clock.getElapsedTime();
 
-  sX += (tX - sX) * 0.05;
-  sY += (tY - sY) * 0.05;
+  animationMixerMaybeUpdate(gltfMixer, dt);
+  pointerSmoother.update(pointerTargetX, pointerTargetY, dt);
+
+  const idleA = motionIdleAmp();
+  const ptrA  = motionPointerAmp();
+  const sX = pointerSmoother.x * ptrA;
+  const sY = pointerSmoother.y * ptrA;
 
   if (pcLoaded) {
+    const scrollProgress = scrollState.progress;
     const scrollRotY = scrollProgress * rad(-150);
-    pcGroup.rotation.x = rad(15)  + sY * 0.12 + Math.sin(t * 0.30) * 0.020;
-    pcGroup.rotation.y = rad(-30) + scrollRotY - sX * 0.16 + Math.sin(t * 0.23) * 0.025;
+    pcGroup.rotation.x = rad(15) + sY * 0.12 + Math.sin(t * 0.30) * 0.020 * idleA;
+    pcGroup.rotation.y = rad(-30) + scrollRotY - sX * 0.16 + Math.sin(t * 0.23) * 0.025 * idleA;
     pcGroup.rotation.z = sX * 0.03;
-    pcGroup.position.y = -1.55 + Math.sin(t * 0.48 + Math.PI) * 0.08;
-    pcGroup.position.x =  0.62 + Math.sin(t * 0.33) * 0.05;
+    pcGroup.position.y = -1.55 + Math.sin(t * 0.48 + Math.PI) * 0.08 * idleA;
+    pcGroup.position.x = 0.62 + Math.sin(t * 0.33) * 0.05 * idleA;
   }
 
   renderer.render(scene, camera);

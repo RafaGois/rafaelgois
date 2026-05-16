@@ -5,9 +5,18 @@
  * comportamento: posição, rotação base, scroll, parallax e materiais GLB.
  */
 import * as THREE from 'three';
-import { GLTFLoader }  from 'three/addons/loaders/GLTFLoader.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { configureGltfSceneMaterials } from './configure-gltf-materials.js';
+import { fitModel } from './three-gltf-layout.js';
+import {
+  PointerSmoother,
+  animationMixerMaybeUpdate,
+  createOptionalAnimationMixer,
+  motionIdleAmp,
+  motionPointerAmp,
+} from './three-motion-helpers.js';
+import { setupBoxFoldScrollTriggers } from './three-box-scroll.js';
 
 const container = document.getElementById('box-left-bottom-3d');
 if (!container) throw new Error('[box-left-bottom-3d] container não encontrado');
@@ -61,25 +70,13 @@ const rim = new THREE.DirectionalLight(0xfff8f0, 1.0);
 rim.position.set(0, -4, 5);
 scene.add(rim);
 
-function fitModel(model, targetSize) {
-  const box0   = new THREE.Box3().setFromObject(model);
-  const size   = box0.getSize(new THREE.Vector3());
-  const maxDim = Math.max(size.x, size.y, size.z);
-  if (!maxDim || !isFinite(maxDim)) return;
-
-  model.scale.setScalar(targetSize / maxDim);
-
-  const box1 = new THREE.Box3().setFromObject(model);
-  const ctr  = box1.getCenter(new THREE.Vector3());
-  model.position.set(-ctr.x, -ctr.y, -ctr.z);
-}
-
 const potGroup = new THREE.Group();
 potGroup.position.set(-0.92, -1.88, 0);
 scene.add(potGroup);
 
 let potLoaded = false;
-
+/** @type {THREE.AnimationMixer | null} */
+let gltfMixer = null;
 const rad   = THREE.MathUtils.degToRad;
 const draco = new DRACOLoader();
 draco.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/libs/draco/');
@@ -93,68 +90,56 @@ loader.load('./pokebola.glb', (gltf) => {
 
   potGroup.rotation.set(rad(8), rad(48), rad(-4));
   potGroup.add(model);
+  gltfMixer = createOptionalAnimationMixer(model, gltf.animations);
   potLoaded = true;
 }, undefined, (e) => console.error('[box-left-bottom-3d] pokebola:', e));
 
-let scrollProgress = 0;
+const scrollState = { progress: 0 };
 canvas.style.opacity = '1';
 
-function setupScroll() {
-  if (!window.gsap || !window.ScrollTrigger) {
-    requestAnimationFrame(setupScroll);
-    return;
-  }
-  const { gsap, ScrollTrigger } = window;
-  gsap.registerPlugin(ScrollTrigger);
+setupBoxFoldScrollTriggers({ canvas, bindScrollScrub: true, scrollState });
 
-  ScrollTrigger.create({
-    trigger:  '#box',
-    start:    'top bottom',
-    end:      'bottom top',
-    scrub:    true,
-    onUpdate: (self) => { scrollProgress = self.progress; },
-  });
+let pointerTargetX = 0;
+let pointerTargetY = 0;
+const pointerSmoother = new PointerSmoother();
 
-  const fadeIn  = () => gsap.to(canvas, { opacity: 1, duration: 0.9, ease: 'power2.out' });
-  const fadeOut = () => gsap.to(canvas, { opacity: 0, duration: 0.4, ease: 'power1.in'  });
-
-  ScrollTrigger.create({
-    trigger:     '#box',
-    start:       'top 85%',
-    end:         'bottom 15%',
-    onEnter:     fadeIn,
-    onLeave:     fadeOut,
-    onEnterBack: fadeIn,
-    onLeaveBack: fadeOut,
-  });
-}
-
-setupScroll();
-
-let tX = 0, tY = 0, sX = 0, sY = 0;
 document.addEventListener('mousemove', (e) => {
-  tX = (e.clientX / window.innerWidth  - 0.5) * 2;
-  tY = (e.clientY / window.innerHeight - 0.5) * 2;
+  pointerTargetX = (e.clientX / window.innerWidth  - 0.5) * 2;
+  pointerTargetY = (e.clientY / window.innerHeight - 0.5) * 2;
 });
 
 const clock = new THREE.Clock();
 
 function animate() {
   requestAnimationFrame(animate);
-  const t = clock.getElapsedTime();
+  const dt = clock.getDelta();
+  const t  = clock.getElapsedTime();
 
-  sX += (tX - sX) * 0.05;
-  sY += (tY - sY) * 0.05;
+  animationMixerMaybeUpdate(gltfMixer, dt);
+  pointerSmoother.update(pointerTargetX, pointerTargetY, dt);
 
-  const p = scrollProgress;
+  const idleA = motionIdleAmp();
+  const ptrA  = motionPointerAmp();
+  const sX = pointerSmoother.x * ptrA;
+  const sY = pointerSmoother.y * ptrA;
+
+  const p = scrollState.progress;
 
   if (potLoaded) {
-    potGroup.rotation.x = rad(8)  + sY * 0.08 + Math.sin(t * 0.28) * 0.015;
-    potGroup.rotation.y = rad(48) - sX * 0.10 + Math.sin(t * 0.20) * 0.018;
+    potGroup.rotation.x = rad(8) + sY * 0.08 + Math.sin(t * 0.28) * 0.015 * idleA;
+    potGroup.rotation.y = rad(48) - sX * 0.10 + Math.sin(t * 0.20) * 0.018 * idleA;
     potGroup.rotation.z = rad(-4) - sX * 0.02;
-    potGroup.position.x = -0.92 + p * 1.4 + Math.sin(t * 0.35 + 1.0) * 0.06;
-    potGroup.position.y = -1.88 + p * 1.8 + Math.sin(t * 0.46 + Math.PI) * 0.09;
-    potGroup.position.z =        p * 0.6 + Math.sin(t * 0.22) * 0.04;
+    potGroup.position.x =
+      -0.92 +
+      p * 1.4 +
+      Math.sin(t * 0.35 + 1.0) * 0.06 * idleA;
+    potGroup.position.y =
+      -1.88 +
+      p * 1.8 +
+      Math.sin(t * 0.46 + Math.PI) * 0.09 * idleA;
+    potGroup.position.z =
+      p * 0.6 +
+      Math.sin(t * 0.22) * 0.04 * idleA;
   }
 
   renderer.render(scene, camera);

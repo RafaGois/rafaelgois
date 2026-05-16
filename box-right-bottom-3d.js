@@ -7,6 +7,14 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { configureGltfSceneMaterials } from './configure-gltf-materials.js';
+import {
+  PointerSmoother,
+  animationMixerMaybeUpdate,
+  createOptionalAnimationMixer,
+  motionIdleAmp,
+  motionPointerAmp,
+} from './three-motion-helpers.js';
+import { setupBoxFoldScrollTriggers } from './three-box-scroll.js';
 
 const container = document.getElementById('box-right-bottom-3d');
 if (!container) throw new Error('[box-right-bottom-3d] container não encontrado');
@@ -66,6 +74,8 @@ benchGroup.position.set(benchBaseX, -2.28, 0);
 scene.add(benchGroup);
 
 let benchLoaded = false;
+/** @type {THREE.AnimationMixer | null} */
+let gltfMixer = null;
 const rad   = THREE.MathUtils.degToRad;
 const draco = new DRACOLoader();
 draco.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/libs/draco/');
@@ -85,66 +95,46 @@ loader.load('./retro_computer__low.glb', (gltf) => {
 
   benchGroup.rotation.set(rad(12), rad(-22), rad(0));
   benchGroup.add(model);
+  gltfMixer = createOptionalAnimationMixer(model, gltf.animations);
   benchLoaded = true;
 }, undefined, (e) => console.error('[box-right-bottom-3d] retro_computer:', e));
 
-let scrollProgress = 0;
+const scrollState = { progress: 0 };
 canvas.style.opacity = '1';
 
-function setupScroll() {
-  if (!window.gsap || !window.ScrollTrigger) {
-    requestAnimationFrame(setupScroll);
-    return;
-  }
-  const { gsap, ScrollTrigger } = window;
-  gsap.registerPlugin(ScrollTrigger);
+setupBoxFoldScrollTriggers({ canvas, bindScrollScrub: true, scrollState });
 
-  ScrollTrigger.create({
-    trigger:  '#box',
-    start:    'top bottom',
-    end:      'bottom top',
-    scrub:    true,
-    onUpdate: (self) => { scrollProgress = self.progress; },
-  });
+let pointerTargetX = 0;
+let pointerTargetY = 0;
+const pointerSmoother = new PointerSmoother();
 
-  const fadeIn  = () => gsap.to(canvas, { opacity: 1, duration: 0.9, ease: 'power2.out' });
-  const fadeOut = () => gsap.to(canvas, { opacity: 0, duration: 0.4, ease: 'power1.in'  });
-
-  ScrollTrigger.create({
-    trigger:     '#box',
-    start:       'top 85%',
-    end:         'bottom 15%',
-    onEnter:     fadeIn,
-    onLeave:     fadeOut,
-    onEnterBack: fadeIn,
-    onLeaveBack: fadeOut,
-  });
-}
-
-setupScroll();
-
-let tX = 0, tY = 0, sX = 0, sY = 0;
 document.addEventListener('mousemove', (e) => {
-  tX = (e.clientX / window.innerWidth  - 0.5) * 2;
-  tY = (e.clientY / window.innerHeight - 0.5) * 2;
+  pointerTargetX = (e.clientX / window.innerWidth  - 0.5) * 2;
+  pointerTargetY = (e.clientY / window.innerHeight - 0.5) * 2;
 });
 
 const clock = new THREE.Clock();
 
 function animate() {
   requestAnimationFrame(animate);
-  const t = clock.getElapsedTime();
+  const dt = clock.getDelta();
+  const t  = clock.getElapsedTime();
 
-  sX += (tX - sX) * 0.05;
-  sY += (tY - sY) * 0.05;
+  animationMixerMaybeUpdate(gltfMixer, dt);
+  pointerSmoother.update(pointerTargetX, pointerTargetY, dt);
+
+  const idleA = motionIdleAmp();
+  const ptrA  = motionPointerAmp();
+  const sX = pointerSmoother.x * ptrA;
+  const sY = pointerSmoother.y * ptrA;
 
   if (benchLoaded) {
-    const scrollRotY = scrollProgress * rad(130);
-    benchGroup.rotation.x = rad(12) + sY * 0.10 + Math.sin(t * 0.29) * 0.018;
-    benchGroup.rotation.y = rad(-22) + scrollRotY - sX * 0.14 + Math.sin(t * 0.21) * 0.022;
+    const scrollRotY = scrollState.progress * rad(130);
+    benchGroup.rotation.x = rad(12) + sY * 0.10 + Math.sin(t * 0.29) * 0.018 * idleA;
+    benchGroup.rotation.y = rad(-22) + scrollRotY - sX * 0.14 + Math.sin(t * 0.21) * 0.022 * idleA;
     benchGroup.rotation.z = sX * 0.025;
-    benchGroup.position.y = -2.28 + Math.sin(t * 0.48 + Math.PI * 1.2) * 0.075;
-    benchGroup.position.x = benchBaseX + Math.sin(t * 0.30 + 1.4) * 0.045;
+    benchGroup.position.y = -2.28 + Math.sin(t * 0.48 + Math.PI * 1.2) * 0.075 * idleA;
+    benchGroup.position.x = benchBaseX + Math.sin(t * 0.30 + 1.4) * 0.045 * idleA;
   }
 
   renderer.render(scene, camera);

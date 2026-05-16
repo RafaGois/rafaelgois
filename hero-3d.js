@@ -1,6 +1,13 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+import {
+  PointerSmoother,
+  animationMixerMaybeUpdate,
+  createOptionalAnimationMixer,
+  motionIdleAmp,
+  motionPointerAmp,
+} from './three-motion-helpers.js';
 
 const container = document.getElementById('hero-3d-container');
 const canvas    = document.getElementById('hero-canvas');
@@ -109,6 +116,8 @@ scene.add(modelGroup);
 let modelLoaded = false;
 let keyMeshes   = [];   // todas as keycaps, populadas após carregar o GLB
 let baseMeshes  = [];   // case/PCB, ficam fixos
+/** @type {THREE.AnimationMixer | null} */
+let gltfMixer = null;
 
 const draco = new DRACOLoader();
 draco.setDecoderPath(
@@ -190,15 +199,18 @@ loader.load(
     });
 
     modelGroup.add(model);
+    gltfMixer = createOptionalAnimationMixer(model, gltf.animations);
     modelLoaded = true;
   },
   undefined,
   (err) => console.error('[hero-3d] Failed to load keyboard.glb:', err)
 );
 
-// ─── Input — mouse parallax ───────────────────────────────────────────────────
-let targetMouseX = 0, targetMouseY = 0;
-let mouseX       = 0, mouseY       = 0;
+// ─── Input — mouse parallax (delta-based; ≈ ex-0.03/frame @60 Hz → rate = -ln(0.97)·60) ─
+let targetMouseX = 0;
+let targetMouseY = 0;
+const heroPointerSmoothRatePerSec = -Math.log(0.97) * 60;
+const pointerSmoother = new PointerSmoother(heroPointerSmoothRatePerSec);
 
 document.addEventListener('mousemove', (e) => {
   targetMouseX = (e.clientX / window.innerWidth  - 0.5) * 2;
@@ -211,26 +223,31 @@ const clock = new THREE.Clock();
 function animate() {
   requestAnimationFrame(animate);
 
-  const t = clock.getElapsedTime();
+  const dt = clock.getDelta();
+  const t  = clock.getElapsedTime();
 
-  // Smooth mouse follow
-  mouseX += (targetMouseX - mouseX) * 0.03;
-  mouseY += (targetMouseY - mouseY) * 0.03;
+  animationMixerMaybeUpdate(gltfMixer, dt);
+  pointerSmoother.update(targetMouseX, targetMouseY, dt);
+
+  const idleA = motionIdleAmp();
+  const ptrA  = motionPointerAmp();
+  const mouseX = pointerSmoother.x * ptrA;
+  const mouseY = pointerSmoother.y * ptrA;
 
   // Parallax reduz proporcionalmente ao scale — menos distração nas seções inferiores
   const p = pose.scale;
 
   modelGroup.rotation.y = pose.rotY
-    + Math.sin(t * 0.28) * 0.025
+    + Math.sin(t * 0.28) * 0.025 * idleA
     + mouseX * 0.06 * p;
 
   modelGroup.rotation.x = pose.rotX
-    + Math.sin(t * 0.19) * 0.015
+    + Math.sin(t * 0.19) * 0.015 * idleA
     + mouseY * 0.04 * p;
 
   modelGroup.position.set(
     pose.posX,
-    pose.posY + Math.sin(t * 0.6) * 0.09,
+    pose.posY + Math.sin(t * 0.6) * 0.09 * idleA,
     pose.posZ,
   );
 
