@@ -1,8 +1,8 @@
 /**
  * box-right-top-3d.js — canto superior direito da dobra "Pensando fora da caixa"
  *
- * mouse_arrow.glb (antes em box-right-mouse.js). Mesmo comportamento: escala,
- * rotação, scroll, parallax e materiais GLB.
+ * mouse_arrow — parallax do cursor, sway forte na rotação e deriva ampla na posição
+ * (prefers-reduced-motion desliga a deriva).
  */
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
@@ -62,7 +62,9 @@ rim.position.set(0, -4, 5);
 scene.add(rim);
 
 const mouseGroup = new THREE.Group();
-mouseGroup.position.set(-0.1, 1.6, 0);
+const mouseBaseX = 0.68;
+const mouseBaseY = 2.08;
+mouseGroup.position.set(mouseBaseX, mouseBaseY, 0);
 scene.add(mouseGroup);
 
 let mouseLoaded = false;
@@ -82,12 +84,11 @@ loader.load('./mouse_arrow.glb', (gltf) => {
 
   configureGltfSceneMaterials(model);
 
-  mouseGroup.rotation.set(rad(-12), rad(25), rad(-6));
+  mouseGroup.rotation.set(rad(-12), rad(25 + 180), rad(-6));
   mouseGroup.add(model);
   mouseLoaded = true;
 }, undefined, (e) => console.error('[box-right-top-3d] mouse_arrow:', e));
 
-let scrollProgress = 0;
 canvas.style.opacity = '1';
 
 function setupScroll() {
@@ -97,14 +98,6 @@ function setupScroll() {
   }
   const { gsap, ScrollTrigger } = window;
   gsap.registerPlugin(ScrollTrigger);
-
-  ScrollTrigger.create({
-    trigger:  '#box',
-    start:    'top bottom',
-    end:      'bottom top',
-    scrub:    true,
-    onUpdate: (self) => { scrollProgress = self.progress; },
-  });
 
   const fadeIn  = () => gsap.to(canvas, { opacity: 1, duration: 0.9, ease: 'power2.out' });
   const fadeOut = () => gsap.to(canvas, { opacity: 0, duration: 0.4, ease: 'power1.in'  });
@@ -130,6 +123,10 @@ document.addEventListener('mousemove', (e) => {
 
 const clock = new THREE.Clock();
 
+const cursorIdleDrift =
+  typeof window.matchMedia === 'undefined' ||
+  !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 function animate() {
   requestAnimationFrame(animate);
   const t = clock.getElapsedTime();
@@ -138,11 +135,30 @@ function animate() {
   sY += (tY - sY) * 0.05;
 
   if (mouseLoaded) {
-    const scrollRotY = scrollProgress * rad(180);
-    mouseGroup.rotation.x = rad(-12) + sY * 0.15 + Math.sin(t * 0.35) * 0.025;
-    mouseGroup.rotation.y = rad(25)  + scrollRotY - sX * 0.20 + Math.sin(t * 0.27) * 0.030;
-    mouseGroup.rotation.z = rad(-6)  - sX * 0.04;
-    mouseGroup.position.y = 1.6 + Math.sin(t * 0.48) * 0.09;
+    mouseGroup.rotation.x =
+      rad(-12) + sY * 0.15 + Math.sin(t * 0.58) * 0.11;
+    mouseGroup.rotation.y =
+      rad(25 + 180) -
+      sX * 0.2 +
+      Math.sin(t * 0.48) * 0.11 +
+      Math.cos(t * 0.39 + 1.1) * 0.062;
+    mouseGroup.rotation.z =
+      rad(-6) - sX * 0.04 + Math.sin(t * 0.44 + 0.7) * 0.055;
+
+    let driftX = 0;
+    let driftY = 0;
+    if (cursorIdleDrift) {
+      driftX =
+        Math.sin(t * 0.52) * 0.46 +
+        Math.sin(t * 0.92 + 1.95) * 0.22 +
+        Math.cos(t * 0.34) * 0.15;
+      driftY =
+        Math.cos(t * 0.44) * 0.4 +
+        Math.sin(t * 0.74 + 0.95) * 0.2 +
+        Math.sin(t * 0.63 + 2.2) * 0.15;
+    }
+    mouseGroup.position.x = mouseBaseX + driftX;
+    mouseGroup.position.y = mouseBaseY + driftY;
   }
 
   renderer.render(scene, camera);

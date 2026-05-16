@@ -67,7 +67,7 @@ scene.add(rim);
 
 // ─── Grupos ───────────────────────────────────────────────────────────────────
 const pcGroup = new THREE.Group();
-pcGroup.position.set(0.2, -1.55, 0);
+pcGroup.position.set(0.62, -1.55, 0);
 scene.add(pcGroup);
 
 let pcLoaded = false;
@@ -153,7 +153,7 @@ function animate() {
     pcGroup.rotation.y = rad(-30) + scrollRotY - sX * 0.16 + Math.sin(t * 0.23) * 0.025;
     pcGroup.rotation.z = sX * 0.03;
     pcGroup.position.y = -1.55 + Math.sin(t * 0.48 + Math.PI) * 0.08;
-    pcGroup.position.x =  0.2 + Math.sin(t * 0.33) * 0.05;
+    pcGroup.position.x =  0.62 + Math.sin(t * 0.33) * 0.05;
   }
 
   renderer.render(scene, camera);

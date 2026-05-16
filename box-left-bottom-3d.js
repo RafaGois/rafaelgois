@@ -75,7 +75,6 @@ function fitModel(model, targetSize) {
 }
 
 const potGroup = new THREE.Group();
-/** Mais pequeno, ligeiramente à esquerda e mais abaixo (composição na caixa). */
 potGroup.position.set(-0.92, -1.88, 0);
 scene.add(potGroup);
 
@@ -89,10 +88,10 @@ loader.setDRACOLoader(draco);
 
 loader.load('./pokebola.glb', (gltf) => {
   const model = gltf.scene;
-  fitModel(model, 0.72);
+  fitModel(model, 0.56);
   configureGltfSceneMaterials(model);
 
-  potGroup.rotation.set(rad(8), rad(34), rad(-4));
+  potGroup.rotation.set(rad(8), rad(48), rad(-4));
   potGroup.add(model);
   potLoaded = true;
 }, undefined, (e) => console.error('[box-left-bottom-3d] pokebola:', e));
@@ -151,7 +150,7 @@ function animate() {
 
   if (potLoaded) {
     potGroup.rotation.x = rad(8)  + sY * 0.08 + Math.sin(t * 0.28) * 0.015;
-    potGroup.rotation.y = rad(34) - sX * 0.10 + Math.sin(t * 0.20) * 0.018;
+    potGroup.rotation.y = rad(48) - sX * 0.10 + Math.sin(t * 0.20) * 0.018;
     potGroup.rotation.z = rad(-4) - sX * 0.02;
     potGroup.position.x = -0.92 + p * 1.4 + Math.sin(t * 0.35 + 1.0) * 0.06;
     potGroup.position.y = -1.88 + p * 1.8 + Math.sin(t * 0.46 + Math.PI) * 0.09;

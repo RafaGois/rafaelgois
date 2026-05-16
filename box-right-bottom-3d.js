@@ -61,7 +61,8 @@ rim.position.set(0, -4, 5);
 scene.add(rim);
 
 const benchGroup = new THREE.Group();
-benchGroup.position.set(0.15, -2.28, 0);
+const benchBaseX = 0.88;
+benchGroup.position.set(benchBaseX, -2.28, 0);
 scene.add(benchGroup);
 
 let benchLoaded = false;
@@ -143,7 +144,7 @@ function animate() {
     benchGroup.rotation.y = rad(-22) + scrollRotY - sX * 0.14 + Math.sin(t * 0.21) * 0.022;
     benchGroup.rotation.z = sX * 0.025;
     benchGroup.position.y = -2.28 + Math.sin(t * 0.48 + Math.PI * 1.2) * 0.075;
-    benchGroup.position.x = 0.15 + Math.sin(t * 0.30 + 1.4) * 0.045;
+    benchGroup.position.x = benchBaseX + Math.sin(t * 0.30 + 1.4) * 0.045;
   }
 
   renderer.render(scene, camera);
