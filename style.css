@@ -518,6 +518,41 @@ p, small, li, span, a{
   letter-spacing: 0.5px;
 }
 
+.contact-form-status {
+  font-family: "Manrope", sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  padding: 0.75rem 1rem;
+  border: 1px solid transparent;
+}
+
+.contact-form-status--success {
+  color: #2d5a3d;
+  background: rgba(45, 90, 61, 0.08);
+  border-color: rgba(45, 90, 61, 0.2);
+}
+
+.contact-form-status--error {
+  color: #6b3838;
+  background: rgba(107, 56, 56, 0.08);
+  border-color: rgba(107, 56, 56, 0.2);
+}
+
+.contact-form-status__mailto {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.contact-form-status__mailto:hover {
+  opacity: 0.85;
+}
+
+button[type="submit"][aria-busy="true"] {
+  opacity: 0.7;
+  cursor: wait;
+}
+
 input:focus,
 textarea:focus {
   border-color: #4F4A4A;

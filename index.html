@@ -1233,17 +1233,31 @@
                   >
                 </div>
                 <form
+                  id="contact-form"
                   action="https://formsubmit.co/contato@rafaelgois.com"
                   method="POST"
                   class="space-y-6"
                 >
                   <input type="hidden" name="_captcha" value="false" />
+                  <input type="hidden" name="_template" value="table" />
+                  <input
+                    type="hidden"
+                    name="_next"
+                    value="https://rafaelgois.com/#contact?enviado=1"
+                  />
                   <input type="hidden" name="_honey" style="display: none" />
                   <input
                     type="hidden"
                     name="_subject"
                     value="Contato do Site"
                   />
+                  <p
+                    id="contact-form-status"
+                    class="contact-form-status"
+                    role="status"
+                    aria-live="polite"
+                    hidden
+                  ></p>
                   <div>
                     <label for="name" class="block text-sm text-[#4F4A4A] mb-2">
                       Nome
@@ -1862,6 +1876,7 @@
       src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"
       defer
     ></script>
+    <script src="contact-form.js?v=1" defer></script>
     <script src="index.js?v=2" defer></script>
     <script type="module" src="hero-3d.js?v=2"></script>
     <script type="module" src="box-right-3d.js?v=2"></script>
