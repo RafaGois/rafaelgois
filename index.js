@@ -40,7 +40,6 @@ function initAnimationsWithSplitText() {
 
 // Animações que não usam SplitText
 function initOtherAnimations() {
-  initBoxFrameSequence();
   initBoxAnimations();
   initBoxSideImages();
   initBoxIcaro();
@@ -430,91 +429,6 @@ function initSkillsAnimations() {
       buildPath();
       ScrollTrigger.refresh();
     }, 300);
-  });
-}
-const urls = [
- 
-
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057826/50_wuvngn.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057827/49_g2xngw.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057825/48_nnpk98.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057826/47_mnkaty.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057825/46_jbvzfh.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057823/45_omfkgn.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057824/44_lrn5og.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057821/43_hxs9gt.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057820/42_hat9a5.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057820/41_hybzxc.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057819/40_gy7gq5.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057819/39_einxb4.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057817/38_m2ilxp.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057816/37_vjtilk.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057816/36_ymjbq6.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057815/35_opmfgg.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057814/34_g0ifpn.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057813/33_uyp8k9.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057812/32_js5pu9.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057812/31_ejytlc.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057811/30_oz0pic.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057809/29_dewvg7.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057808/28_xpouci.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057806/27_pk2qu9.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057806/26_mwsxil.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057807/25_ovopor.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057804/24_z6ktjw.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057804/23_c8pzmx.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057803/22_wmyx1o.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057803/21_ih5d5a.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057801/20_zxtikn.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057801/19_ngjdry.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057800/18_ohomsq.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057799/17_rzrfgk.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057798/16_aaqpca.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057798/15_wgtblp.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057800/14_cae5l1.png",
-
-
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057797/13_aknumw.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057795/12_akzviw.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057796/11_vunv02.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057794/10_zzamec.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057794/09_s2ybjw.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057794/08_yvzsfs.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057793/07_j2c6dj.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057794/06_qgiowk.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057793/05_byappv.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057793/04_ykmhca.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057793/03_h2anld.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057792/02_z0howp.png",
-"https://res.cloudinary.com/dn454izoh/image/upload/v1773057792/01_rlcug5.png"
-];
-
-function initBoxFrameSequence() {
-  const frameImg = document.querySelector("#box-frame-img");
-  const boxSection = document.querySelector("#box");
-  if (!frameImg || !boxSection) return;
-
-  const FRAME_COUNT = 50;
-  for (let i = 1; i <= FRAME_COUNT; i++) {
-    const img = new Image();
-    img.src = urls?.[i];
-  }
-
-  const proxy = { progress: 0 };
-  gsap.to(proxy, {
-    progress: 1,
-    duration: 1,
-    ease: "none",
-    scrollTrigger: {
-      trigger: boxSection,
-      start: "top bottom",
-      end: "bottom top",
-      scrub: true,
-    },
-    onUpdate: () => {
-      const frameNum = 1 + Math.min(FRAME_COUNT - 1, Math.floor(proxy.progress * FRAME_COUNT));
-      frameImg.src = urls?.[frameNum];
-    },
   });
 }
 
