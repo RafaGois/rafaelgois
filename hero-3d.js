@@ -1,18 +1,22 @@
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+import { loadHeroGltf } from './gltf-load-queue.js';
+import { registerRenderLayer } from './three-composite-renderer.js';
 import {
   PointerSmoother,
   animationMixerMaybeUpdate,
   createOptionalAnimationMixer,
   motionIdleAmp,
   motionPointerAmp,
+  createRenderVisibilityWatcher,
 } from './three-motion-helpers.js';
 
 const container = document.getElementById('hero-3d-container');
-const canvas    = document.getElementById('hero-canvas');
 
-if (!container || !canvas) throw new Error('[hero-3d] elements not found');
+if (!container) throw new Error('[hero-3d] container not found');
+
+const renderVisibility = createRenderVisibilityWatcher(container, {
+  isActive: () => !container.classList.contains('hero-3d-suppressed'),
+});
 
 /**
  * Teclado fixo: some na dobra “Pensando fora da caixa” (#box) e daí em diante
@@ -38,15 +42,6 @@ function syncHero3dSuppressed() {
   container.classList.toggle('hero-3d-suppressed', suppressed);
 }
 
-// ─── Renderer ─────────────────────────────────────────────────────────────────
-const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.outputColorSpace    = THREE.SRGBColorSpace;
-renderer.toneMapping         = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.0;
-renderer.shadowMap.enabled   = true;
-renderer.shadowMap.type      = THREE.PCFSoftShadowMap;
-
 // ─── Scene ────────────────────────────────────────────────────────────────────
 const scene = new THREE.Scene();
 
@@ -54,16 +49,6 @@ const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
 camera.position.set(0, 1.2, 6.0);
 camera.lookAt(0, 0, 0);
-
-function resize() {
-  const w = container.clientWidth;
-  const h = container.clientHeight;
-  if (w === 0 || h === 0) return;
-  renderer.setSize(w, h, false);
-  camera.aspect = w / h;
-  camera.updateProjectionMatrix();
-}
-resize();
 
 // ─── Iluminação ───────────────────────────────────────────────────────────────
 const ambient = new THREE.AmbientLight(0xf0ede8, 2.2);
@@ -119,15 +104,7 @@ let baseMeshes  = [];   // case/PCB, ficam fixos
 /** @type {THREE.AnimationMixer | null} */
 let gltfMixer = null;
 
-const draco = new DRACOLoader();
-draco.setDecoderPath(
-  'https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/libs/draco/'
-);
-
-const loader = new GLTFLoader();
-loader.setDRACOLoader(draco);
-
-loader.load(
+loadHeroGltf(
   './keyboard.glb',
   (gltf) => {
     const model  = gltf.scene;
@@ -217,48 +194,42 @@ document.addEventListener('mousemove', (e) => {
   targetMouseY = (e.clientY / window.innerHeight - 0.5) * 2;
 });
 
-// ─── Render loop ──────────────────────────────────────────────────────────────
-const clock = new THREE.Clock();
+registerRenderLayer({
+  id: 'hero',
+  scene,
+  camera,
+  getContainer: () => container,
+  isInView: () => renderVisibility.isInView(),
+  getOpacity: () => pose.opacity,
+  zIndex: 0,
+  toneMappingExposure: 1.0,
+  update(dt, t) {
+    animationMixerMaybeUpdate(gltfMixer, dt);
+    pointerSmoother.update(targetMouseX, targetMouseY, dt);
 
-function animate() {
-  requestAnimationFrame(animate);
+    const idleA = motionIdleAmp();
+    const ptrA  = motionPointerAmp();
+    const mouseX = pointerSmoother.x * ptrA;
+    const mouseY = pointerSmoother.y * ptrA;
+    const p = pose.scale;
 
-  const dt = clock.getDelta();
-  const t  = clock.getElapsedTime();
+    modelGroup.rotation.y = pose.rotY
+      + Math.sin(t * 0.28) * 0.025 * idleA
+      + mouseX * 0.06 * p;
 
-  animationMixerMaybeUpdate(gltfMixer, dt);
-  pointerSmoother.update(targetMouseX, targetMouseY, dt);
+    modelGroup.rotation.x = pose.rotX
+      + Math.sin(t * 0.19) * 0.015 * idleA
+      + mouseY * 0.04 * p;
 
-  const idleA = motionIdleAmp();
-  const ptrA  = motionPointerAmp();
-  const mouseX = pointerSmoother.x * ptrA;
-  const mouseY = pointerSmoother.y * ptrA;
+    modelGroup.position.set(
+      pose.posX,
+      pose.posY + Math.sin(t * 0.6) * 0.09 * idleA,
+      pose.posZ,
+    );
 
-  // Parallax reduz proporcionalmente ao scale — menos distração nas seções inferiores
-  const p = pose.scale;
-
-  modelGroup.rotation.y = pose.rotY
-    + Math.sin(t * 0.28) * 0.025 * idleA
-    + mouseX * 0.06 * p;
-
-  modelGroup.rotation.x = pose.rotX
-    + Math.sin(t * 0.19) * 0.015 * idleA
-    + mouseY * 0.04 * p;
-
-  modelGroup.position.set(
-    pose.posX,
-    pose.posY + Math.sin(t * 0.6) * 0.09 * idleA,
-    pose.posZ,
-  );
-
-  modelGroup.scale.setScalar(pose.scale);
-
-  canvas.style.opacity = String(pose.opacity);
-
-  renderer.render(scene, camera);
-}
-
-animate();
+    modelGroup.scale.setScalar(pose.scale);
+  },
+});
 
 // ─── Scroll animations ────────────────────────────────────────────────────────
 // Aguarda GSAP + ScrollTrigger (scripts defer no HTML) E o GLB estar pronto
@@ -566,6 +537,3 @@ function resetKeycaps() {
 }
 
 setupScrollAnimations();
-
-// ─── Resize ───────────────────────────────────────────────────────────────────
-new ResizeObserver(resize).observe(container);

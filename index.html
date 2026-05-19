@@ -73,14 +73,20 @@
     </script>
   </head>
   <body class="bg-[#EDEDED] text-[#4F4A4A] overflow-x-hidden">
-    <!-- 3D Canvas: fixed, persiste em todas as dobras do site -->
+    <!-- Canvas WebGL único (hero + dobra #box via scissor/viewport) -->
+    <div
+      id="three-composite-root"
+      class="three-composite-root hidden md:block pointer-events-none"
+      aria-hidden="true"
+    >
+      <canvas id="three-composite-canvas"></canvas>
+    </div>
+    <!-- Âncora fixa do hero (visibilidade / scroll); render no canvas compartilhado -->
     <div
       id="hero-3d-container"
       class="hidden md:block pointer-events-none"
       aria-hidden="true"
-    >
-      <canvas id="hero-canvas"></canvas>
-    </div>
+    ></div>
 
     <header class="flex flex-col min-h-screen relative z-10">
       <div class="hidden md:flex items-center justify-between px-10 py-6">
@@ -1198,10 +1204,10 @@
         <video
           id="contact-video"
           class="contact-bg-video"
-          src="flower-motion.mp4"
+          data-src="flower-motion.mp4"
           muted
           playsinline
-         
+          preload="none"
           aria-hidden="true"
           tabindex="-1"
           disablepictureinpicture
@@ -1875,11 +1881,6 @@
     <script src="contact-form.js?v=3" defer></script>
     <script src="index.js?v=2" defer></script>
     <script type="module" src="hero-3d.js?v=2"></script>
-    <script type="module" src="box-right-3d.js?v=2"></script>
-    <script type="module" src="box-left-bottom-3d.js?v=2"></script>
-    <script type="module" src="box-right-mouse.js?v=2"></script>
-    <script type="module" src="box-right-bottom-3d.js?v=2"></script>
-    <script type="module" src="box-right-top-3d.js?v=2"></script>
-    <script type="module" src="box-left-top-3d.js?v=2"></script>
+    <script type="module" src="box-3d-loader.js?v=2"></script>
   </body>
 </html>

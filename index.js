@@ -1094,7 +1094,8 @@ function updateFooterYear() {
 }
 
 /**
- * Dobra de contato: vídeo `eye-motion.mp4` ao fundo, scrub controlado por scroll.
+ * Dobra de contato: vídeo `flower-motion.mp4` ao fundo, scrub controlado por scroll.
+ * O arquivo só é baixado quando #contact entra no viewport.
  *
  * Sequência (tudo em um único ScrollTrigger para evitar conflitos de posição):
  *  0–72% do scroll → vídeo avança/recua; conteúdo invisível.
@@ -1117,6 +1118,8 @@ function initContactScrollVideo() {
 
   // CSS sabe que JS está no controle — esconde conteúdo via .is-scroll-driven.
   content.classList.add("is-scroll-driven");
+
+  let videoLoadStarted = false;
 
   const setup = () => {
     if (section.dataset.scrollReady === "true") return;
@@ -1194,14 +1197,42 @@ function initContactScrollVideo() {
     }
   };
 
-  if (video.readyState >= 1 && Number.isFinite(video.duration)) {
-    kickFirstFrame();
-    setup();
-  } else {
-    video.addEventListener("loadedmetadata", () => {
+  const beginVideoLoad = () => {
+    if (videoLoadStarted) return;
+    videoLoadStarted = true;
+
+    const src = video.dataset.src;
+    if (!src) return;
+
+    video.src = src;
+    video.load();
+
+    const onMetadata = () => {
       kickFirstFrame();
       setup();
-    }, { once: true });
-    setTimeout(setup, 1500);
+    };
+
+    if (video.readyState >= 1 && Number.isFinite(video.duration)) {
+      onMetadata();
+    } else {
+      video.addEventListener("loadedmetadata", onMetadata, { once: true });
+      setTimeout(setup, 1500);
+    }
+  };
+
+  if (!("IntersectionObserver" in window)) {
+    beginVideoLoad();
+    return;
   }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      if (!entries.some((e) => e.isIntersecting)) return;
+      observer.disconnect();
+      beginVideoLoad();
+    },
+    { threshold: 0 },
+  );
+
+  observer.observe(section);
 }

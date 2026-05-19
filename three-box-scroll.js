@@ -3,6 +3,7 @@
  */
 export function setupBoxFoldScrollTriggers({
   canvas,
+  fade,
   bindScrollScrub = true,
   scrollState,
 } = {}) {
@@ -26,12 +27,13 @@ export function setupBoxFoldScrollTriggers({
       });
     }
 
-    if (!canvas) return;
+    const fadeTarget = fade ?? canvas;
+    if (!fadeTarget) return;
 
     const fadeIn = () =>
-      gsap.to(canvas, { opacity: 1, duration: 0.9, ease: 'power2.out' });
+      gsap.to(fadeTarget, { opacity: 1, duration: 0.9, ease: 'power2.out' });
     const fadeOut = () =>
-      gsap.to(canvas, { opacity: 0, duration: 0.4, ease: 'power1.in' });
+      gsap.to(fadeTarget, { opacity: 0, duration: 0.4, ease: 'power1.in' });
 
     ScrollTrigger.create({
       trigger: '#box',

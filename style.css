@@ -6,24 +6,25 @@
   box-sizing: border-box;
 }
 
-/* ─── Scene 3D — fixa em todo o viewport ─────────────────────────────────── */
-#hero-3d-container {
+/* ─── Canvas WebGL único (hero + dobra #box) ─────────────────────────────── */
+.three-composite-root {
   position: fixed;
   inset: 0;
-  /* Mantém abaixo de header/main; 0 às vezes perde para camadas GPU das dobras */
   z-index: 1;
 }
 
-/* Canvas fixo: some na dobra #box e a partir de #projects; visível em #skills (ordem DOM: box → skills → projects). */
-#hero-3d-container.hero-3d-suppressed {
-  visibility: hidden;
-}
-
-#hero-canvas {
+#three-composite-canvas {
   display: block;
   width: 100%;
   height: 100%;
-  opacity: 0;
+}
+
+/* Âncora do hero para viewport / scroll (render no canvas compartilhado) */
+#hero-3d-container {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
 }
 
 /* Acima do canvas fixo do hero (teclado 3D). Hero, Sobre e Habilidades não entram aqui. */

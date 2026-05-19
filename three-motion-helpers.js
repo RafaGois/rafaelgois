@@ -76,3 +76,43 @@ export function createOptionalAnimationMixer(root, animations) {
 export function animationMixerMaybeUpdate(mixer, delta) {
   if (mixer) mixer.update(delta);
 }
+
+/**
+ * IntersectionObserver no elemento do canvas/container — pausar WebGL fora da tela.
+ * @param {Element} element
+ * @param {{ isActive?: () => boolean }} [options] — ex.: hero suprimido por scroll
+ */
+export function createRenderVisibilityWatcher(element, options = {}) {
+  const { isActive } = options;
+  let intersecting = true;
+
+  const isInView = () => {
+    if (!intersecting) return false;
+    if (isActive && !isActive()) return false;
+    if (typeof document !== 'undefined' && document.visibilityState === 'hidden') {
+      return false;
+    }
+    return true;
+  };
+
+  if (
+    typeof window === 'undefined' ||
+    !element ||
+    !('IntersectionObserver' in window)
+  ) {
+    return { isInView };
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      intersecting = entries.some((e) => e.isIntersecting);
+    },
+    { threshold: 0 },
+  );
+  observer.observe(element);
+
+  return {
+    isInView,
+    disconnect: () => observer.disconnect(),
+  };
+}
