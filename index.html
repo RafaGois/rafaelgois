@@ -1234,18 +1234,17 @@
                 </div>
                 <form
                   id="contact-form"
+                  action="https://api.web3forms.com/submit"
+                  method="POST"
                   class="space-y-6"
-                  novalidate
-                  action="https://api.web3forms.com/submit" method="POST"
                 >
-                  <!-- Anti-spam (Web3Forms): deixe vazio -->
+                  <!-- Honeypot Web3Forms: não marcar; não usar .value no JS -->
                   <input
                     type="checkbox"
                     name="botcheck"
-                    class="hidden"
+                    style="display: none"
                     tabindex="-1"
                     autocomplete="off"
-                    aria-hidden="true"
                   />
                   <p
                     id="contact-form-status"
@@ -1872,8 +1871,8 @@
       src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"
       defer
     ></script>
-    <script src="contact-config.js?v=1" defer></script>
-    <script src="contact-form.js?v=2" defer></script>
+    <script src="contact-config.js?v=2" defer></script>
+    <script src="contact-form.js?v=3" defer></script>
     <script src="index.js?v=2" defer></script>
     <script type="module" src="hero-3d.js?v=2"></script>
     <script type="module" src="box-right-3d.js?v=2"></script>

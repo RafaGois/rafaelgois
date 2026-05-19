@@ -1,6 +1,6 @@
 /**
- * Formulário de contato — Web3Forms (https://api.web3forms.com)
- * Substitui FormSubmit (timeouts / erro Cloudflare no formsubmit.co).
+ * Formulário de contato — Web3Forms (https://api.web3forms.com/submit)
+ * Envio via FormData, conforme documentação oficial.
  */
 (function initContactForm() {
   const form = document.getElementById("contact-form");
@@ -12,12 +12,12 @@
   const defaultLabel = submitLabel?.textContent || "Enviar mensagem";
 
   const config = window.PORTFOLIO_CONTACT || {};
-  const accessKey = (config.web3formsAccessKey || form.dataset.web3formsKey || "").trim();
+  const accessKey = (config.web3formsAccessKey || "").trim();
   const customEndpoint = (config.customEndpoint || "").trim();
 
   if (!accessKey && !customEndpoint) {
     console.error(
-      "[contact-form] Configure web3formsAccessKey em contact-config.js — https://web3forms.com",
+      "[contact-form] Configure web3formsAccessKey em contact-config.js",
     );
   }
 
@@ -35,86 +35,96 @@
 
     if (!submitBtn || submitBtn.disabled) return;
 
-    const name = form.elements.namedItem("name")?.value?.trim();
-    const email = form.elements.namedItem("email")?.value?.trim();
-    const subject = form.elements.namedItem("subject")?.value?.trim();
-    const message = form.elements.namedItem("message")?.value?.trim();
-    const botcheck = form.elements.namedItem("botcheck")?.value;
+    const botField = form.elements.namedItem("botcheck");
+    if (botField && "checked" in botField && botField.checked) {
+      return;
+    }
+
+    const name = getFieldValue(form, "name");
+    const email = getFieldValue(form, "email");
+    const subject = getFieldValue(form, "subject");
+    const message = getFieldValue(form, "message");
 
     if (!name || !email || !subject || !message) {
       showStatus("error", "Preencha todos os campos obrigatórios.");
       return;
     }
 
-    if (botcheck) return;
-
     setLoading(true);
     showStatus("", "");
 
-    const controller = new AbortController();
-    const timeoutId = window.setTimeout(() => controller.abort(), 20000);
-
-    const payload = { name, email, subject, message, botcheck: botcheck || "" };
+    const originalText = submitBtn.textContent;
 
     try {
-      const response = customEndpoint
-        ? await fetch(customEndpoint, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Accept: "application/json",
-            },
-            body: JSON.stringify(payload),
-            signal: controller.signal,
-          })
-        : await fetch("https://api.web3forms.com/submit", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Accept: "application/json",
-            },
-            body: JSON.stringify({
-              access_key: accessKey,
-              name,
-              email,
-              subject: `[Site] ${subject}`,
-              message,
-              from_name: "Portfolio — Rafael Gois",
-              replyto: email,
-            }),
-            signal: controller.signal,
-          });
-
-      const data = await response.json().catch(() => ({}));
-
-      if (response.ok && data.success) {
-        form.reset();
-        showStatus(
-          "success",
-          "Mensagem enviada com sucesso. Obrigado — responderei em breve no seu e-mail.",
-        );
+      if (customEndpoint) {
+        const response = await fetch(customEndpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({ name, email, subject, message }),
+        });
+        const data = await response.json().catch(() => ({}));
+        if (response.ok && data.success) {
+          onSuccess();
+        } else {
+          showStatus("error", data.message || "Falha ao enviar.", true);
+        }
         return;
       }
 
-      const msg =
-        data.message ||
-        data.body?.message ||
-        "Não foi possível enviar. Tente novamente ou use o e-mail abaixo.";
-      showStatus("error", msg, true);
-    } catch (err) {
-      const timedOut = err && err.name === "AbortError";
+      const formData = new FormData(form);
+      formData.set("access_key", accessKey);
+      formData.set("subject", `[Site] ${subject}`);
+      formData.set("from_name", "Portfolio — Rafael Gois");
+      formData.set("replyto", email);
+      formData.delete("botcheck");
+
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (response.ok && data.success !== false) {
+        onSuccess();
+        return;
+      }
+
+      console.warn("[contact-form] Web3Forms:", response.status, data);
       showStatus(
         "error",
-        timedOut
-          ? "A conexão demorou demais. Tente de novo ou escreva para "
-          : "Erro de rede ao enviar. Tente de novo ou escreva para ",
+        data.message || "Não foi possível enviar. Tente de novo ou use o e-mail abaixo.",
+        true,
+      );
+    } catch (error) {
+      console.error("[contact-form]", error);
+      showStatus(
+        "error",
+        "Erro de rede ao enviar. Tente de novo ou escreva para ",
         true,
       );
     } finally {
-      window.clearTimeout(timeoutId);
+      submitBtn.textContent = originalText;
       setLoading(false);
     }
   });
+
+  function onSuccess() {
+    form.reset();
+    showStatus(
+      "success",
+      "Mensagem enviada com sucesso. Obrigado — responderei em breve.",
+    );
+  }
+
+  function getFieldValue(formEl, fieldName) {
+    const field = formEl.elements.namedItem(fieldName);
+    if (!field || "value" in field === false) return "";
+    return String(field.value).trim();
+  }
 
   function setLoading(loading) {
     if (!submitBtn) return;
@@ -122,6 +132,8 @@
     submitBtn.setAttribute("aria-busy", loading ? "true" : "false");
     if (submitLabel) {
       submitLabel.textContent = loading ? "Enviando…" : defaultLabel;
+    } else if (loading) {
+      submitBtn.textContent = "Enviando…";
     }
   }
 
