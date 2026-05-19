@@ -1234,22 +1234,18 @@
                 </div>
                 <form
                   id="contact-form"
-                  action="https://formsubmit.co/contato@rafaelgois.com"
-                  method="POST"
                   class="space-y-6"
+                  novalidate
+                  action="https://api.web3forms.com/submit" method="POST"
                 >
-                  <input type="hidden" name="_captcha" value="false" />
-                  <input type="hidden" name="_template" value="table" />
+                  <!-- Anti-spam (Web3Forms): deixe vazio -->
                   <input
-                    type="hidden"
-                    name="_next"
-                    value="https://rafaelgois.com/#contact?enviado=1"
-                  />
-                  <input type="hidden" name="_honey" style="display: none" />
-                  <input
-                    type="hidden"
-                    name="_subject"
-                    value="Contato do Site"
+                    type="checkbox"
+                    name="botcheck"
+                    class="hidden"
+                    tabindex="-1"
+                    autocomplete="off"
+                    aria-hidden="true"
                   />
                   <p
                     id="contact-form-status"
@@ -1876,7 +1872,8 @@
       src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"
       defer
     ></script>
-    <script src="contact-form.js?v=1" defer></script>
+    <script src="contact-config.js?v=1" defer></script>
+    <script src="contact-form.js?v=2" defer></script>
     <script src="index.js?v=2" defer></script>
     <script type="module" src="hero-3d.js?v=2"></script>
     <script type="module" src="box-right-3d.js?v=2"></script>

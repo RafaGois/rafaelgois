@@ -1,6 +1,6 @@
 /**
- * Envio do formulário via FormSubmit AJAX — evita redirecionar o navegador
- * para formsubmit.co (onde o timeout/522 costuma aparecer com Cloudflare).
+ * Formulário de contato — Web3Forms (https://api.web3forms.com)
+ * Substitui FormSubmit (timeouts / erro Cloudflare no formsubmit.co).
  */
 (function initContactForm() {
   const form = document.getElementById("contact-form");
@@ -11,88 +11,103 @@
   const submitLabel = submitBtn?.querySelector("span");
   const defaultLabel = submitLabel?.textContent || "Enviar mensagem";
 
-  const action = form.getAttribute("action") || "";
-  const ajaxEndpoint = action.replace(
-    /^https:\/\/formsubmit\.co\//i,
-    "https://formsubmit.co/ajax/",
-  );
+  const config = window.PORTFOLIO_CONTACT || {};
+  const accessKey = (config.web3formsAccessKey || form.dataset.web3formsKey || "").trim();
+  const customEndpoint = (config.customEndpoint || "").trim();
 
-  if (!ajaxEndpoint.includes("formsubmit.co/ajax/")) {
-    console.warn("[contact-form] action inválida:", action);
-    return;
-  }
-
-  const returnUrl = new URL(window.location.href);
-  returnUrl.search = "";
-  returnUrl.hash = "contact";
-
-  let nextInput = form.querySelector('input[name="_next"]');
-  if (!nextInput) {
-    nextInput = document.createElement("input");
-    nextInput.type = "hidden";
-    nextInput.name = "_next";
-    form.appendChild(nextInput);
-  }
-  nextInput.value = returnUrl.toString() + "?enviado=1";
-
-  if (new URLSearchParams(window.location.search).get("enviado") === "1") {
-    showStatus(
-      "success",
-      "Mensagem recebida. Obrigado pelo contato — responderei em breve.",
+  if (!accessKey && !customEndpoint) {
+    console.error(
+      "[contact-form] Configure web3formsAccessKey em contact-config.js — https://web3forms.com",
     );
-    window.history.replaceState(null, "", returnUrl.pathname + "#contact");
   }
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
+    if (!accessKey && !customEndpoint) {
+      showStatus(
+        "error",
+        "Formulário ainda não configurado. Enquanto isso, envie para ",
+        true,
+      );
+      return;
+    }
+
     if (!submitBtn || submitBtn.disabled) return;
+
+    const name = form.elements.namedItem("name")?.value?.trim();
+    const email = form.elements.namedItem("email")?.value?.trim();
+    const subject = form.elements.namedItem("subject")?.value?.trim();
+    const message = form.elements.namedItem("message")?.value?.trim();
+    const botcheck = form.elements.namedItem("botcheck")?.value;
+
+    if (!name || !email || !subject || !message) {
+      showStatus("error", "Preencha todos os campos obrigatórios.");
+      return;
+    }
+
+    if (botcheck) return;
 
     setLoading(true);
     showStatus("", "");
 
     const controller = new AbortController();
-    const timeoutId = window.setTimeout(() => controller.abort(), 25000);
+    const timeoutId = window.setTimeout(() => controller.abort(), 20000);
+
+    const payload = { name, email, subject, message, botcheck: botcheck || "" };
 
     try {
-      const body = new FormData(form);
-      body.set("_ajax", "true");
-      body.set("_template", "table");
+      const response = customEndpoint
+        ? await fetch(customEndpoint, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            body: JSON.stringify(payload),
+            signal: controller.signal,
+          })
+        : await fetch("https://api.web3forms.com/submit", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            body: JSON.stringify({
+              access_key: accessKey,
+              name,
+              email,
+              subject: `[Site] ${subject}`,
+              message,
+              from_name: "Portfolio — Rafael Gois",
+              replyto: email,
+            }),
+            signal: controller.signal,
+          });
 
-      const response = await fetch(ajaxEndpoint, {
-        method: "POST",
-        body,
-        headers: { Accept: "application/json" },
-        signal: controller.signal,
-      });
+      const data = await response.json().catch(() => ({}));
 
-      let data = null;
-      try {
-        data = await response.json();
-      } catch (_) {
-        data = null;
-      }
-
-      if (response.ok && (!data || data.success !== false)) {
+      if (response.ok && data.success) {
         form.reset();
         showStatus(
           "success",
-          "Mensagem enviada com sucesso. Obrigado — responderei em breve.",
+          "Mensagem enviada com sucesso. Obrigado — responderei em breve no seu e-mail.",
         );
         return;
       }
 
       const msg =
-        (data && (data.message || data.error)) ||
-        "Não foi possível enviar agora. Tente de novo ou use o e-mail abaixo.";
-      showStatus("error", msg);
+        data.message ||
+        data.body?.message ||
+        "Não foi possível enviar. Tente novamente ou use o e-mail abaixo.";
+      showStatus("error", msg, true);
     } catch (err) {
       const timedOut = err && err.name === "AbortError";
       showStatus(
         "error",
         timedOut
-          ? "O serviço de envio demorou demais (timeout). Use "
-          : "Falha na conexão com o serviço de envio. Use ",
+          ? "A conexão demorou demais. Tente de novo ou escreva para "
+          : "Erro de rede ao enviar. Tente de novo ou escreva para ",
         true,
       );
     } finally {
@@ -121,7 +136,9 @@
     }
 
     statusEl.classList.add(
-      kind === "success" ? "contact-form-status--success" : "contact-form-status--error",
+      kind === "success"
+        ? "contact-form-status--success"
+        : "contact-form-status--error",
     );
 
     if (withMailtoFallback) {
