@@ -62,6 +62,25 @@ function initOtherAnimations() {
 
   // Footer - Update year
   updateFooterYear();
+
+  scheduleScrollTriggerRefresh();
+}
+
+/** Recalcula triggers após imagens/fontes (layout na nuvem costuma estabilizar mais tarde). */
+function scheduleScrollTriggerRefresh() {
+  if (typeof ScrollTrigger === "undefined") return;
+
+  const refresh = () => {
+    try {
+      ScrollTrigger.refresh();
+    } catch (_) {}
+  };
+
+  window.addEventListener("load", refresh, { once: true });
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(refresh);
+  }
+  setTimeout(refresh, 800);
 }
 
 // Inicializar quando DOM estiver pronto
