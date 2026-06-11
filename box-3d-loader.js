@@ -5,9 +5,7 @@
 const CACHE_VERSION = '2';
 
 const BOX_3D_MODULES = [
-  `./box-right-3d.js?v=${CACHE_VERSION}`,
   `./box-left-bottom-3d.js?v=${CACHE_VERSION}`,
-  `./box-right-mouse.js?v=${CACHE_VERSION}`,
   `./box-right-bottom-3d.js?v=${CACHE_VERSION}`,
   `./box-right-top-3d.js?v=${CACHE_VERSION}`,
   `./box-left-top-3d.js?v=${CACHE_VERSION}`,

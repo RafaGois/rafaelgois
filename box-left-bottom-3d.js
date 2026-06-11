@@ -1,8 +1,8 @@
 /**
  * box-left-bottom-3d.js — elemento inferior esquerdo da dobra "Pensando fora da caixa"
  *
- * pokebola.glb (antes em box-right-3d.js / potGroup). Painel próprio, mesmo
- * comportamento: posição, rotação base, scroll, parallax e materiais GLB.
+ * pokebola.glb. Painel próprio na metade esquerda da #box.
+ * Posição, rotação base, scroll, parallax e materiais GLB.
  */
 import * as THREE from 'three';
 import { loadBoxGltf } from './gltf-load-queue.js';

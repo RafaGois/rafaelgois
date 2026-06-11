@@ -1,6 +1,6 @@
 /**
- * Alinha GLB carregados ao mesmo pipeline visual do painel direito
- * (box-right-mouse.js): colorSpace das texturas + correção de alpha/draw.
+ * Pipeline visual comum dos GLBs da dobra #box: colorSpace das texturas +
+ * correção de alpha/draw.
  */
 import * as THREE from 'three';
 

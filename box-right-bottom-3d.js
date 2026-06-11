@@ -1,7 +1,7 @@
 /**
  * box-right-bottom-3d.js — canto inferior direito da dobra "Pensando fora da caixa"
  *
- * retro_computer__low.glb (antes em box-right-mouse.js). Mesmo comportamento.
+ * retro_computer__low.glb na metade direita inferior da #box.
  */
 import * as THREE from 'three';
 import { loadBoxGltf } from './gltf-load-queue.js';
