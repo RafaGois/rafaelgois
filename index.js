@@ -17,6 +17,8 @@ function initApp() {
     gsap.registerPlugin(SplitText);
   }
 
+  initCustomCursor();
+
   // Aguardar carregamento das fontes antes de usar SplitText
   if (document.fonts && document.fonts.ready) {
     document.fonts.ready.then(() => {
@@ -1091,6 +1093,190 @@ function updateFooterYear() {
   if (yearElement) {
     yearElement.textContent = new Date().getFullYear();
   }
+}
+
+/** Cursor customizado: ponto + anel com lag (desktop, pointer fino). */
+function initCustomCursor() {
+  if (typeof gsap === "undefined") return;
+
+  var HOVER_SELECTOR =
+    "a, button, input, textarea, select, label, [role='button'], .project-visual, .service-item, .testimonial-nav-btn, .dot";
+
+  var root = null;
+  var ring = null;
+  var dot = null;
+  var enabled = false;
+  var visible = false;
+  var hovering = false;
+  var pressed = false;
+  var hasMoved = false;
+
+  var xRing = null;
+  var yRing = null;
+  var xDot = null;
+  var yDot = null;
+
+  var onMove = null;
+  var onOver = null;
+  var onOut = null;
+  var onDown = null;
+  var onUp = null;
+  var onLeave = null;
+  var onEnter = null;
+  var onResize = null;
+
+  function canUseCustomCursor() {
+    if (window.innerWidth < 768) return false;
+    if (typeof window.matchMedia !== "function") return true;
+    return window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  }
+
+  function ringLagDuration() {
+    if (
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return 0.08;
+    }
+    return 0.55;
+  }
+
+  function setHoverState(next) {
+    if (!root || hovering === next) return;
+    hovering = next;
+    root.classList.toggle("is-hover", next);
+  }
+
+  function setPressedState(next) {
+    if (!root || pressed === next) return;
+    pressed = next;
+    root.classList.toggle("is-pressed", next);
+  }
+
+  function setVisible(next) {
+    if (!root || visible === next) return;
+    visible = next;
+    root.classList.toggle("is-visible", next);
+  }
+
+  function mount() {
+    if (root || !canUseCustomCursor()) return;
+
+    root = document.createElement("div");
+    root.id = "custom-cursor";
+    root.className = "custom-cursor";
+    root.setAttribute("aria-hidden", "true");
+
+    ring = document.createElement("div");
+    ring.className = "custom-cursor__ring";
+
+    dot = document.createElement("div");
+    dot.className = "custom-cursor__dot";
+
+    root.appendChild(ring);
+    root.appendChild(dot);
+    document.body.appendChild(root);
+    document.body.classList.add("custom-cursor-active");
+
+    gsap.set([ring, dot], { left: 0, top: 0 });
+
+    var lag = ringLagDuration();
+    xRing = gsap.quickTo(ring, "left", { duration: lag, ease: "power3.out" });
+    yRing = gsap.quickTo(ring, "top", { duration: lag, ease: "power3.out" });
+    xDot = gsap.quickTo(dot, "left", { duration: 0.12, ease: "power3.out" });
+    yDot = gsap.quickTo(dot, "top", { duration: 0.12, ease: "power3.out" });
+
+    onMove = function (e) {
+      if (!hasMoved) {
+        hasMoved = true;
+        gsap.set([ring, dot], { left: e.clientX, top: e.clientY });
+      }
+      xRing(e.clientX);
+      yRing(e.clientY);
+      xDot(e.clientX);
+      yDot(e.clientY);
+      if (!visible) setVisible(true);
+    };
+
+    onOver = function (e) {
+      if (e.target.closest(HOVER_SELECTOR)) setHoverState(true);
+    };
+
+    onOut = function (e) {
+      var from = e.target.closest(HOVER_SELECTOR);
+      if (!from) return;
+      var to = e.relatedTarget;
+      if (!to || !from.contains(to)) setHoverState(false);
+    };
+
+    onDown = function () {
+      setPressedState(true);
+    };
+
+    onUp = function () {
+      setPressedState(false);
+    };
+
+    onLeave = function () {
+      setVisible(false);
+    };
+
+    onEnter = function () {
+      setVisible(true);
+    };
+
+    document.addEventListener("mousemove", onMove, { passive: true });
+    document.addEventListener("mouseover", onOver);
+    document.addEventListener("mouseout", onOut);
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("mouseup", onUp);
+    document.documentElement.addEventListener("mouseleave", onLeave);
+    document.documentElement.addEventListener("mouseenter", onEnter);
+
+    enabled = true;
+  }
+
+  function unmount() {
+    if (!enabled) return;
+
+    document.removeEventListener("mousemove", onMove);
+    document.removeEventListener("mouseover", onOver);
+    document.removeEventListener("mouseout", onOut);
+    document.removeEventListener("mousedown", onDown);
+    document.removeEventListener("mouseup", onUp);
+    document.documentElement.removeEventListener("mouseleave", onLeave);
+    document.documentElement.removeEventListener("mouseenter", onEnter);
+
+    document.body.classList.remove("custom-cursor-active");
+
+    if (root && root.parentNode) {
+      root.parentNode.removeChild(root);
+    }
+
+    root = null;
+    ring = null;
+    dot = null;
+    xRing = null;
+    yRing = null;
+    xDot = null;
+    yDot = null;
+    enabled = false;
+    visible = false;
+    hovering = false;
+    pressed = false;
+    hasMoved = false;
+  }
+
+  onResize = function () {
+    if (canUseCustomCursor()) {
+      mount();
+    } else {
+      unmount();
+    }
+  };
+
+  mount();
+  window.addEventListener("resize", onResize);
 }
 
 /**
