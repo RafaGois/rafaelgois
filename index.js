@@ -19,6 +19,9 @@ function initApp() {
 
   initCustomCursor();
 
+  window.__heroIntroRequested = true;
+  window.dispatchEvent(new CustomEvent("hero:introStart"));
+
   // Aguardar carregamento das fontes antes de usar SplitText
   if (document.fonts && document.fonts.ready) {
     document.fonts.ready.then(() => {
@@ -45,6 +48,7 @@ function initOtherAnimations() {
   initBoxAnimations();
   initBoxSideImages();
   initBoxIcaro();
+  initBoxTagline();
   aboutMeAnimations();
 
   // Skills Section Animations
@@ -567,14 +571,6 @@ function initBoxIcaro() {
   var icaro = document.querySelector("#box-icaro");
   if (!icaro) return;
 
-  // Começa centrada atrás da moldura (top:50% + yPercent:-50 = centro exato),
-  // desce conforme o scroll emergindo pela borda inferior da moldura.
-  // z-index 35 < moldura z-40 → sempre atrás enquanto ainda sobreposta.
-  // Posição inicial: centrada atrás da moldura (xPercent -50 + yPercent -50)
-  // A imagem desce em unidades de viewport para garantir que sai visivelmente
-  // por baixo da moldura independente do tamanho do elemento.
-  // Dispara uma vez quando as laterais terminam (center center do box)
-  // Sem scrub — animação livre com duração e easing próprios.
   gsap.fromTo(icaro,
     { xPercent: -50, yPercent: -50, opacity: 0 },
     {
@@ -590,6 +586,27 @@ function initBoxIcaro() {
       },
     }
   );
+}
+
+function initBoxTagline() {
+  var tagline = document.querySelector("#box-tagline");
+  if (!tagline) return;
+
+  var prefersReducedMotion =
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  gsap.from(tagline, {
+    y: prefersReducedMotion ? 0 : 18,
+    opacity: 0,
+    duration: prefersReducedMotion ? 0.4 : 1,
+    ease: "power3.out",
+    scrollTrigger: {
+      trigger: "#box",
+      start: "center 72%",
+      toggleActions: "play none none reverse",
+    },
+  });
 }
 
 function initServicesAnimations() {
@@ -914,56 +931,128 @@ function initTestimonialsNavigation() {
 
 function headerInitAnimations() {
   const header = document.querySelector("header");
+  if (!header) return;
+
   const headerBars = header.querySelectorAll(".header-bar");
   const headerLetter = header.querySelector(".header-letter");
   const headerButton = header.querySelector(".header-button");
+  const headerTitle = header.querySelector(".header-title");
+  const headerSubtitle = header.querySelector(".header-subtitle");
+  const headerDescription = header.querySelector(".header-description");
+  const navItems = header.querySelectorAll("ul.flex.gap-16 li");
 
-  const tl = gsap.timeline();
+  const prefersReducedMotion =
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  tl.from(header.querySelectorAll("li"), {
-    scale: 0,
-    duration: 0.8,
-    ease: "power2.out",
-    stagger: {
-      amount: 0.5,
-      from: "edges",
-    },
-  });
+  const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-  tl.from(headerLetter, {
-    scale: 0,
-    transformOrigin: "center center",
-    duration: 1.5,
-    ease: "power2.out",
-  });
+  if (!window.__heroIntroRequested) {
+    window.__heroIntroRequested = true;
+    window.dispatchEvent(new CustomEvent("hero:introStart"));
+  }
 
-  tl.from(
-    headerBars[0],
-    {
-      scaleX: 0,
-      transformOrigin: "left center",
-      duration: 1.5,
-      ease: "power2.out",
-    },
-    "<0.4",
-  );
+  if (headerTitle && typeof SplitText !== "undefined" && !prefersReducedMotion) {
+    try {
+      const splitTitle = new SplitText(headerTitle, { type: "chars" });
+      const chars = splitTitle.chars;
+      const originalChars = chars.map((el) => el.textContent);
+      const scrambleSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZÀÁÃÇÊÉÍÓÚàáãçêéíóú!@#";
 
-  tl.from(
-    headerBars[1],
-    {
-      scaleX: 0,
-      transformOrigin: "right center",
-      duration: 1.5,
-      ease: "power2.out",
-    },
-    "<",
-  );
+      gsap.set(chars, { opacity: 0 });
 
-  // Verificar se SplitText está disponível e se o elemento existe
-  const headerSubtitle = document.querySelector(".header-subtitle");
+      const titleProxy = { progress: 0 };
+      tl.to(
+        titleProxy,
+        {
+          progress: 1,
+          duration: 2.35,
+          ease: "power3.out",
+          onUpdate: () => {
+            const p = titleProxy.progress;
+            chars.forEach((el, i) => {
+              const threshold =
+                chars.length <= 1 ? p : (i / (chars.length - 1)) * 0.9;
+              const resolved = p >= threshold;
+
+              el.textContent = resolved
+                ? originalChars[i]
+                : scrambleSet[
+                    Math.floor(Math.random() * scrambleSet.length)
+                  ];
+
+              if (resolved && el.dataset.resolved !== "1") {
+                el.dataset.resolved = "1";
+                gsap.to(el, {
+                  opacity: 1,
+                  duration: 0.28,
+                  ease: "power2.out",
+                });
+              }
+            });
+          },
+        },
+        0,
+      );
+    } catch (error) {
+      console.warn("Erro ao criar SplitText para header-title:", error);
+      tl.from(
+        headerTitle,
+        { opacity: 0, duration: 1.1, ease: "power3.out" },
+        0,
+      );
+    }
+  } else if (headerTitle) {
+    tl.from(
+      headerTitle,
+      { opacity: 0, duration: 1, ease: "power2.out" },
+      0,
+    );
+  }
+
+  if (headerBars[0]) {
+    tl.from(
+      headerBars[0],
+      {
+        scaleX: 0,
+        transformOrigin: "right center",
+        duration: 1.35,
+        ease: "expo.out",
+      },
+      0.45,
+    );
+  }
+
+  if (headerBars[1]) {
+    tl.from(
+      headerBars[1],
+      {
+        scaleX: 0,
+        transformOrigin: "left center",
+        duration: 1.35,
+        ease: "expo.out",
+      },
+      0.45,
+    );
+  }
+
+  if (headerLetter) {
+    tl.from(
+      headerLetter,
+      {
+        scale: 0,
+        rotate: -120,
+        transformOrigin: "center center",
+        duration: 0.9,
+        ease: "back.out(3)",
+      },
+      0.72,
+    );
+  }
+
   if (headerSubtitle && typeof SplitText !== "undefined") {
     try {
-      const split = new SplitText(".header-subtitle", {
+      const split = new SplitText(headerSubtitle, {
         type: "lines, words",
         mask: "lines",
       });
@@ -971,11 +1060,13 @@ function headerInitAnimations() {
         tl.from(
           split.lines,
           {
-            yPercent: -100,
+            yPercent: 110,
             opacity: 0,
+            duration: 0.85,
+            stagger: 0.08,
             ease: "expo.out",
           },
-          "<0.4",
+          1.35,
         );
       }
     } catch (error) {
@@ -983,23 +1074,23 @@ function headerInitAnimations() {
     }
   }
 
-  // Verificar se SplitText está disponível e se o elemento existe
-  const headerDescription = document.querySelector(".header-description");
   if (headerDescription && typeof SplitText !== "undefined") {
     try {
-      const splitDescription = new SplitText(".header-description", {
-        type: "lines, words",
+      const splitDescription = new SplitText(headerDescription, {
+        type: "lines",
         mask: "lines",
       });
       if (splitDescription && splitDescription.lines) {
         tl.from(
           splitDescription.lines,
           {
-            yPercent: -100,
+            yPercent: 100,
             opacity: 0,
-            ease: "expo.out",
+            duration: 0.75,
+            stagger: 0.06,
+            ease: "power2.out",
           },
-          "<0.3",
+          1.55,
         );
       }
     } catch (error) {
@@ -1007,15 +1098,34 @@ function headerInitAnimations() {
     }
   }
 
-  tl.from(
-    headerButton,
-    {
-      scale: 0,
-      transformOrigin: "center center",
-      ease: "power2.inOut",
-    },
-    "<0.2",
-  );
+  if (navItems.length) {
+    tl.from(
+      navItems,
+      {
+        y: -18,
+        opacity: 0,
+        duration: 0.65,
+        stagger: { amount: 0.35, from: "center" },
+        ease: "power2.out",
+      },
+      1.85,
+    );
+  }
+
+  if (headerButton) {
+    tl.from(
+      headerButton,
+      {
+        y: 16,
+        opacity: 0,
+        scale: 0.92,
+        transformOrigin: "center center",
+        duration: 0.7,
+        ease: "back.out(2)",
+      },
+      2.15,
+    );
+  }
 }
 
 function titlesScrollAnimations() {

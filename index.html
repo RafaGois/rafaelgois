@@ -44,7 +44,7 @@
 
     <link rel="icon" href="letra-r.ico" type="image/x-icon" />
     <!-- Aumente ?v= a cada deploy para forçar CSS/JS novos (complementa o .htaccess) -->
-    <link rel="stylesheet" href="style.css?v=6" />
+    <link rel="stylesheet" href="style.css?v=21" />
 
     <!-- Preconnect para melhorar performance de recursos externos -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
@@ -151,7 +151,7 @@
           </div>
           <div class="flex-1 h-px bg-[#4F4A4A]/20 header-bar"></div>
         </div>
-        <h1 class="text-7xl">Rafael Gois</h1>
+        <h1 class="text-7xl header-title">Rafael Gois</h1>
         <p class="text-2xl mb-4 header-subtitle">Software Engineer</p>
         <small class="text-sm text-wrap text-center max-w-xl header-description"
           >Criando soluções que impactam a vida das pessoas, resolvendo
@@ -268,20 +268,33 @@
           aria-hidden="true"
         ></div>
 
-        <img
-          id="box-moldura"
-          src="https://res.cloudinary.com/dn454izoh/image/upload/v1773077074/IMG_5497_n9xjds.png"
-          alt="Pensando fora da caixa"
-          class="w-full max-w-4xl z-40 object-center absolute"
-        />
-        <p
-          id="box-text"
-          class="z-10 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-7xl sm:text-8xl md:text-[10rem] font-black text-black uppercase text-center rotate-[-5deg] leading-[1.25] max-w-[90vw] text-nowrap"
-        >
-          Pensando <br />
-          fora <br />
-          da caixa
-        </p>
+        <div class="box-center">
+          <div class="box-center__stage">
+            <p
+              id="box-text"
+              class="box-headline absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-7xl sm:text-8xl md:text-[10rem] font-black text-black uppercase text-center rotate-[-5deg] leading-[1.25] max-w-[90vw] text-nowrap"
+            >
+              Pensando <br />
+              fora <br />
+              da caixa
+            </p>
+            <img
+              id="box-moldura"
+              src="https://res.cloudinary.com/dn454izoh/image/upload/v1773077074/IMG_5497_n9xjds.png"
+              alt="Pensando fora da caixa"
+              class="box-moldura w-full object-center"
+            />
+          </div>
+
+          <p id="box-tagline" class="box-tagline">
+            <span class="box-tagline__lead"
+              >Não é o que o software faz,</span
+            >
+            <span class="box-tagline__emphasis"
+              >é como ele faz as pessoas se sentirem.</span
+            >
+          </p>
+        </div>
       </section>
       <section id="skills" class="flex flex-col p-8 overflow-hidden">
         <div
@@ -1878,7 +1891,7 @@
     ></script>
     <script src="contact-config.js?v=2" defer></script>
     <script src="contact-form.js?v=3" defer></script>
-    <script src="index.js?v=6" defer></script>
-    <script type="module" src="three-entry.js?v=2"></script>
+    <script src="index.js?v=16" defer></script>
+    <script type="module" src="three-entry.js?v=4"></script>
   </body>
 </html>

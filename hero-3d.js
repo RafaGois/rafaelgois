@@ -234,6 +234,54 @@ registerRenderLayer({
 // ─── Scroll animations ────────────────────────────────────────────────────────
 // Aguarda GSAP + ScrollTrigger (scripts defer no HTML) E o GLB estar pronto
 // antes de registrar — caso contrário keyMeshes estaria vazio.
+let introPlayed = false;
+let introRequested = false;
+
+function playHeroIntro() {
+  if (introPlayed || !modelLoaded || !window.gsap) return;
+  introPlayed = true;
+
+  const { gsap } = window;
+  const reduced =
+    typeof window.matchMedia === 'function' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (reduced) {
+    gsap.to(pose, { opacity: 1, duration: 0.6, ease: 'power2.out' });
+    return;
+  }
+
+  gsap.fromTo(
+    pose,
+    {
+      opacity: 0,
+      scale: 0.62,
+      posZ: -1.85,
+      rotX: rad(34),
+      rotY: rad(32),
+    },
+    {
+      opacity: 1,
+      scale: 1,
+      posZ: 0,
+      rotX: BASE_ROT_X,
+      rotY: BASE_ROT_Y,
+      duration: 2.35,
+      ease: 'power3.out',
+    },
+  );
+}
+
+function requestHeroIntro() {
+  introRequested = true;
+  playHeroIntro();
+}
+
+window.addEventListener('hero:introStart', requestHeroIntro);
+if (window.__heroIntroRequested) {
+  requestHeroIntro();
+}
+
 function setupScrollAnimations() {
   if (!window.gsap || !window.ScrollTrigger || !modelLoaded) {
     requestAnimationFrame(setupScrollAnimations);
@@ -243,8 +291,8 @@ function setupScrollAnimations() {
   const { gsap, ScrollTrigger } = window;
   gsap.registerPlugin(ScrollTrigger);
 
-  // Fade de entrada
-  gsap.to(pose, { opacity: 1, duration: 1.8, ease: 'power2.out' });
+  // Sempre inicia visível no hero — não depende só do evento (corrida com fonts/GLB).
+  playHeroIntro();
 
   // Configuração padrão para as transições entre seções
   const trigger = (id, scrub = 1.5) => ({

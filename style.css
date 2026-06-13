@@ -115,6 +115,60 @@ body {
   height: 100%;
 }
 
+/* ─── Box — módulo central + tagline ──────────────────────────────────────── */
+.box-center {
+  position: relative;
+  z-index: 40;
+  width: 100%;
+  max-width: 56rem;
+  margin-inline: auto;
+}
+
+.box-center__stage {
+  position: relative;
+  width: 100%;
+}
+
+.box-headline {
+  z-index: 1;
+  pointer-events: none;
+}
+
+.box-moldura {
+  display: block;
+  position: relative;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.box-tagline {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: clamp(1.25rem, 3vh, 2rem);
+  padding-inline: 1.25rem;
+  max-width: 24rem;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.box-tagline__lead {
+  font-family: "Manrope", sans-serif;
+  font-size: clamp(0.8125rem, 1.35vw, 0.9375rem);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  line-height: 1.55;
+  color: rgba(79, 74, 74, 0.72);
+}
+
+.box-tagline__emphasis {
+  font-family: "Italiana", serif;
+  font-size: clamp(1.25rem, 2.2vw, 1.65rem);
+  line-height: 1.35;
+  color: #4f4a4a;
+}
+
 /* ─── Box — imagens laterais "Criação de Adão" ───────────────────────────── */
 #box-left-img {
   position: absolute;
@@ -138,11 +192,11 @@ body {
 
 #box-icaro {
   position: absolute;
-  top: 50%;           /* ancora no centro vertical do box */
-  left: 50%;
+  top: 50%;
+  left: 40%;
   max-height: clamp(14rem, 38vh, 28rem);
   width: auto;
-  z-index: 35;        /* atrás da moldura (z-40) — fica escondida atrás dela */
+  z-index: 35;
   will-change: transform, opacity;
 }
 
@@ -596,6 +650,12 @@ footer a:hover {
 
 .skill-item:hover::before {
   width: 8px;
+}
+
+.header-title .split-char,
+.header-title .char {
+  display: inline-block;
+  will-change: opacity;
 }
 
 /* ─── Cursor customizado (desktop) ─────────────────────────────────────────── */

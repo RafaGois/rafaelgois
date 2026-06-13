@@ -2,7 +2,7 @@
  * Entrada única do Three.js no index: só em viewport ≥ md (768px).
  * Hero no load; dobra #box via box-3d-loader (lazy + fila de GLBs).
  */
-const CACHE_VERSION = '2';
+const CACHE_VERSION = '4';
 const MD_MIN_WIDTH = '(min-width: 768px)';
 
 let started = false;
