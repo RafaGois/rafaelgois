@@ -29,8 +29,13 @@
   pointer-events: none;
 }
 
-/* Acima do canvas fixo do hero (teclado 3D). Hero, Sobre e Habilidades não entram aqui. */
-#box,
+/* Acima do canvas fixo do hero (teclado 3D). #box fica sem fundo opaco — os GLBs
+   desenham no canvas compartilhado atrás do HTML da dobra. */
+#box {
+  position: relative;
+  z-index: 30;
+}
+
 #projects,
 #services,
 #testimonials,
@@ -38,6 +43,7 @@
 body > footer {
   position: relative;
   z-index: 30;
+  background-color: #ededed;
 }
 
 body {
@@ -652,10 +658,11 @@ footer a:hover {
   width: 8px;
 }
 
+
 .header-title .split-char,
 .header-title .char {
   display: inline-block;
-  will-change: opacity;
+  will-change: opacity, transform;
 }
 
 /* ─── Cursor customizado (desktop) ─────────────────────────────────────────── */

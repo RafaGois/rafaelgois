@@ -689,98 +689,87 @@ function initServicesAnimations() {
 }
 
 function aboutMeAnimations() {
-  const aboutMeTextLeft = document.querySelector(".about-me-text-left");
+  const aboutMeTextLeft  = document.querySelector(".about-me-text-left");
   const aboutMeTextRight = document.querySelector(".about-me-text-right");
-  const aboutMeImage = document.querySelector(".about-me-image");
+  const aboutMeImage     = document.querySelector(".about-me-image");
 
   if (!aboutMeImage) return;
 
-  const isDesktop = window.innerWidth >= 1024;
+  const isDesktop = window.innerWidth >= 768;
 
-  // Usar immediateRender: false para evitar layout shift inicial
-  // Os elementos começam em suas posições finais e só animam quando o scroll trigger ativa
-  const tl = gsap.timeline({
-    scrollTrigger: {
-      trigger: aboutMeImage,
-      start: "top 75%",
-      end: "bottom 30%",
-      scrub: true,
-    },
-  });
-
-  // Animar imagem (scale não causa layout shift)
-  tl.fromTo(
+  // Imagem: cresce de 0.6 → 1 conforme a seção entra na tela
+  gsap.fromTo(
     aboutMeImage,
-    {
-      scale: 0.5,
-      transformOrigin: "center center",
-      immediateRender: false,
-    },
+    { scale: 0.6, opacity: 0, transformOrigin: "center center", immediateRender: false },
     {
       scale: 1,
-      ease: "power2.out",
+      opacity: 1,
+      ease: "none",
+      scrollTrigger: {
+        trigger: aboutMeImage,
+        start: "top 85%",
+        end: "center 55%",
+        scrub: 1.2,
+      },
     },
   );
 
-  // Animar textos - usar immediateRender: false para evitar shift inicial
   if (isDesktop) {
-    tl.fromTo(
-      aboutMeTextLeft,
-      {
-        x: 90,
-        opacity: 0,
-        immediateRender: false,
-      },
-      {
-        x: -50,
-        opacity: 1,
-        ease: "power2.out",
-      },
-      0,
-    );
-    tl.fromTo(
-      aboutMeTextRight,
-      {
-        x: -90,
-        opacity: 0,
-        immediateRender: false,
-      },
-      {
-        x: 50,
-        opacity: 1,
-        ease: "power2.out",
-      },
-      0,
-    );
+    // Desktop: textos chegam das bordas e pousam em x:0
+    if (aboutMeTextLeft) {
+      gsap.fromTo(
+        aboutMeTextLeft,
+        { x: -60, opacity: 0, immediateRender: false },
+        {
+          x: 0,
+          opacity: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: aboutMeImage,
+            start: "top 85%",
+            end: "center 55%",
+            scrub: 1.2,
+          },
+        },
+      );
+    }
+    if (aboutMeTextRight) {
+      gsap.fromTo(
+        aboutMeTextRight,
+        { x: 60, opacity: 0, immediateRender: false },
+        {
+          x: 0,
+          opacity: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: aboutMeImage,
+            start: "top 85%",
+            end: "center 55%",
+            scrub: 1.2,
+          },
+        },
+      );
+    }
   } else {
-    tl.fromTo(
-      aboutMeTextLeft,
-      {
-        y: 70,
-        opacity: 0,
-        immediateRender: false,
-      },
-      {
-        y: 0,
-        opacity: 1,
-        ease: "power2.out",
-      },
-      0,
-    );
-    tl.fromTo(
-      aboutMeTextRight,
-      {
-        y: -70,
-        opacity: 0,
-        immediateRender: false,
-      },
-      {
-        y: 0,
-        opacity: 1,
-        ease: "power2.out",
-      },
-      0,
-    );
+    // Mobile: tudo em coluna, cada bloco sobe ao aparecer
+    [aboutMeTextLeft, aboutMeTextRight].forEach((el) => {
+      if (!el) return;
+      gsap.fromTo(
+        el,
+        { y: 40, opacity: 0, immediateRender: false },
+        {
+          y: 0,
+          opacity: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: el,
+            start: "top 90%",
+            end: "top 60%",
+            scrub: 1,
+          },
+        },
+      );
+    });
   }
 }
 
@@ -956,41 +945,16 @@ function headerInitAnimations() {
     try {
       const splitTitle = new SplitText(headerTitle, { type: "chars" });
       const chars = splitTitle.chars;
-      const originalChars = chars.map((el) => el.textContent);
-      const scrambleSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZÀÁÃÇÊÉÍÓÚàáãçêéíóú!@#";
 
-      gsap.set(chars, { opacity: 0 });
-
-      const titleProxy = { progress: 0 };
+      gsap.set(chars, { opacity: 0, y: 40 });
       tl.to(
-        titleProxy,
+        chars,
         {
-          progress: 1,
-          duration: 2.35,
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          stagger: 0.038,
           ease: "power3.out",
-          onUpdate: () => {
-            const p = titleProxy.progress;
-            chars.forEach((el, i) => {
-              const threshold =
-                chars.length <= 1 ? p : (i / (chars.length - 1)) * 0.9;
-              const resolved = p >= threshold;
-
-              el.textContent = resolved
-                ? originalChars[i]
-                : scrambleSet[
-                    Math.floor(Math.random() * scrambleSet.length)
-                  ];
-
-              if (resolved && el.dataset.resolved !== "1") {
-                el.dataset.resolved = "1";
-                gsap.to(el, {
-                  opacity: 1,
-                  duration: 0.28,
-                  ease: "power2.out",
-                });
-              }
-            });
-          },
         },
         0,
       );
@@ -998,14 +962,14 @@ function headerInitAnimations() {
       console.warn("Erro ao criar SplitText para header-title:", error);
       tl.from(
         headerTitle,
-        { opacity: 0, duration: 1.1, ease: "power3.out" },
+        { opacity: 0, y: 30, duration: 1.1, ease: "power3.out" },
         0,
       );
     }
   } else if (headerTitle) {
     tl.from(
       headerTitle,
-      { opacity: 0, duration: 1, ease: "power2.out" },
+      { opacity: 0, y: 30, duration: 1, ease: "power3.out" },
       0,
     );
   }
@@ -1040,11 +1004,10 @@ function headerInitAnimations() {
     tl.from(
       headerLetter,
       {
-        scale: 0,
-        rotate: -120,
-        transformOrigin: "center center",
-        duration: 0.9,
-        ease: "back.out(3)",
+        opacity: 0,
+        scale: 0.7,
+        duration: 0.7,
+        ease: "power2.out",
       },
       0.72,
     );

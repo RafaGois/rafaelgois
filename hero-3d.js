@@ -31,15 +31,28 @@ function syncHero3dSuppressed() {
   if (!box || !skills || !projects) return;
 
   const vh = window.innerHeight;
-  // Não usar só `top < vh`: com Projetos só “encostando” no rodapé (ex.: em 03 Outros)
-  // o teclado sumia. Alinhar ao início da animação de Projetos (`top 52%` no ScrollTrigger).
-  const projectsEntered = projects.getBoundingClientRect().top < vh * 0.52;
-  const skillsEntered = skills.getBoundingClientRect().top < vh;
-  const boxEntered = box.getBoundingClientRect().top < vh;
+  const boxRect = box.getBoundingClientRect();
+  const skillsRect = skills.getBoundingClientRect();
+  const projectsRect = projects.getBoundingClientRect();
+
+  const skillsEntered = skillsRect.top < vh;
+  const boxEntered = boxRect.top < vh;
   const inBoxFoldOnly = boxEntered && !skillsEntered;
 
-  const suppressed = projectsEntered || inBoxFoldOnly;
+  // Alinhado ao handoff Skills → Projects (ScrollTrigger `top 52%`).
+  const projectsHandoff = projectsRect.top < vh * 0.52;
+
+  // Enquanto Projetos (ou seções abaixo) domina a dobra — skills já saiu da área útil.
+  const pastSkillsIntoProjects =
+    skillsRect.bottom < vh * 0.5 && projectsRect.bottom > 0;
+
+  const suppressed = inBoxFoldOnly || projectsHandoff || pastSkillsIntoProjects;
   container.classList.toggle('hero-3d-suppressed', suppressed);
+}
+
+function isHeroLayerVisible() {
+  if (container.classList.contains('hero-3d-suppressed')) return false;
+  return renderVisibility.isInView();
 }
 
 // ─── Scene ────────────────────────────────────────────────────────────────────
@@ -199,8 +212,8 @@ registerRenderLayer({
   scene,
   camera,
   getContainer: () => container,
-  isInView: () => renderVisibility.isInView(),
-  getOpacity: () => pose.opacity,
+  isInView: () => isHeroLayerVisible(),
+  getOpacity: () => (isHeroLayerVisible() ? pose.opacity : 0),
   zIndex: 0,
   toneMappingExposure: 1.0,
   update(dt, t) {
@@ -303,14 +316,29 @@ function setupScrollAnimations() {
   });
 
   // ─── Hero → About ─────────────────────────────────────────────────────────
-  // Zoom in durante a desmontagem: teclado cresce enquanto as teclas voam,
-  // dando sensação de câmera se aproximando antes de tudo desaparecer.
+  // Pose (rotação + scale): anima durante toda a entrada do #about na viewport.
   gsap.fromTo(pose,
-    { rotY: rad(38),  rotX: rad(22),  posX: 0,   posY: 0,    posZ: 0,    scale: 1.00, opacity: 1 },
-    { rotY: rad(42),  rotX: rad(58),  posX: 0,   posY: -0.2, posZ: 0,    scale: 1.55, opacity: 0,
+    { rotY: rad(38),  rotX: rad(22),  posX: 0,   posY: 0,    posZ: 0,    scale: 1.00 },
+    { rotY: rad(42),  rotX: rad(58),  posX: 0,   posY: -0.2, posZ: 0,    scale: 1.55,
       ease: 'power1.inOut',
       immediateRender: false,
-      scrollTrigger: { ...trigger('#about', 1.2) },
+      scrollTrigger: { ...trigger('#about', 1.2), end: 'top 38%' },
+    }
+  );
+
+  // Opacidade separada: começa a desaparecer gradualmente no terço final do scroll,
+  // indo de 1 → 0 suavemente antes do teclado sair completamente da cena.
+  gsap.fromTo(pose,
+    { opacity: 1 },
+    { opacity: 0,
+      ease: 'power1.in',
+      immediateRender: false,
+      scrollTrigger: {
+        trigger: '#about',
+        start: 'top 75%',
+        end:   'top 38%',
+        scrub: 1.2,
+      },
     }
   );
 
@@ -568,6 +596,19 @@ function setupScrollAnimations() {
     container.dataset.hero3dSuppressBound = '1';
     ScrollTrigger.addEventListener('refresh', syncHero3dSuppressed);
     window.addEventListener('scroll', syncHero3dSuppressed, { passive: true });
+
+    ScrollTrigger.create({
+      trigger: '#projects',
+      start: 'top 52%',
+      endTrigger: '#services',
+      end: 'top top',
+      onEnter: () => container.classList.add('hero-3d-suppressed'),
+      onEnterBack: () => container.classList.add('hero-3d-suppressed'),
+      onLeaveBack: () => {
+        container.classList.remove('hero-3d-suppressed');
+        syncHero3dSuppressed();
+      },
+    });
   }
   syncHero3dSuppressed();
   ScrollTrigger.refresh();
