@@ -480,40 +480,12 @@ p, small, li, span, a{
   background-color: #4F4A4A;
 }
 
-/* Contact Section — Vídeo de fundo controlado pelo scroll */
 #contact {
-  /* min-h é definido pelo Tailwind; o pin do ScrollTrigger usa altura real da viewport */
   background-color: #EDEDED;
-}
-
-.contact-bg-video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  z-index: 0;
-  pointer-events: none;
-  /* enquanto a JS não monta o scrub, evita flash do primeiro frame */
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  will-change: opacity;
-}
-
-.contact-bg-video.is-ready {
-  opacity: 0.76; /* alinhado ao scrub em index.js (VIDEO_BLEND_OPACITY) */
 }
 
 .contact-content {
   position: relative;
-  will-change: opacity, transform;
-}
-
-/* Estado inicial aplicado APENAS quando o JS confirma que vai animar.
-   Sem JS, o conteúdo permanece visível (graceful degradation). */
-.contact-content.is-scroll-driven {
-  opacity: 0;
 }
 
 /* Contact Section Styles */

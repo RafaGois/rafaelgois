@@ -62,9 +62,6 @@ function initOtherAnimations() {
   // Testimonials Section Navigation
   initTestimonialsNavigation();
 
-  // Contact - Scroll-scrubbed background video
-  initContactScrollVideo();
-
   // Footer - Update year
   updateFooterYear();
 
@@ -456,19 +453,29 @@ function initBoxAnimations() {
   const proxy = { progress: 0 };
   gsap.timeline({
     scrollTrigger: {
+      // Preso ao próprio texto: como o #box tem 120svh e o texto fica no
+      // centro, usar #box terminava o scramble antes do texto aparecer.
+      // Aqui começa quando o texto entra por baixo e termina no centro da tela,
+      // deixando a animação visível durante todo o percurso.
       trigger: "#box-text",
-      start: "top 80%",
-      end: "bottom 30%",
+      // "top 130%": começa com o texto ainda abaixo da tela, alongando o
+      // percurso do scramble até terminar no centro.
+      start: "top 150%",
+      end: "center center",
       scrub: true,
+      invalidateOnRefresh: true,
     },
   }).to(proxy, {
     progress: 1,
     duration: 1,
-    ease: "power2.out",
+    // Linear: o desembaralhamento se espalha por todo o scroll até o centro,
+    // em vez de terminar cedo (power2.out concentrava tudo no início).
+    ease: "none",
     onUpdate: () => {
       const p = proxy.progress;
       chars.forEach((el, i) => {
-        const threshold = (i / chars.length) * 0.9;
+        // Escalona até 1.0 para o último caractere resolver só no fim (centro).
+        const threshold = i / chars.length;
         el.textContent =
           p >= threshold ? originalChars[i] : scrambleSet[Math.floor(Math.random() * scrambleSet.length)];
       });
@@ -1352,146 +1359,3 @@ function initCustomCursor() {
   window.addEventListener("resize", onResize);
 }
 
-/**
- * Dobra de contato: vídeo `flower-motion.mp4` ao fundo, scrub controlado por scroll.
- * O arquivo só é baixado quando #contact entra no viewport.
- *
- * Sequência (tudo em um único ScrollTrigger para evitar conflitos de posição):
- *  0–72% do scroll → vídeo avança/recua; conteúdo invisível.
- *  72–100%         → vídeo faz fade-out; conteúdo faz fade-in sobre fundo neutro.
- *  Fim do pin      → scroll normal retoma com formulário visível.
- *
- * Distância de scrub do vídeo propositalmente mais curta (menos scroll para o fim).
- */
-function initContactScrollVideo() {
-  const section = document.getElementById("contact");
-  const video   = document.getElementById("contact-video");
-  const content = section ? section.querySelector(".contact-content") : null;
-
-  if (!section || !video || !content) return;
-  if (typeof ScrollTrigger === "undefined") return;
-  if (typeof gsap === "undefined") return;
-
-  video.muted      = true;
-  video.playsInline = true;
-
-  // CSS sabe que JS está no controle — esconde conteúdo via .is-scroll-driven.
-  content.classList.add("is-scroll-driven");
-
-  let videoLoadStarted = false;
-
-  const setup = () => {
-    if (section.dataset.scrollReady === "true") return;
-    section.dataset.scrollReady = "true";
-
-    video.classList.add("is-ready");
-
-    const duration = Number.isFinite(video.duration) && video.duration > 0
-      ? video.duration
-      : 4;
-
-    // 72% do scroll total é usado pelo scrub; 28% para a transição.
-    const VIDEO_RATIO = 0.72;
-
-    // Menos scroll para percorrer o vídeo: base menor (antes 0.8·vh e 0.3·vh·s).
-    const totalDistance = () =>
-      Math.max(window.innerHeight * 0.52, duration * window.innerHeight * 0.2) /
-      VIDEO_RATIO;
-
-    // Opacidade máxima < 1: o vídeo tem fundo branco e o bloco usa #EDEDED — mistura melhor.
-    const VIDEO_BLEND_OPACITY = 0.76;
-
-    // quickSetters: mais rápido que gsap.set() dentro de onUpdate.
-    const setVideoOpacity   = gsap.quickSetter(video,   "opacity");
-    const setContentOpacity = gsap.quickSetter(content, "opacity");
-    const setContentY       = gsap.quickSetter(content, "y", "px");
-
-    gsap.set(video,   { opacity: VIDEO_BLEND_OPACITY });
-    gsap.set(content, { opacity: 0, y: 24 });
-
-    let lastT = -1;
-    const minStep = 1 / 60; // evita seeks redundantes
-
-    ScrollTrigger.create({
-      trigger: section,
-      start: "top top",
-      end: () => "+=" + totalDistance(),
-      pin: true,
-      pinSpacing: true,
-      scrub: 0.35,          // um pouco mais rápido a acompanhar o scroll
-      anticipatePin: 1,
-      invalidateOnRefresh: true,
-      onUpdate: (self) => {
-        const p = self.progress; // já suavizado pelo scrub
-
-        // ── Fase 1: scrub do vídeo ──────────────────────────────────────────
-        const videoT = Math.min(p / VIDEO_RATIO, 1) * duration;
-        if (Math.abs(videoT - lastT) > minStep) {
-          lastT = videoT;
-          try { video.currentTime = videoT; } catch (_) {}
-        }
-
-        // ── Fase 2: transição (começa quando vídeo chega ao fim) ───────────
-        if (p <= VIDEO_RATIO) {
-          setVideoOpacity(VIDEO_BLEND_OPACITY);
-          setContentOpacity(0);
-          setContentY(24);
-        } else {
-          const t = (p - VIDEO_RATIO) / (1 - VIDEO_RATIO); // 0→1
-          setVideoOpacity(VIDEO_BLEND_OPACITY * (1 - t));
-          setContentOpacity(t);
-          setContentY(24 * (1 - t));
-        }
-      },
-    });
-  };
-
-  // iOS Safari só decodifica o primeiro frame após play(). Kick silencioso.
-  const kickFirstFrame = () => {
-    const p = video.play();
-    if (p && typeof p.then === "function") {
-      p.then(() => video.pause()).catch(() => {});
-    } else {
-      try { video.pause(); } catch (_) {}
-    }
-  };
-
-  const beginVideoLoad = () => {
-    if (videoLoadStarted) return;
-    videoLoadStarted = true;
-
-    const src = video.dataset.src;
-    if (!src) return;
-
-    video.src = src;
-    video.load();
-
-    const onMetadata = () => {
-      kickFirstFrame();
-      setup();
-    };
-
-    if (video.readyState >= 1 && Number.isFinite(video.duration)) {
-      onMetadata();
-    } else {
-      video.addEventListener("loadedmetadata", onMetadata, { once: true });
-      setTimeout(setup, 1500);
-    }
-  };
-
-  if (!("IntersectionObserver" in window)) {
-    beginVideoLoad();
-    return;
-  }
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      if (!entries.some((e) => e.isIntersecting)) return;
-      observer.disconnect();
-      beginVideoLoad();
-    },
-    { threshold: 0 },
-  );
-
-  observer.observe(section);
-}

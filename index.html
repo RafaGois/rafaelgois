@@ -110,7 +110,7 @@
           <li><a href="#skills">Habilidades</a></li>
           <li><a href="#projects">Projetos</a></li>
           <li><a href="#services">Serviços</a></li>
-          <li><a href="#testimonials">Depoimentos</a></li>
+          <!-- Depoimentos oculto temporariamente -->
         </ul>
         <div
           class="border border-[#4F4A4A] border-opacity-80 rounded-md p-1 px-4"
@@ -408,7 +408,7 @@
                       <p
                         class="skill-item text-sm md:text-base text-[#4F4A4A]/60 hover:text-[#4F4A4A] transition-all duration-500 cursor-default"
                       >
-                        JWT & Auth
+                        Nest.js
                       </p>
                       <p
                         class="skill-item text-sm md:text-base text-[#4F4A4A]/60 hover:text-[#4F4A4A] transition-all duration-500 cursor-default"
@@ -944,7 +944,8 @@
           </div>
         </div>
       </section>
-      <section id="testimonials" class="min-h-screen flex flex-col p-8">
+      <!-- Oculta temporariamente: remover "hidden" para reativar -->
+      <section id="testimonials" class="hidden min-h-screen flex flex-col p-8">
         <div
           class="section-title flex w-full flex-col items-center justify-center pt-32 pb-16"
         >
@@ -1220,18 +1221,6 @@
         id="contact"
         class="relative min-h-screen flex flex-col pt-20 px-8 pb-8 overflow-hidden"
       >
-        <video
-          id="contact-video"
-          class="contact-bg-video"
-          data-src="flower-motion.mp4"
-          muted
-          playsinline
-          preload="none"
-          aria-hidden="true"
-          tabindex="-1"
-          disablepictureinpicture
-          disableremoteplayback
-        ></video>
         <div class="contact-content relative z-10 flex flex-col w-full flex-1">
           <div
             class="section-title flex w-full flex-col items-center justify-center mb-10"
@@ -1522,17 +1511,7 @@
                   >
                 </a>
               </li>
-              <li>
-                <a
-                  href="#testimonials"
-                  class="text-sm text-[#4F4A4A]/70 hover:text-[#4F4A4A] transition-colors inline-flex items-center gap-2 group"
-                >
-                  <span>Depoimentos</span>
-                  <span class="group-hover:translate-x-1 transition-transform"
-                    >→</span
-                  >
-                </a>
-              </li>
+              <!-- Depoimentos oculto temporariamente -->
               <li>
                 <a
                   href="#contact"
@@ -1761,10 +1740,11 @@
           </div>
         </a>
 
+        <!-- Depoimentos oculto temporariamente -->
         <a
-          href="#testimonials"
+          href="#testimonials-disabled"
           onclick="closeMenu()"
-          class="mobile-menu-link group w-full max-w-sm border border-[#4F4A4A]/10 hover:border-[#4F4A4A]/30 p-6"
+          class="mobile-menu-link group w-full max-w-sm border border-[#4F4A4A]/10 hover:border-[#4F4A4A]/30 p-6 hidden"
         >
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
@@ -1897,7 +1877,7 @@
     ></script>
     <script src="contact-config.js?v=2" defer></script>
     <script src="contact-form.js?v=3" defer></script>
-    <script src="index.js?v=16" defer></script>
+    <script src="index.js?v=20" defer></script>
     <script type="module" src="three-entry.js?v=5"></script>
   </body>
 </html>
