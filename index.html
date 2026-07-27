@@ -18,6 +18,7 @@
     <meta name="language" content="Portuguese" />
     <meta name="geo.region" content="BR-SC" />
     <meta name="geo.placename" content="Curitibanos" />
+    <meta name="theme-color" content="#FFFBEF" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
@@ -42,18 +43,24 @@
       content="Software Engineer e desenvolvedor de soluções em Curitibanos. Especialista em desenvolvimento Full Stack e automação industrial."
     />
 
+    <!-- Marca que há JS: só então o CSS esconde o que será revelado por animação.
+         Sem JS, todo o conteúdo aparece normalmente. -->
+    <script>
+      document.documentElement.classList.add("js");
+    </script>
+
     <link rel="icon" href="letra-r.ico" type="image/x-icon" />
     <!-- Aumente ?v= a cada deploy para forçar CSS/JS novos (complementa o .htaccess) -->
-    <link rel="stylesheet" href="style.css?v=23" />
+    <link rel="stylesheet" href="ds.css?v=2" />
 
     <!-- Preconnect para melhorar performance de recursos externos -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+    <link rel="preconnect" href="https://res.cloudinary.com" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Italiana&family=Manrope:wght@200..800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Italiana&family=Manrope:wght@200..800&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
 
@@ -86,1798 +93,900 @@
       }
     </script>
   </head>
-  <body class="bg-[#EDEDED] text-[#4F4A4A] overflow-x-hidden">
-    <!-- Canvas WebGL único (hero + dobra #box via scissor/viewport) -->
+  <body class="grain">
+    <!-- ═══ Sprite de ícones — grid 24px, traço 1.75, pontas redondas ═══ -->
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <defs>
+        <symbol id="i-livro" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6c-1.8-1.6-4.2-2-8-2v14c3.8 0 6.2.4 8 2 1.8-1.6 4.2-2 8-2V4c-3.8 0-6.2.4-8 2Z"/><path d="M12 6v14"/></symbol>
+        <symbol id="i-terminal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m5 8 4 4-4 4"/><path d="M12 17h7"/><rect x="2.5" y="3.5" width="19" height="17" rx="2.5"/></symbol>
+        <symbol id="i-faixa" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h18v4H3z"/><path d="M12 14 8 21M12 14l4 7"/><path d="M12 10v4"/></symbol>
+        <symbol id="i-fagulha" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5c.8 5.2 4.3 8.7 9.5 9.5-5.2.8-8.7 4.3-9.5 9.5-.8-5.2-4.3-8.7-9.5-9.5 5.2-.8 8.7-4.3 9.5-9.5Z"/></symbol>
+        <symbol id="i-escudo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5 4 5.5v6c0 5 3.4 8.6 8 10 4.6-1.4 8-5 8-10v-6l-8-3Z"/></symbol>
+        <symbol id="i-codigo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m8 6-6 6 6 6M16 6l6 6-6 6"/></symbol>
+        <symbol id="i-camadas" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/><path d="m3 17.5 9 5 9-5"/></symbol>
+        <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18M3 12h18M3 17h18"/></symbol>
+        <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+        <symbol id="i-linkedin" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></symbol>
+        <symbol id="i-github" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></symbol>
+        <symbol id="i-instagram" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></symbol>
+      </defs>
+    </svg>
+
+    <a class="sr-only" href="#about">Pular para o conteúdo</a>
+
+    <!-- Textura de fundo da dobra do hero: fixa, atrás do canvas WebGL
+         compartilhado (mesma família de z que ele, porém abaixo), para que o
+         teclado 3D renderize por cima dela em vez de atrás. O canvas limpa
+         com alpha 0, então ela aparece nos vãos onde não há teclado desenhado.
+         Visibilidade e movimento (translateX alternado por capítulo) ficam
+         a cargo do hero cinematográfico em site.js; some sozinha quando a
+         dobra do hero sai da tela. -->
+    <div class="hero__bg-image" aria-hidden="true"></div>
+
+    <!-- Canvas WebGL único: teclado do hero + GLBs da dobra "fora da caixa".
+         Fixo atrás do conteúdo; as seções opacas o cobrem, o hero e a dobra
+         #box são transparentes para deixá-lo aparecer. (desktop) -->
     <div
       id="three-composite-root"
-      class="three-composite-root hidden md:block pointer-events-none"
+      class="three-composite-root"
       aria-hidden="true"
     >
       <canvas id="three-composite-canvas"></canvas>
     </div>
-    <!-- Âncora fixa do hero (visibilidade / scroll); render no canvas compartilhado -->
-    <div
-      id="hero-3d-container"
-      class="hidden md:block pointer-events-none"
-      aria-hidden="true"
-    ></div>
+    <!-- Âncora do teclado 3D: viewport inteira, render no canvas compartilhado -->
+    <div id="hero-3d-container" aria-hidden="true"></div>
 
-    <header class="flex flex-col min-h-screen relative z-10">
-      <div class="hidden md:flex items-center justify-between px-10 py-6">
-        <p>Rafael Gois</p>
-        <ul class="flex gap-16">
-          <li><a href="#about">Sobre mim</a></li>
-          <li><a href="#skills">Habilidades</a></li>
-          <li><a href="#projects">Projetos</a></li>
-          <li><a href="#services">Serviços</a></li>
-          <!-- Depoimentos oculto temporariamente -->
-        </ul>
-        <div
-          class="border border-[#4F4A4A] border-opacity-80 rounded-md p-1 px-4"
-        >
-          <a href="#contact">Contato</a>
-        </div>
-      </div>
-      <div class="flex justify-between items-center md:hidden px-10 py-6">
-        <p>Rafael Gois</p>
-        <button
-          onclick="toggleMenu()"
-          class="text-2xl text-[#4F4A4A] hover:opacity-70 transition-opacity"
-          aria-label="Abrir menu"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-          >
-            <path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z" />
-          </svg>
-        </button>
-      </div>
-      <!-- Texto: centralizado sobre o canvas fixo -->
-      <div
-        class="flex-1 flex flex-col items-center justify-center relative z-10"
+    <!-- ═══════════════ NAVBAR ═══════════════ -->
+    <nav class="navbar" id="navbar" aria-label="Navegação principal">
+      <a class="navbar__logo" href="#hero">Rafael Gois<em>.</em></a>
+      <ul class="navbar__links">
+        <li><a class="link-line" href="#about">Sobre mim</a></li>
+        <li><a class="link-line" href="#skills">Habilidades</a></li>
+        <li><a class="link-line" href="#projects">Projetos</a></li>
+        <li><a class="link-line" href="#services">Serviços</a></li>
+      </ul>
+      <a class="btn btn--primary btn--sm navbar__cta" href="#contact">Fale comigo</a>
+      <button
+        class="navbar__burger"
+        id="menu-open"
+        type="button"
+        aria-label="Abrir menu"
+        aria-expanded="false"
+        aria-controls="mobileMenu"
       >
-        <div
-          class="flex items-center justify-center gap-2 w-full max-w-xs mb-8"
-        >
-          <div class="flex-1 h-px bg-[#4F4A4A]/20 header-bar"></div>
-          <div
-            class="header-letter h-6 w-6 border border-[#4F4A4A]/20 rounded-sm text-center"
-          >
-            R
+        <svg class="ic" aria-hidden="true"><use href="#i-menu" /></svg>
+      </button>
+    </nav>
+
+    <!-- ═══════════════ HERO — narrativa cinematográfica guiada por scroll ═══
+         Seção alta + palco sticky. Um único progresso suavizado (lerp) move
+         câmera, névoa, luz, capítulos, HUD e o teclado 3D. -->
+    <header class="hero" id="hero">
+      <div class="hero__track">
+        <div class="hero__stage">
+          <div class="hero__rig" aria-hidden="true">
+            <div class="hero__fog hero__fog--back"></div>
+            <div class="hero__bg"><canvas id="hero-canvas"></canvas></div>
+            <div class="hero__light"></div>
+            <div class="hero__rays"></div>
+            <div class="hero__fog hero__fog--front"></div>
           </div>
-          <div class="flex-1 h-px bg-[#4F4A4A]/20 header-bar"></div>
+          <div class="hero__vignette" aria-hidden="true"></div>
+          <div class="hero__flash" aria-hidden="true"></div>
+
+          <div class="hero__scenes">
+            <section class="hero-chapter hero-chapter--rest" data-chapter="3" aria-label="Apresentação">
+              <div>
+                <h1 class="hero-rest__name">
+                  Rafael
+                  <em>Gois<svg class="sig-stroke" viewBox="0 0 300 40" aria-hidden="true"><path d="M6 28 C 60 12, 120 34, 170 22 S 260 14, 294 24"/></svg></em>
+                </h1>
+                <p class="hero-rest__role">Engenheiro de software · Curitibanos, SC</p>
+                <p class="hero-rest__tag">
+                  Desenvolvo software onde a complexidade técnica encontra a
+                  experiência do usuário — do sistema de controle
+                  <span class="mark-amber" data-mark>siderúrgico</span> ao produto digital.
+                </p>
+                <div class="hero-rest__actions">
+                  <a class="btn btn--primary" href="#projects">
+                    Ver projetos <span class="btn__arrow" aria-hidden="true">→</span>
+                  </a>
+                  <a class="btn btn--secondary" href="#contact">Fale comigo</a>
+                </div>
+              </div>
+            </section>
+
+            <section class="hero-chapter hero-chapter--minor" data-chapter="1" data-side="left" aria-label="Capítulo II">
+              <div>
+                <p class="hero-chapter__over">Capítulo II — o gesto</p>
+                <p class="hero-chapter__line" data-split>
+                  Programo como quem pratica um kata — repito até restar só o movimento certo.
+                </p>
+              </div>
+            </section>
+
+            <section class="hero-chapter hero-chapter--minor" data-chapter="2" data-side="right" aria-label="Capítulo III">
+              <div>
+                <p class="hero-chapter__over">Capítulo III — o ofício</p>
+                <p class="hero-chapter__line" data-split>
+                  Aprendi no chão de fábrica que software ruim para o operador é software que ninguém usa.
+                </p>
+              </div>
+            </section>
+
+            <section class="hero-chapter hero-chapter--minor" data-chapter="0" aria-label="Capítulo I">
+              <div>
+                <p class="hero-chapter__over">Capítulo I — o leitor</p>
+                <p class="hero-chapter__line" data-split>
+                  Toda história que li me ensinou o mesmo: o essencial se revela devagar.
+                </p>
+              </div>
+            </section>
+          </div>
+
+          <p class="hero__cue" aria-hidden="true">
+            <span>role</span>
+            <span class="hero__cue-line"></span>
+          </p>
+
+          <div class="hero__hud" aria-hidden="true">
+            <span class="hero__hud-chapter" id="hero-hud-chapter">01</span>
+            <span class="hero__hud-label" id="hero-hud-label">O leitor</span>
+            <span class="hero__hud-bar"><i id="hero-hud-bar"></i></span>
+          </div>
         </div>
-        <h1 class="text-7xl header-title">Rafael Gois</h1>
-        <p class="text-2xl mb-4 header-subtitle">Software Engineer</p>
-        <small class="text-sm text-wrap text-center max-w-xl header-description"
-          >Engenheiro de software com paixão pela experiência do usuário.
-          Transformo sistemas complexos em interfaces úteis e simples que as pessoas
-          realmente querem usar</small
-        >
-        <button
-          onclick="window.location.href = '#projects'"
-          class="header-button mt-12 bg-[#4F4A4A] text-white px-4 py-2"
-        >
-          Ver projetos →
-        </button>
       </div>
     </header>
-    <main class="relative z-10">
-      <section id="about" class="min-h-screen flex flex-col z-10 pb-32">
-        <div
-          class="section-title flex w-full flex-col items-center justify-center pb-16"
-        >
-          <div id="bar" class="h-px w-full bg-[#4F4A4A]/20"></div>
-          <h2 class="text-5xl text-center mb-4">Sobre mim</h2>
-          <p
-            class="section-description text-sm text-wrap text-center max-w-xl mx-auto px-4"
-          >
-            Engenheiro de software com passagem pela indústria. Crio produtos
-            digitais que as pessoas conseguem usar de verdade.
-          </p>
+
+    <main>
+      <!-- ═══════════════ SOBRE — a história em três atos (scroll horizontal) ═══════════════ -->
+      <section class="section about-scroll" id="about">
+        <div class="wrap">
+          <header class="sec-head" data-reveal>
+            <div class="sec-head__rule" data-rule></div>
+            <p class="text-overline">01 / Sobre mim</p>
+            <h2 class="sec-head__title">A engenharia veio antes<br />do desenho de tela</h2>
+            <p class="sec-head__lede">
+              Não cheguei ao design pelo design. Cheguei vendo de perto o
+              custo de um sistema que ninguém consegue usar.
+            </p>
+          </header>
         </div>
-        <div
-          class="flex-1 flex flex-col md:flex-row items-center justify-center gap-4"
-        >
-          <p
-            class="text-sm text-wrap text-center max-w-xs 2xl:max-w-xl about-me-text-left"
-          >
-            Me chamo <span class="font-bold">Rafael Gois</span>. Comecei na
-            indústria com sistemas de controle, ordens de fabricação e
-            processos. Nesses ambientes, um sistema ruim pode 
-            comprometer o trabalho de todo mundo e, consequentemente, 
-            a linha de produção
-          </p>
-          <img
-            src="https://res.cloudinary.com/dn454izoh/image/upload/v1764007901/me-1_1_qmaart.webp"
-            alt="Rafael Gois - Desenvolvedor de Software e Software Engineer em Curitibanos, Santa Catarina"
-            title="Rafael Gois - Desenvolvedor Full Stack"
-            class="w-1/2 md:w-1/4 h-auto about-me-image"
-            width="1779"
-            height="2746"
-          />
-          <p
-            class="text-sm text-wrap text-center max-w-xs 2xl:max-w-xl about-me-text-right"
-          >
-            Foi lá que vi na prática como a experiência do usuário faz total
-            diferença. Hoje levo esse mesmo cuidado para tudo o que faço,
-            criando software simples, direto e que realmente funcione, agregue valor e melhora na vida dos 
-            seus usuários
-          </p>
+
+        <div class="about-scroll__pin" id="about-scroll-pin">
+          <!-- Linha torta ao fundo: a vida não segue linhas retas — dá
+               voltas, recua, gira sobre si e retoma o rumo. Fica parada
+               (pinada) enquanto os atos deslizam por cima; a curva se
+               desenha conforme o scroll avança, laços incluídos. -->
+          <svg class="about-curve-svg" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true">
+            <g class="about-curve-drift about-curve-drift--main">
+              <path class="about-curve-path about-curve-path--main" d="M 0 700 C 160 800, 280 620, 420 600 C 520 585, 560 480, 480 420 C 400 360, 280 400, 260 500 C 245 570, 300 630, 420 600 C 600 555, 660 300, 880 380 C 1000 425, 1040 560, 960 620 C 900 665, 820 630, 830 560 C 838 505, 900 460, 1000 470 C 1160 485, 1200 300, 1380 260 C 1460 242, 1540 260, 1600 240" />
+            </g>
+          </svg>
+
+          <div class="about-scroll__track" id="about-scroll-track">
+            <div class="about-panel about-panel--i" data-panel>
+              <figure class="about__portrait about-panel__media">
+                <img
+                  src="https://res.cloudinary.com/dn454izoh/image/upload/v1764007901/me-1_1_qmaart.webp"
+                  alt="Rafael Gois - Desenvolvedor de Software e Software Engineer em Curitibanos, Santa Catarina"
+                  title="Rafael Gois - Desenvolvedor Full Stack"
+                  width="1779"
+                  height="2746"
+                />
+                <figcaption>Rafael Gois — Curitibanos, Santa Catarina</figcaption>
+              </figure>
+              <article class="act about-panel__text">
+                <span class="act__roman" aria-hidden="true">I</span>
+                <p class="act__num">Ato I — o contexto</p>
+                <h3 class="act__title">Comecei onde o erro custa caro</h3>
+                <p class="act__text">
+                  Entrei em software pela indústria: sistemas de controle,
+                  ordens de fabricação. Ali, uma tela confusa não gera ticket —
+                  <span class="mark-amber" data-mark>ela para a linha de produção</span>.
+                </p>
+              </article>
+            </div>
+
+            <div class="about-panel about-panel--ii about-panel--reverse" data-panel>
+              <article class="act about-panel__text">
+                <span class="act__roman" aria-hidden="true">II</span>
+                <p class="act__num">Ato II — a virada</p>
+                <h3 class="act__title">O operador me ensinou o resto</h3>
+                <p class="act__text">
+                  Vi sistemas corretos serem abandonados por hostis a quem os
+                  usava às seis da manhã, de luva. Entendi ali: UX não é
+                  acabamento — é engenharia.
+                </p>
+              </article>
+              <figure class="about__portrait about-panel__media">
+                <img
+                  src="https://res.cloudinary.com/dn454izoh/image/upload/v1764007901/me-1_1_qmaart.webp"
+                  alt="Rafael Gois - Desenvolvedor de Software e Software Engineer em Curitibanos, Santa Catarina"
+                  title="Rafael Gois - Desenvolvedor Full Stack"
+                  width="1779"
+                  height="2746"
+                />
+                <figcaption>Rafael Gois — Curitibanos, Santa Catarina</figcaption>
+              </figure>
+            </div>
+
+            <div class="about-panel about-panel--iii" data-panel>
+              <figure class="about__portrait about-panel__media">
+                <img
+                  src="https://res.cloudinary.com/dn454izoh/image/upload/v1764007901/me-1_1_qmaart.webp"
+                  alt="Rafael Gois - Desenvolvedor de Software e Software Engineer em Curitibanos, Santa Catarina"
+                  title="Rafael Gois - Desenvolvedor Full Stack"
+                  width="1779"
+                  height="2746"
+                />
+                <figcaption>Rafael Gois — Curitibanos, Santa Catarina</figcaption>
+              </figure>
+              <article class="act act--now about-panel__text">
+                <span class="act__roman" aria-hidden="true">III</span>
+                <p class="act__num">Ato III — o hoje</p>
+                <h3 class="act__title">Levo esse cuidado para tudo</h3>
+                <p class="act__text">
+                  Hoje construo com a mesma régua: simples na superfície,
+                  sólido por dentro. Programador por ofício; leitor e
+                  praticante de artes marciais pelo resto.
+                </p>
+              </article>
+            </div>
+          </div>
+
+          <!-- HUD de progresso: mesmo padrão do hero (capítulo + label + barra),
+               atualizado em site.js conforme o ato mais próximo do centro do pin. -->
+          <div class="hero__hud about-hud" id="about-hud" aria-hidden="true">
+            <span class="hero__hud-chapter" id="about-hud-chapter">I</span>
+            <span class="hero__hud-label" id="about-hud-label">O contexto</span>
+            <span class="hero__hud-bar"><i id="about-hud-bar"></i></span>
+          </div>
+
+          <!-- Marcador lateral dos três atos — destaca o ato ativo enquanto o
+               scroll horizontal avança. -->
+          <nav class="about-stepper" id="about-stepper" aria-hidden="true">
+            <span class="about-stepper__item is-active" data-step="0">I</span>
+            <span class="about-stepper__rule"></span>
+            <span class="about-stepper__item" data-step="1">II</span>
+            <span class="about-stepper__rule"></span>
+            <span class="about-stepper__item" data-step="2">III</span>
+          </nav>
         </div>
       </section>
-      <section
-        id="box"
-        class="h-[120svh] flex flex-col items-center justify-center relative p-8"
-      >
+
+      <!-- ═══════════════ FORA DA CAIXA — dobra 3D (desktop) ═══════════════ -->
+      <section id="box" aria-label="Pensando fora da caixa">
         <!-- Imagens laterais "Criação de Adão" -->
-        <img
-          id="box-left-img"
-          src="left.png"
-          alt=""
-          aria-hidden="true"
-          class="absolute hidden md:block pointer-events-none select-none"
-        />
-        <img
-          id="box-right-img"
-          src="1.png"
-          alt=""
-          aria-hidden="true"
-          class="absolute hidden md:block pointer-events-none select-none"
-        />
-
+        <img id="box-left-img" src="left.png" alt="" aria-hidden="true" />
+        <img id="box-right-img" src="1.png" alt="" aria-hidden="true" />
         <!-- Ícaro sobe de baixo do box central -->
-        <img
-          id="box-icaro"
-          src="icaro.png"
-          alt=""
-          aria-hidden="true"
-          class="absolute hidden md:block pointer-events-none select-none"
-        />
+        <img id="box-icaro" src="icaro.png" alt="" aria-hidden="true" />
 
-        <!-- ─── Lado esquerdo inferior: pokebola (contexto próprio) ── -->
-        <div
-          id="box-left-bottom-3d"
-          class="box-left-bottom-3d-panel hidden md:block"
-          aria-hidden="true"
-        ></div>
-
-        <!-- ─── Lado esquerdo superior: david_head.glb (contexto próprio) ── -->
-        <div
-          id="box-left-top-3d"
-          class="box-left-top-3d-panel hidden md:block"
-          aria-hidden="true"
-        ></div>
-
-        <!-- ─── Lado direito inferior: retro_computer__low.glb (contexto próprio) ── -->
-        <div
-          id="box-right-bottom-3d"
-          class="box-right-bottom-3d-panel hidden md:block"
-          aria-hidden="true"
-        ></div>
-
-        <!-- ─── Lado direito superior: mouse_arrow.glb (contexto próprio) ── -->
-        <div
-          id="box-right-top-3d"
-          class="box-right-top-3d-panel hidden md:block"
-          aria-hidden="true"
-        ></div>
+        <!-- Painéis 3D: pokebola, david_head, retro_computer, mouse_arrow -->
+        <div id="box-left-bottom-3d" class="box-left-bottom-3d-panel" aria-hidden="true"></div>
+        <div id="box-left-top-3d" class="box-left-top-3d-panel" aria-hidden="true"></div>
+        <div id="box-right-bottom-3d" class="box-right-bottom-3d-panel" aria-hidden="true"></div>
+        <div id="box-right-top-3d" class="box-right-top-3d-panel" aria-hidden="true"></div>
 
         <div class="box-center">
           <div class="box-center__stage">
-            <p
-              id="box-text"
-              class="box-headline absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-7xl sm:text-8xl md:text-[10rem] font-black text-black uppercase text-center rotate-[-5deg] leading-[1.25] max-w-[90vw] text-nowrap"
-            >
-              Pensando <br />
-              fora <br />
-              da caixa
+            <p id="box-text" class="box-headline">
+              <span class="box-headline__line">Pensando</span><br />
+              <span class="box-headline__line">fora</span><br />
+              <span class="box-headline__line">da caixa</span>
             </p>
             <img
               id="box-moldura"
               src="https://res.cloudinary.com/dn454izoh/image/upload/v1773077074/IMG_5497_n9xjds.png"
               alt="Pensando fora da caixa"
-              class="box-moldura w-full object-center"
+              class="box-moldura"
             />
           </div>
 
           <p id="box-tagline" class="box-tagline">
-            <span class="box-tagline__lead"
-              >Não é o que o software faz,</span
-            >
-            <span class="box-tagline__emphasis"
-              >é como ele faz as pessoas se sentirem.</span
-            >
+            <span class="box-tagline__lead">O que me move</span>
+            <span class="box-tagline__emphasis">
+              Fazer o simples parecer óbvio — e o complexo, invisível.
+            </span>
           </p>
         </div>
       </section>
-      <section id="skills" class="flex flex-col p-8 overflow-hidden">
-        <div
-          class="section-title flex w-full flex-col items-center justify-center my-24"
-        >
-          <div id="bar" class="h-px w-full bg-[#4F4A4A]/20"></div>
-          <h2 class="text-5xl text-center mb-4">Habilidades</h2>
-          <p
-            class="section-description text-sm text-wrap text-center max-w-xl mx-auto px-4"
-          >
-            Ao longo dos anos, desenvolvi expertise em diversas tecnologias e
-            metodologias, sempre priorizando qualidade, performance e
-            experiência do usuário. Cada ferramenta é escolhida com propósito,
-            cada solução é pensada com cuidado.
-          </p>
-        </div>
-        <div id="skills-path-wrapper" class="relative max-w-6xl mx-auto w-full">
-          <svg
-            id="skills-svg"
-            class="absolute top-0 left-0 w-full h-full pointer-events-none z-0"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          ></svg>
-          <div class="relative z-10 py-16 lg:py-24">
-            <!-- 01 Frontend -->
-            <div class="skill-node mb-40 lg:mb-64" data-align="left">
-              <div class="skill-node-content lg:w-[50%]">
-                <div class="flex items-start gap-4 md:gap-8">
-                  <span
-                    class="skill-number text-7xl md:text-[8rem] font-bold text-[#4F4A4A] leading-none select-none"
-                    >01</span
-                  >
-                  <div>
-                    <h3 class="text-3xl md:text-5xl font-bold mb-6 md:mb-10">
-                      Frontend
-                    </h3>
-                    <div class="space-y-3 pl-1">
-                      <p
-                        class="skill-item text-sm md:text-base text-[#4F4A4A]/60 hover:text-[#4F4A4A] transition-all duration-500 cursor-default"
-                      >
-                        React
-                      </p>
-                      <p
-                        class="skill-item text-sm md:text-base text-[#4F4A4A]/60 hover:text-[#4F4A4A] transition-all duration-500 cursor-default"
-                      >
-                        Next.js
-                      </p>
-                      <p
-                        class="skill-item text-sm md:text-base text-[#4F4A4A]/60 hover:text-[#4F4A4A] transition-all duration-500 cursor-default"
-                      >
-                        JavaScript
-                      </p>
-                      <p
-                        class="skill-item text-sm md:text-base text-[#4F4A4A]/60 hover:text-[#4F4A4A] transition-all duration-500 cursor-default"
-                      >
-                        React Native
-                      </p>
-                      <p
-                        class="skill-item text-sm md:text-base text-[#4F4A4A]/60 hover:text-[#4F4A4A] transition-all duration-500 cursor-default"
-                      >
-                        GSAP
-                      </p>
-                      <p
-                        class="skill-item text-sm md:text-base text-[#4F4A4A]/60 hover:text-[#4F4A4A] transition-all duration-500 cursor-default"
-                      >
-                        HTML5 & CSS3
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- 02 Backend -->
-            <div
-              id="skills-backend"
-              class="skill-node mb-40 lg:mb-64"
-              data-align="right"
-            >
-              <div
-                class="skill-node-content lg:w-[50%] lg:ml-auto pl-8 sm:pl-10 lg:pl-14 xl:pl-24"
-              >
-                <div class="flex items-start gap-4 md:gap-8">
-                  <span
-                    class="skill-number text-7xl md:text-[8rem] font-bold text-[#4F4A4A] leading-none select-none"
-                    >02</span
-                  >
-                  <div>
-                    <h3 class="text-3xl md:text-5xl font-bold mb-6 md:mb-10">
-                      Backend
-                    </h3>
-                    <div class="space-y-3 pl-1">
-                      <p
-                        class="skill-item text-sm md:text-base text-[#4F4A4A]/60 hover:text-[#4F4A4A] transition-all duration-500 cursor-default"
-                      >
-                        Node.js
-                      </p>
-                      <p
-                        class="skill-item text-sm md:text-base text-[#4F4A4A]/60 hover:text-[#4F4A4A] transition-all duration-500 cursor-default"
-                      >
-                        Prisma
-                      </p>
-                      <p
-                        class="skill-item text-sm md:text-base text-[#4F4A4A]/60 hover:text-[#4F4A4A] transition-all duration-500 cursor-default"
-                      >
-                        SQL Server
-                      </p>
-                      <p
-                        class="skill-item text-sm md:text-base text-[#4F4A4A]/60 hover:text-[#4F4A4A] transition-all duration-500 cursor-default"
-                      >
-                        Express.js
-                      </p>
-                      <p
-                        class="skill-item text-sm md:text-base text-[#4F4A4A]/60 hover:text-[#4F4A4A] transition-all duration-500 cursor-default"
-                      >
-                        Nest.js
-                      </p>
-                      <p
-                        class="skill-item text-sm md:text-base text-[#4F4A4A]/60 hover:text-[#4F4A4A] transition-all duration-500 cursor-default"
-                      >
-                        TypeScript
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- 03 Outros -->
-            <div id="skills-outros" class="skill-node" data-align="left">
-              <div class="skill-node-content lg:w-[50%]">
-                <div class="flex items-start gap-4 md:gap-8">
-                  <span
-                    class="skill-number text-7xl md:text-[8rem] font-bold text-[#4F4A4A] leading-none select-none"
-                    >03</span
-                  >
-                  <div>
-                    <h3 class="text-3xl md:text-5xl font-bold mb-6 md:mb-10">
-                      Outros
-                    </h3>
-                    <div class="space-y-3 pl-1">
-                      <p
-                        class="skill-item text-sm md:text-base text-[#4F4A4A]/60 hover:text-[#4F4A4A] transition-all duration-500 cursor-default"
-                      >
-                        UI/UX Design
-                      </p>
-                      <p
-                        class="skill-item text-sm md:text-base text-[#4F4A4A]/60 hover:text-[#4F4A4A] transition-all duration-500 cursor-default"
-                      >
-                        Performance
-                      </p>
-                      <p
-                        class="skill-item text-sm md:text-base text-[#4F4A4A]/60 hover:text-[#4F4A4A] transition-all duration-500 cursor-default"
-                      >
-                        Responsividade
-                      </p>
-                      <p
-                        class="skill-item text-sm md:text-base text-[#4F4A4A]/60 hover:text-[#4F4A4A] transition-all duration-500 cursor-default"
-                      >
-                        SEO
-                      </p>
-                      <p
-                        class="skill-item text-sm md:text-base text-[#4F4A4A]/60 hover:text-[#4F4A4A] transition-all duration-500 cursor-default"
-                      >
-                        Git & Versionamento
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      <section id="projects" class="min-h-screen flex flex-col p-8">
-        <div
-          class="section-title flex w-full flex-col items-center justify-center my-24"
-        >
-          <div id="bar" class="h-px w-full bg-[#4F4A4A]/20"></div>
-          <h2 class="text-5xl text-center mb-4">Projetos</h2>
-          <p
-            class="section-description text-sm text-wrap text-center max-w-xl mx-auto px-4"
-          >
-            Cada projeto começa com um problema real. O que você vê aqui
-            é o resultado — o que não aparece é o processo de entender
-            o negócio antes de escrever a primeira linha de código.
-          </p>
-        </div>
-        <div class="max-w-7xl mx-auto w-full">
-          <div class="projects-container space-y-16">
-            <!-- Project 1: Elevate Pro Media -->
-            <div class="project-item group" data-project="elevate">
-              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-                <div class="project-content order-2 lg:order-1">
-                  <div class="flex items-center gap-3 mb-4">
-                    <div
-                      class="project-line h-px w-12 bg-[#4F4A4A] group-hover:w-16 transition-all duration-300"
-                    ></div>
-                    <span
-                      class="text-xs text-[#4F4A4A]/50 uppercase tracking-wider group-hover:text-black group-hover:font-bold transition-all duration-300"
-                      >01</span
-                    >
-                  </div>
-                  <h3
-                    class="text-3xl mb-3 group-hover:tracking-wide transition-all duration-300"
-                  >
-                    Elevate Pro Media
-                  </h3>
-                  <p
-                    class="text-sm text-[#4F4A4A]/70 mb-4 leading-relaxed max-w-lg"
-                  >
-                    A agência não conseguia transmitir o próprio nível de
-                    trabalho online — o site anterior não conversava com os
-                    clientes que queria atrair. Reconstruímos a plataforma do
-                    zero com foco em hierarquia visual e clareza de proposta,
-                    para que cada visita se sentisse como uma reunião de
-                    apresentação.
-                  </p>
-                  <div class="flex flex-wrap gap-2 mb-4">
-                    <span
-                      class="text-xs px-2 py-1 border border-[#4F4A4A]/30 text-[#4F4A4A]/70"
-                      >Next.js</span
-                    >
-                    <span
-                      class="text-xs px-2 py-1 border border-[#4F4A4A]/30 text-[#4F4A4A]/70"
-                      >Node.js</span
-                    >
-                    <span
-                      class="text-xs px-2 py-1 border border-[#4F4A4A]/30 text-[#4F4A4A]/70"
-                      >MySQL</span
-                    >
-                  </div>
-                  <a
-                    href="https://www.sistemaselevate.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="inline-flex items-center gap-2 text-sm text-[#4F4A4A] hover:text-[#4F4A4A]/70 transition-colors group"
-                  >
-                    <span>Ver projeto</span>
-                    <span class="group-hover:translate-x-1 transition-transform"
-                      >→</span
-                    >
-                  </a>
-                </div>
-                <div class="project-visual order-1 lg:order-2 relative">
-                  <div
-                    class="aspect-[16/9] border border-[#4F4A4A]/10 overflow-hidden"
-                  >
-                    <img
-                      src="https://res.cloudinary.com/dn454izoh/image/upload/v1763988368/Captura_de_Tela_2025-11-24_a%CC%80s_09.36.57_sdefbv.png"
-                      alt="Elevate Pro Media - Plataforma completa para agência de marketing digital desenvolvida por Rafael Gois com Next.js, Node.js e MySQL"
-                      title="Elevate Pro Media - Projeto desenvolvido por Rafael Gois"
-                      class="w-full h-full object-center"
-                      width="1200"
-                      height="675"
-                      loading="lazy"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
 
-            <!-- Project 2: Pollen Intelligence -->
-            <div class="project-item group" data-project="pollen">
-              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-                <div class="project-visual">
-                  <div
-                    class="aspect-[16/9] border border-[#4F4A4A]/10 overflow-hidden"
-                  >
-                    <img
-                      src="https://res.cloudinary.com/dn454izoh/image/upload/v1773058932/Captura_de_Tela_2026-03-09_a%CC%80s_09.21.17_t1lflt.png"
-                      alt="Pollen Intelligence - Solução tecnológica para análise e inteligência de dados desenvolvida por Rafael Gois com HTML5, CSS3 e JavaScript"
-                      title="Pollen Intelligence - Projeto desenvolvido por Rafael Gois"
-                      class="w-full h-full object-center"
-                      width="1200"
-                      height="675"
-                      loading="lazy"
-                    />
-                  </div>
-                </div>
-                <div class="project-content">
-                  <div class="flex items-center gap-3 mb-4">
-                    <div
-                      class="project-line h-px w-12 bg-[#4F4A4A] group-hover:w-16 transition-all duration-300"
-                    ></div>
-                    <span
-                      class="text-xs text-[#4F4A4A]/50 uppercase tracking-wider group-hover:text-black group-hover:font-bold transition-all duration-300"
-                      >02</span
-                    >
-                  </div>
-                  <h3
-                    class="text-3xl mb-3 group-hover:tracking-wide transition-all duration-300"
-                  >
-                    Pollen Intelligence
-                  </h3>
-                  <p
-                    class="text-sm text-[#4F4A4A]/70 mb-4 leading-relaxed max-w-lg"
-                  >
-                    A Pollen lida com análise de dados complexos, mas precisava
-                    que qualquer gestor extraísse insights sem ser especialista
-                    em dados. Projetamos a interface priorizando clareza de
-                    leitura e fluxo de decisão — para que os dados falassem
-                    por si, sem precisar de treinamento.
-                  </p>
-                  <div class="flex flex-wrap gap-2 mb-4">
-                    <span
-                      class="text-xs px-2 py-1 border border-[#4F4A4A]/30 text-[#4F4A4A]/70"
-                      >HTML5</span
-                    >
-                    <span
-                      class="text-xs px-2 py-1 border border-[#4F4A4A]/30 text-[#4F4A4A]/70"
-                      >CSS3</span
-                    >
-                    <span
-                      class="text-xs px-2 py-1 border border-[#4F4A4A]/30 text-[#4F4A4A]/70"
-                      >JavaScript</span
-                    >
-                  </div>
-                  <a
-                    href="https://pollenintelligence.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="inline-flex items-center gap-2 text-sm text-[#4F4A4A] hover:text-[#4F4A4A]/70 transition-colors group"
-                  >
-                    <span>Ver projeto</span>
-                    <span class="group-hover:translate-x-1 transition-transform"
-                      >→</span
-                    >
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <!-- Project 3: Codinome Barbearia -->
-            <div class="project-item group" data-project="codinome">
-              <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-                <div class="project-content order-2 lg:order-1">
-                  <div class="flex items-center gap-3 mb-4">
-                    <div
-                      class="project-line h-px w-12 bg-[#4F4A4A] group-hover:w-16 transition-all duration-300"
-                    ></div>
-                    <span
-                      class="text-xs text-[#4F4A4A]/50 uppercase tracking-wider group-hover:text-black group-hover:font-bold transition-all duration-300"
-                      >03</span
-                    >
-                  </div>
-                  <h3
-                    class="text-3xl mb-3 group-hover:tracking-wide transition-all duration-300"
-                  >
-                    Codinome Barbearia
-                  </h3>
-                  <p
-                    class="text-sm text-[#4F4A4A]/70 mb-4 leading-relaxed max-w-lg"
-                  >
-                    A barbearia tinha identidade forte, mas o site não
-                    transmitia o posicionamento premium nem convertia visitas
-                    em agendamentos. Criamos uma experiência que guia o usuário
-                    naturalmente — do primeiro contato até o momento de
-                    agendar.
-                  </p>
-                  <div class="flex flex-wrap gap-2 mb-4">
-                    <span
-                      class="text-xs px-2 py-1 border border-[#4F4A4A]/30 text-[#4F4A4A]/70"
-                      >Next.js</span
-                    >
-                    <span
-                      class="text-xs px-2 py-1 border border-[#4F4A4A]/30 text-[#4F4A4A]/70"
-                      >React</span
-                    >
-                    <span
-                      class="text-xs px-2 py-1 border border-[#4F4A4A]/30 text-[#4F4A4A]/70"
-                      >JavaScript</span
-                    >
-                  </div>
-                  <a
-                    href="https://codinomebarbearia.com.br"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="inline-flex items-center gap-2 text-sm text-[#4F4A4A] hover:text-[#4F4A4A]/70 transition-colors group"
-                  >
-                    <span>Ver projeto</span>
-                    <span class="group-hover:translate-x-1 transition-transform"
-                      >→</span
-                    >
-                  </a>
-                </div>
-                <div class="project-visual order-1 lg:order-2 relative">
-                  <div
-                    class="aspect-[16/9] border border-[#4F4A4A]/10 overflow-hidden"
-                  >
-                    <img
-                      src="https://res.cloudinary.com/dn454izoh/image/upload/v1773058932/Captura_de_Tela_2026-03-09_a%CC%80s_09.21.43_m9dlvl.png"
-                      alt="Codinome Barbearia - Website elegante para barbearia moderna desenvolvida por Rafael Gois com Next.js, React e JavaScript"
-                      title="Codinome Barbearia - Projeto desenvolvido por Rafael Gois"
-                      class="w-full h-full object-center"
-                      width="1200"
-                      height="675"
-                      loading="lazy"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Bloco de Destaque - Outros Projetos -->
-            <div class="project-highlight mt-16 pt-8">
-              <div class="max-w-4xl mx-auto text-center">
-                <div class="mb-6">
-                  <div class="inline-block h-px w-20 bg-[#4F4A4A] mb-4"></div>
-                </div>
-                <p class="text-xl text-[#4F4A4A] leading-relaxed mb-3">
-                  Além desses, há sistemas que não cabem em screenshot.
-                </p>
-                <p class="text-sm text-[#4F4A4A]/60 mt-6">
-                  Sistemas de controle siderúrgico, painéis de ordens de
-                  fabricação, ferramentas de automação para chão de fábrica.
-                  Projetos que rodam em ambientes críticos — usados por
-                  operadores que não têm margem para aprender software ruim,
-                  e que funcionam.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      <section id="services" class="min-h-screen flex flex-col py-16 p-8">
-        <div
-          class="section-title flex w-full flex-col items-center justify-center pt-32 pb-28"
-        >
-          <div id="bar" class="h-px w-full bg-[#4F4A4A]/20"></div>
-          <h2 class="text-5xl text-center mb-3">Serviços</h2>
-          <div class="service-section-ornament"></div>
-          <p
-            class="section-description text-sm text-wrap text-center max-w-xl mx-auto px-4"
-          >
-            Soluções digitais sob medida, desde aplicações complexas até
-            presença online elegante
+      <!-- ═══════════════ MANIFESTO — a seção 100% âmbar ═══════════════ -->
+      <section class="manifesto" id="manifesto" aria-label="Manifesto">
+        <div class="wrap manifesto__inner">
+          <p class="text-overline manifesto__over" data-reveal>02 / Manifesto</p>
+          <blockquote class="manifesto__quote" data-quote>
+            Não é o que o software faz — é como ele faz as pessoas se sentirem.
+          </blockquote>
+          <p class="manifesto__proof" data-reveal>
+            É por isso que meu trabalho não termina no deploy. Um painel de
+            chão de fábrica só está pronto quando o operador prefere usá-lo a
+            voltar para o papel. Um site só está pronto quando o cliente
+            entende, em cinco segundos, por que deveria continuar lendo.
           </p>
-        </div>
-        <div class="max-w-7xl mx-auto w-full">
-          <div class="services-container grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Service 1: Desenvolvimento Full Stack -->
-            <a
-              href="/fullstack.html"
-              class="service-item service-item--fullstack group relative overflow-visible rounded-2xl pt-[clamp(6.5rem,13vw,8.5rem)] pb-10 flex flex-col h-full"
-              data-service="fullstack"
-            >
-              <figure class="service-card-peek" aria-hidden="true">
-                <img
-                  src="f.png"
-                  alt=""
-                  class="service-card-peek__img"
-                  width="256"
-                  height="256"
-                  loading="lazy"
-                  decoding="async"
-                />
-              </figure>
-              <div class="text-center relative z-[1] flex flex-col flex-1">
-                <div class="flex flex-col items-center mb-5 px-8">
-                  <div class="service-letter-badge">F</div>
-                  <span class="service-category-label">DESENVOLVIMENTO</span>
-                </div>
-                <h3 class="text-4xl mb-6 px-6">Desenvolvimento Full Stack</h3>
-                <p class="text-[#4F4A4A]/60 text-sm leading-relaxed mb-3 px-6">
-                  Aplicações completas com Next.js + Node
-                </p>
-                <p class="text-[#4F4A4A]/60 text-sm leading-relaxed mb-3 px-6">
-                  Dashboards e Sistemas de Controle
-                </p>
-                <p class="text-[#4F4A4A]/60 text-sm leading-relaxed mb-6 px-6">
-                  Painéis administrativos
-                </p>
-                <div class="mt-auto pt-2 flex justify-center pb-2">
-                  <span class="service-cta-btn">Saiba mais →</span>
-                </div>
-              </div>
+          <p class="manifesto__cta" data-reveal>
+            <a class="btn btn--secondary" href="#projects">
+              Ver isso na prática <span class="btn__arrow" aria-hidden="true">→</span>
             </a>
-
-            <!-- Service 2: Sites Institucionais -->
-            <a
-              href="/institutional.html"
-              class="service-item service-item--institutional group relative overflow-visible rounded-2xl pt-[clamp(6.5rem,13vw,8.5rem)] pb-10 flex flex-col h-full"
-              data-service="institutional"
-            >
-              <figure class="service-card-peek" aria-hidden="true">
-                <img
-                  src="i.png"
-                  alt=""
-                  class="service-card-peek__img"
-                  width="256"
-                  height="256"
-                  loading="lazy"
-                  decoding="async"
-                />
-              </figure>
-              <div class="text-center relative z-[1] flex flex-col flex-1">
-                <div class="flex flex-col items-center mb-5 px-8">
-                  <div class="service-letter-badge">I</div>
-                  <span class="service-category-label"
-                    >SITES INSTITUCIONAIS</span
-                  >
-                </div>
-                <h3 class="text-4xl mb-6 px-6">Sites<br />Institucionais</h3>
-                <p class="text-[#4F4A4A]/60 text-sm leading-relaxed mb-3 px-6">
-                  Landing pages
-                </p>
-                <p class="text-[#4F4A4A]/60 text-sm leading-relaxed mb-3 px-6">
-                  Sites empresariais
-                </p>
-                <p class="text-[#4F4A4A]/60 text-sm leading-relaxed mb-6 px-6">
-                  HTML + CSS puro ou Next.js
-                </p>
-                <div class="mt-auto pt-2 flex justify-center pb-2">
-                  <span class="service-cta-btn">Saiba mais →</span>
-                </div>
-              </div>
-            </a>
-
-            <!-- Service 3: Consultoria e Suporte -->
-            <a
-              href="/consulting.html"
-              class="service-item service-item--consulting group relative overflow-visible rounded-2xl pt-[clamp(6.5rem,13vw,8.5rem)] pb-10 flex flex-col h-full"
-              data-service="consulting"
-            >
-              <figure class="service-card-peek" aria-hidden="true">
-                <img
-                  src="c.png"
-                  alt=""
-                  class="service-card-peek__img"
-                  width="256"
-                  height="256"
-                  loading="lazy"
-                  decoding="async"
-                />
-              </figure>
-              <div class="text-center relative z-[1] flex flex-col flex-1">
-                <div class="flex flex-col items-center mb-5 px-8">
-                  <div class="service-letter-badge">C</div>
-                  <span class="service-category-label"
-                    >CONSULTORIA E SUPORTE</span
-                  >
-                </div>
-                <h3 class="text-4xl mb-6 px-6">Consultoria<br />e Suporte</h3>
-                <p class="text-[#4F4A4A]/60 text-sm leading-relaxed mb-3 px-6">
-                  Digitalização da sua empresa
-                </p>
-                <p class="text-[#4F4A4A]/60 text-sm leading-relaxed mb-6 px-6">
-                  Correções em sites existentes
-                </p>
-                <div class="mt-auto pt-2 flex justify-center pb-2">
-                  <span class="service-cta-btn">Saiba mais →</span>
-                </div>
-              </div>
-            </a>
-          </div>
-
-          <!-- Faixa de atributos — mais estreita que os cards -->
-          <div class="service-features-strip-wrap mt-10">
-            <div class="service-features-strip">
-              <div class="service-feature-item">
-                <div class="service-feature-icon">
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    aria-hidden="true"
-                  >
-                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-                  </svg>
-                </div>
-                <div>
-                  <strong>Performance</strong>
-                  <p>Soluções rápidas e escaláveis</p>
-                </div>
-              </div>
-              <div class="service-feature-item">
-                <div class="service-feature-icon">
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    aria-hidden="true"
-                  >
-                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                  </svg>
-                </div>
-                <div>
-                  <strong>Segurança</strong>
-                  <p>Proteção em cada camada</p>
-                </div>
-              </div>
-              <div class="service-feature-item">
-                <div class="service-feature-icon">
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    aria-hidden="true"
-                  >
-                    <polyline points="16 18 22 12 16 6" />
-                    <polyline points="8 6 2 12 8 18" />
-                  </svg>
-                </div>
-                <div>
-                  <strong>Código Limpo</strong>
-                  <p>Estruturas modernas e eficientes</p>
-                </div>
-              </div>
-              <div class="service-feature-item">
-                <div class="service-feature-icon">
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    aria-hidden="true"
-                  >
-                    <polygon
-                      points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
-                    />
-                  </svg>
-                </div>
-                <div>
-                  <strong>Design Premium</strong>
-                  <p>Interfaces elegantes e intuitivas</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      <!-- Oculta temporariamente: remover "hidden" para reativar -->
-      <section id="testimonials" class="hidden min-h-screen flex flex-col p-8">
-        <div
-          class="section-title flex w-full flex-col items-center justify-center pt-32 pb-16"
-        >
-          <div id="bar" class="h-px w-full bg-[#4F4A4A]/20"></div>
-          <h2 class="text-5xl text-center mb-4">Depoimentos</h2>
-          <p
-            class="section-description text-sm text-wrap text-center max-w-xl mx-auto px-4"
-          >
-            Veja o que meus clientes estão dizendo sobre meu trabalho e
-            experiência de colaboração
           </p>
         </div>
-        <div class="max-w-7xl mx-auto w-full">
-          <div class="testimonials-container relative">
-            <div
-              class="testimonials-wrapper grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12"
-            >
-              <!-- Testimonial 1 -->
-              <div class="testimonial-item group" data-testimonial="0">
-                <div
-                  class="h-full flex flex-col border border-[#4F4A4A]/10 p-8 transition-all duration-300 hover:border-[#4F4A4A]/30"
-                >
-                  <div class="mb-6">
-                    <div class="flex items-center gap-2 mb-4">
-                      <div class="testimonial-line h-px w-8 bg-[#4F4A4A]"></div>
-                      <div class="flex gap-1">
-                        <span class="text-[#4F4A4A]/60 text-xs">★★★★★</span>
-                      </div>
-                    </div>
-                    <p class="text-sm text-[#4F4A4A]/80 leading-relaxed mb-6">
-                      "Trabalho excepcional! Rafael entregou exatamente o que
-                      precisávamos, com atenção aos detalhes e comunicação
-                      constante. O resultado superou nossas expectativas."
-                    </p>
-                  </div>
-                  <div class="mt-auto pt-6 border-t border-[#4F4A4A]/10">
-                    <div class="flex items-center gap-3">
-                      <div
-                        class="w-12 h-12 rounded-full bg-[#4F4A4A]/10 flex items-center justify-center"
-                      >
-                        <span class="text-[#4F4A4A] text-lg font-bold">JD</span>
-                      </div>
-                      <div>
-                        <h4 class="font-semibold text-[#4F4A4A]">João Silva</h4>
-                        <p class="text-xs text-[#4F4A4A]/50">
-                          CEO, Empresa Tech
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+      </section>
 
-              <!-- Testimonial 2 -->
-              <div class="testimonial-item group" data-testimonial="1">
-                <div
-                  class="h-full flex flex-col border border-[#4F4A4A]/10 p-8 transition-all duration-300 hover:border-[#4F4A4A]/30"
-                >
-                  <div class="mb-6">
-                    <div class="flex items-center gap-2 mb-4">
-                      <div class="testimonial-line h-px w-8 bg-[#4F4A4A]"></div>
-                      <div class="flex gap-1">
-                        <span class="text-[#4F4A4A]/60 text-xs">★★★★★</span>
-                      </div>
-                    </div>
-                    <p class="text-sm text-[#4F4A4A]/80 leading-relaxed mb-6">
-                      "Profissionalismo e expertise técnica de alto nível. A
-                      solução desenvolvida transformou nosso processo de
-                      trabalho e aumentou significativamente nossa
-                      produtividade."
-                    </p>
-                  </div>
-                  <div class="mt-auto pt-6 border-t border-[#4F4A4A]/10">
-                    <div class="flex items-center gap-3">
-                      <div
-                        class="w-12 h-12 rounded-full bg-[#4F4A4A]/10 flex items-center justify-center"
-                      >
-                        <span class="text-[#4F4A4A] text-lg font-bold">MC</span>
-                      </div>
-                      <div>
-                        <h4 class="font-semibold text-[#4F4A4A]">
-                          Maria Costa
-                        </h4>
-                        <p class="text-xs text-[#4F4A4A]/50">
-                          Diretora, Indústria Plus
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+      <!-- ═══════════════ HABILIDADES — a constelação ═══════════════ -->
+      <section class="section" id="skills">
+        <div class="wrap wrap--wide">
+          <header class="sec-head" data-reveal>
+            <div class="sec-head__rule" data-rule></div>
+            <p class="text-overline">03 / Habilidades</p>
+            <h2 class="sec-head__title">Ferramentas com contexto de uso</h2>
+            <p class="sec-head__lede">
+              Uma lista de tecnologias não diz nada — qualquer portfólio tem a
+              mesma. O que muda é onde cada uma já foi usada, e por quê.
+            </p>
+          </header>
 
-              <!-- Testimonial 3 -->
-              <div class="testimonial-item group" data-testimonial="2">
-                <div
-                  class="h-full flex flex-col border border-[#4F4A4A]/10 p-8 transition-all duration-300 hover:border-[#4F4A4A]/30"
-                >
-                  <div class="mb-6">
-                    <div class="flex items-center gap-2 mb-4">
-                      <div class="testimonial-line h-px w-8 bg-[#4F4A4A]"></div>
-                      <div class="flex gap-1">
-                        <span class="text-[#4F4A4A]/60 text-xs">★★★★★</span>
-                      </div>
-                    </div>
-                    <p class="text-sm text-[#4F4A4A]/80 leading-relaxed mb-6">
-                      "Rafael não apenas desenvolveu nossa plataforma, mas
-                      também entendeu profundamente nosso negócio. A entrega foi
-                      pontual e a qualidade impecável."
-                    </p>
-                  </div>
-                  <div class="mt-auto pt-6 border-t border-[#4F4A4A]/10">
-                    <div class="flex items-center gap-3">
-                      <div
-                        class="w-12 h-12 rounded-full bg-[#4F4A4A]/10 flex items-center justify-center"
-                      >
-                        <span class="text-[#4F4A4A] text-lg font-bold">PS</span>
-                      </div>
-                      <div>
-                        <h4 class="font-semibold text-[#4F4A4A]">
-                          Pedro Santos
-                        </h4>
-                        <p class="text-xs text-[#4F4A4A]/50">
-                          Fundador, StartupX
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+          <div class="skills__wrapper" id="skills-path-wrapper">
+            <svg id="skills-svg" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true"></svg>
 
-              <!-- Testimonial 4 -->
-              <div class="testimonial-item group hidden" data-testimonial="3">
-                <div
-                  class="h-full flex flex-col border border-[#4F4A4A]/10 p-8 transition-all duration-300 hover:border-[#4F4A4A]/30"
-                >
-                  <div class="mb-6">
-                    <div class="flex items-center gap-2 mb-4">
-                      <div class="testimonial-line h-px w-8 bg-[#4F4A4A]"></div>
-                      <div class="flex gap-1">
-                        <span class="text-[#4F4A4A]/60 text-xs">★★★★★</span>
-                      </div>
-                    </div>
-                    <p class="text-sm text-[#4F4A4A]/80 leading-relaxed mb-6">
-                      "Excelente comunicação e capacidade de traduzir nossas
-                      necessidades em soluções técnicas eficientes. Recomendo
-                      sem hesitação."
-                    </p>
-                  </div>
-                  <div class="mt-auto pt-6 border-t border-[#4F4A4A]/10">
-                    <div class="flex items-center gap-3">
-                      <div
-                        class="w-12 h-12 rounded-full bg-[#4F4A4A]/10 flex items-center justify-center"
-                      >
-                        <span class="text-[#4F4A4A] text-lg font-bold">AL</span>
-                      </div>
-                      <div>
-                        <h4 class="font-semibold text-[#4F4A4A]">Ana Lima</h4>
-                        <p class="text-xs text-[#4F4A4A]/50">
-                          Gerente, Digital Solutions
-                        </p>
-                      </div>
+            <div class="skills__nodes">
+              <!-- 01 Frontend -->
+              <article class="skill-node" data-align="left" data-reveal>
+                <div class="skill-node__content">
+                  <span class="skill-node__roman" aria-hidden="true">I</span>
+                  <div class="skill-node__head">
+                    <span class="skill-node__num" aria-hidden="true">01</span>
+                    <div>
+                      <h3 class="skill-node__title">Interfaces para ambientes reais</h3>
+                      <p class="skill-node__lede">
+                        Telas que precisam funcionar sob pressa, ruído e luva de raspa.
+                      </p>
                     </div>
                   </div>
+                  <ul class="skill-node__list">
+                    <li class="skill-item"><span class="skill-item__idx" aria-hidden="true">I</span><span><span class="skill-item__name">React</span><span class="skill-item__ctx">Dashboards industriais com atualização em tempo real</span></span></li>
+                    <li class="skill-item"><span class="skill-item__idx" aria-hidden="true">II</span><span><span class="skill-item__name">Next.js</span><span class="skill-item__ctx">Sites e plataformas que precisam ser rápidos e achados no Google</span></span></li>
+                    <li class="skill-item"><span class="skill-item__idx" aria-hidden="true">III</span><span><span class="skill-item__name">JavaScript &amp; TypeScript</span><span class="skill-item__ctx">Base de tudo — tipagem onde o erro sai caro</span></span></li>
+                    <li class="skill-item"><span class="skill-item__idx" aria-hidden="true">IV</span><span><span class="skill-item__name">React Native</span><span class="skill-item__ctx">Coleta de dados em campo, longe da mesa</span></span></li>
+                    <li class="skill-item"><span class="skill-item__idx" aria-hidden="true">V</span><span><span class="skill-item__name">GSAP</span><span class="skill-item__ctx">Movimento com intenção — inclusive neste site</span></span></li>
+                    <li class="skill-item"><span class="skill-item__idx" aria-hidden="true">VI</span><span><span class="skill-item__name">HTML5 &amp; CSS3</span><span class="skill-item__ctx">Semântica e acessibilidade antes de qualquer framework</span></span></li>
+                  </ul>
                 </div>
-              </div>
+              </article>
 
-              <!-- Testimonial 5 -->
-              <div class="testimonial-item group hidden" data-testimonial="4">
-                <div
-                  class="h-full flex flex-col border border-[#4F4A4A]/10 p-8 transition-all duration-300 hover:border-[#4F4A4A]/30"
-                >
-                  <div class="mb-6">
-                    <div class="flex items-center gap-2 mb-4">
-                      <div class="testimonial-line h-px w-8 bg-[#4F4A4A]"></div>
-                      <div class="flex gap-1">
-                        <span class="text-[#4F4A4A]/60 text-xs">★★★★★</span>
-                      </div>
-                    </div>
-                    <p class="text-sm text-[#4F4A4A]/80 leading-relaxed mb-6">
-                      "Profissional dedicado que sempre busca a melhor solução.
-                      O projeto foi concluído com sucesso e superou nossas
-                      expectativas em todos os aspectos."
-                    </p>
-                  </div>
-                  <div class="mt-auto pt-6 border-t border-[#4F4A4A]/10">
-                    <div class="flex items-center gap-3">
-                      <div
-                        class="w-12 h-12 rounded-full bg-[#4F4A4A]/10 flex items-center justify-center"
-                      >
-                        <span class="text-[#4F4A4A] text-lg font-bold">RO</span>
-                      </div>
-                      <div>
-                        <h4 class="font-semibold text-[#4F4A4A]">
-                          Roberto Oliveira
-                        </h4>
-                        <p class="text-xs text-[#4F4A4A]/50">
-                          CTO, Innovation Labs
-                        </p>
-                      </div>
+              <!-- 02 Backend -->
+              <article class="skill-node" id="skills-backend" data-align="right" data-reveal>
+                <div class="skill-node__content">
+                  <span class="skill-node__roman" aria-hidden="true">II</span>
+                  <div class="skill-node__head">
+                    <span class="skill-node__num" aria-hidden="true">02</span>
+                    <div>
+                      <h3 class="skill-node__title">Sistemas de controle e processo</h3>
+                      <p class="skill-node__lede">
+                        O que sustenta a tela: dados confiáveis, integrações e regra de negócio.
+                      </p>
                     </div>
                   </div>
+                  <ul class="skill-node__list">
+                    <li class="skill-item"><span class="skill-item__idx" aria-hidden="true">I</span><span><span class="skill-item__name">Node.js</span><span class="skill-item__ctx">APIs de ordens de fabricação e apontamento de produção</span></span></li>
+                    <li class="skill-item"><span class="skill-item__idx" aria-hidden="true">II</span><span><span class="skill-item__name">Nest.js &amp; Express</span><span class="skill-item__ctx">Arquitetura que outro dev consegue manter depois de mim</span></span></li>
+                    <li class="skill-item"><span class="skill-item__idx" aria-hidden="true">III</span><span><span class="skill-item__name">SQL Server</span><span class="skill-item__ctx">Bases legadas de indústria — consultar sem quebrar o que roda</span></span></li>
+                    <li class="skill-item"><span class="skill-item__idx" aria-hidden="true">IV</span><span><span class="skill-item__name">Prisma</span><span class="skill-item__ctx">Modelagem versionada, migrações sem susto</span></span></li>
+                    <li class="skill-item"><span class="skill-item__idx" aria-hidden="true">V</span><span><span class="skill-item__name">Integrações</span><span class="skill-item__ctx">Conversar com o ERP e com o chão de fábrica ao mesmo tempo</span></span></li>
+                  </ul>
                 </div>
-              </div>
+              </article>
 
-              <!-- Testimonial 6 -->
-              <div class="testimonial-item group hidden" data-testimonial="5">
-                <div
-                  class="h-full flex flex-col border border-[#4F4A4A]/10 p-8 transition-all duration-300 hover:border-[#4F4A4A]/30"
-                >
-                  <div class="mb-6">
-                    <div class="flex items-center gap-2 mb-4">
-                      <div class="testimonial-line h-px w-8 bg-[#4F4A4A]"></div>
-                      <div class="flex gap-1">
-                        <span class="text-[#4F4A4A]/60 text-xs">★★★★★</span>
-                      </div>
-                    </div>
-                    <p class="text-sm text-[#4F4A4A]/80 leading-relaxed mb-6">
-                      "Trabalho de alta qualidade técnica e design impecável.
-                      Rafael demonstrou grande conhecimento e entregou um
-                      produto final excepcional."
-                    </p>
-                  </div>
-                  <div class="mt-auto pt-6 border-t border-[#4F4A4A]/10">
-                    <div class="flex items-center gap-3">
-                      <div
-                        class="w-12 h-12 rounded-full bg-[#4F4A4A]/10 flex items-center justify-center"
-                      >
-                        <span class="text-[#4F4A4A] text-lg font-bold">CF</span>
-                      </div>
-                      <div>
-                        <h4 class="font-semibold text-[#4F4A4A]">
-                          Carla Ferreira
-                        </h4>
-                        <p class="text-xs text-[#4F4A4A]/50">
-                          Diretora de Marketing, Brand Co
-                        </p>
-                      </div>
+              <!-- 03 Ofício -->
+              <article class="skill-node" id="skills-outros" data-align="left" data-reveal>
+                <div class="skill-node__content">
+                  <span class="skill-node__roman" aria-hidden="true">III</span>
+                  <div class="skill-node__head">
+                    <span class="skill-node__num" aria-hidden="true">03</span>
+                    <div>
+                      <h3 class="skill-node__title">O ofício em volta do código</h3>
+                      <p class="skill-node__lede">
+                        A parte que decide se o software vira hábito ou vira piada interna.
+                      </p>
                     </div>
                   </div>
+                  <ul class="skill-node__list">
+                    <li class="skill-item"><span class="skill-item__idx" aria-hidden="true">I</span><span><span class="skill-item__name">UI/UX</span><span class="skill-item__ctx">Entender a rotina de quem usa antes de desenhar a tela</span></span></li>
+                    <li class="skill-item"><span class="skill-item__idx" aria-hidden="true">II</span><span><span class="skill-item__name">Performance</span><span class="skill-item__ctx">Orçamento de 60fps e de segundos até o primeiro conteúdo</span></span></li>
+                    <li class="skill-item"><span class="skill-item__idx" aria-hidden="true">III</span><span><span class="skill-item__name">Acessibilidade &amp; responsividade</span><span class="skill-item__ctx">De 320px ao monitor da sala de controle</span></span></li>
+                    <li class="skill-item"><span class="skill-item__idx" aria-hidden="true">IV</span><span><span class="skill-item__name">SEO técnico</span><span class="skill-item__ctx">Ser encontrado por quem procura o serviço</span></span></li>
+                    <li class="skill-item"><span class="skill-item__idx" aria-hidden="true">V</span><span><span class="skill-item__name">Git &amp; versionamento</span><span class="skill-item__ctx">Histórico legível — o projeto não morre comigo</span></span></li>
+                  </ul>
                 </div>
-              </div>
-            </div>
-
-            <!-- Navigation -->
-            <div class="flex justify-center items-center gap-4 mt-12">
-              <button
-                class="testimonial-nav-btn prev-btn border border-[#4F4A4A]/30 px-4 py-2 text-[#4F4A4A] hover:border-[#4F4A4A] transition-colors"
-                aria-label="Anterior"
-              >
-                ←
-              </button>
-              <div class="testimonial-dots flex gap-2">
-                <span
-                  class="dot w-2 h-2 rounded-full bg-[#4F4A4A] cursor-pointer active"
-                  data-page="0"
-                ></span>
-                <span
-                  class="dot w-2 h-2 rounded-full bg-[#4F4A4A]/30 cursor-pointer"
-                  data-page="1"
-                ></span>
-              </div>
-              <button
-                class="testimonial-nav-btn next-btn border border-[#4F4A4A]/30 px-4 py-2 text-[#4F4A4A] hover:border-[#4F4A4A] transition-colors"
-                aria-label="Próximo"
-              >
-                →
-              </button>
+              </article>
             </div>
           </div>
         </div>
       </section>
-      <section
-        id="contact"
-        class="relative min-h-screen flex flex-col pt-20 px-8 pb-8 overflow-hidden"
-      >
-        <div class="contact-content relative z-10 flex flex-col w-full flex-1">
-          <div
-            class="section-title flex w-full flex-col items-center justify-center mb-10"
-          >
-            <div id="bar" class="h-px w-full bg-[#4F4A4A]/20"></div>
-            <h2 class="text-5xl text-center mb-4">Contato</h2>
-            <p
-              class="section-description text-sm text-wrap text-center max-w-xl mx-auto px-4"
-            >
-              Entre em contato comigo para tirar suas ideias do papel e
-              transformar em realidade. Estou sempre aberto a novos projetos e
-              colaborações.
+
+      <!-- ═══════════════ PROJETOS — cases ═══════════════ -->
+      <section class="section section--alt" id="projects">
+        <div class="wrap wrap--wide">
+          <header class="sec-head" data-reveal>
+            <div class="sec-head__rule" data-rule></div>
+            <p class="text-overline">04 / Projetos</p>
+            <h2 class="sec-head__title">Cada projeto começa<br />com um problema</h2>
+            <p class="sec-head__lede">
+              O que você vê é o resultado. O que não aparece é o processo de
+              entender o negócio antes de escrever a primeira linha de código.
+            </p>
+          </header>
+
+          <div class="cases">
+            <!-- Case 01 -->
+            <article class="case" data-project="elevate">
+              <div class="case__content">
+                <div class="case__meta">
+                  <span class="case__rule" aria-hidden="true"></span>
+                  <span class="case__num">Case 01 · Agência</span>
+                </div>
+                <h3 class="case__problem">
+                  Uma agência que fazia trabalho premium — e um site que não dizia isso.
+                </h3>
+                <p class="case__name">Elevate Pro Media</p>
+                <p class="case__solution">
+                  Reconstruímos a plataforma do zero, tratando hierarquia visual
+                  e clareza de proposta como requisito, não como enfeite: cada
+                  visita passou a funcionar como uma reunião de apresentação.
+                </p>
+                <p class="case__result">
+                  ↳ Proposta de valor legível nos primeiros segundos e caminho
+                  único até o contato
+                </p>
+                <ul class="case__stack">
+                  <li class="badge badge--mono">Next.js</li>
+                  <li class="badge badge--mono">Node.js</li>
+                  <li class="badge badge--mono">MySQL</li>
+                </ul>
+                <p class="case__actions">
+                  <a class="link-arrow" href="https://www.sistemaselevate.com" target="_blank" rel="noopener noreferrer">
+                    <span>Ver projeto</span><span aria-hidden="true">→</span>
+                  </a>
+                </p>
+              </div>
+              <div class="case__visual">
+                <div class="case__frame">
+                  <img
+                    src="https://res.cloudinary.com/dn454izoh/image/upload/v1763988368/Captura_de_Tela_2025-11-24_a%CC%80s_09.36.57_sdefbv.png"
+                    alt="Elevate Pro Media - Plataforma completa para agência de marketing digital desenvolvida por Rafael Gois com Next.js, Node.js e MySQL"
+                    title="Elevate Pro Media - Projeto desenvolvido por Rafael Gois"
+                    width="1200" height="675" loading="lazy" decoding="async"
+                  />
+                </div>
+              </div>
+            </article>
+
+            <!-- Case 02 -->
+            <article class="case case--flip" data-project="pollen">
+              <div class="case__content">
+                <div class="case__meta">
+                  <span class="case__rule" aria-hidden="true"></span>
+                  <span class="case__num">Case 02 · Dados</span>
+                </div>
+                <h3 class="case__problem">
+                  Dados complexos que só faziam sentido para quem já era especialista.
+                </h3>
+                <p class="case__name">Pollen Intelligence</p>
+                <p class="case__solution">
+                  Projetei a interface em torno do fluxo de decisão — o que o
+                  gestor precisa ver primeiro, o que pode esperar — priorizando
+                  clareza de leitura em vez de densidade de informação.
+                </p>
+                <p class="case__result">
+                  ↳ Leitura dos dados sem treinamento prévio
+                </p>
+                <ul class="case__stack">
+                  <li class="badge badge--mono">HTML5</li>
+                  <li class="badge badge--mono">CSS3</li>
+                  <li class="badge badge--mono">JavaScript</li>
+                </ul>
+                <p class="case__actions">
+                  <a class="link-arrow" href="https://pollenintelligence.com" target="_blank" rel="noopener noreferrer">
+                    <span>Ver projeto</span><span aria-hidden="true">→</span>
+                  </a>
+                </p>
+              </div>
+              <div class="case__visual">
+                <div class="case__frame">
+                  <img
+                    src="https://res.cloudinary.com/dn454izoh/image/upload/v1773058932/Captura_de_Tela_2026-03-09_a%CC%80s_09.21.17_t1lflt.png"
+                    alt="Pollen Intelligence - Solução tecnológica para análise e inteligência de dados desenvolvida por Rafael Gois com HTML5, CSS3 e JavaScript"
+                    title="Pollen Intelligence - Projeto desenvolvido por Rafael Gois"
+                    width="1200" height="675" loading="lazy" decoding="async"
+                  />
+                </div>
+              </div>
+            </article>
+
+            <!-- Case 03 -->
+            <article class="case" data-project="codinome">
+              <div class="case__content">
+                <div class="case__meta">
+                  <span class="case__rule" aria-hidden="true"></span>
+                  <span class="case__num">Case 03 · Serviço local</span>
+                </div>
+                <h3 class="case__problem">
+                  Identidade forte na cadeira, invisível na tela.
+                </h3>
+                <p class="case__name">Codinome Barbearia</p>
+                <p class="case__solution">
+                  Traduzi o posicionamento premium da barbearia para a web e
+                  desenhei o percurso do visitante para terminar sempre no mesmo
+                  lugar: o agendamento.
+                </p>
+                <p class="case__result">
+                  ↳ Do primeiro contato ao agendamento em um caminho só
+                </p>
+                <ul class="case__stack">
+                  <li class="badge badge--mono">Next.js</li>
+                  <li class="badge badge--mono">React</li>
+                  <li class="badge badge--mono">JavaScript</li>
+                </ul>
+                <p class="case__actions">
+                  <a class="link-arrow" href="https://codinomebarbearia.com.br" target="_blank" rel="noopener noreferrer">
+                    <span>Ver projeto</span><span aria-hidden="true">→</span>
+                  </a>
+                </p>
+              </div>
+              <div class="case__visual">
+                <div class="case__frame">
+                  <img
+                    src="https://res.cloudinary.com/dn454izoh/image/upload/v1773058932/Captura_de_Tela_2026-03-09_a%CC%80s_09.21.43_m9dlvl.png"
+                    alt="Codinome Barbearia - Website elegante para barbearia moderna desenvolvida por Rafael Gois com Next.js, React e JavaScript"
+                    title="Codinome Barbearia - Projeto desenvolvido por Rafael Gois"
+                    width="1200" height="675" loading="lazy" decoding="async"
+                  />
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div class="cases__closing" data-reveal>
+            <svg class="sig-stroke" viewBox="0 0 300 40" aria-hidden="true"><path d="M6 28 C 60 12, 120 34, 170 22 S 260 14, 294 24"/></svg>
+            <h3>E os sistemas que não cabem em screenshot</h3>
+            <p>
+              Controle siderúrgico, painéis de ordens de fabricação,
+              ferramentas de automação para chão de fábrica. Projetos sob
+              confidencialidade, rodando em ambiente crítico, usados por
+              operadores que não têm margem para aprender software ruim — e que
+              seguem em uso.
+            </p>
+            <p style="margin-top: var(--sp-6)">
+              <a class="link-arrow" href="#contact"><span>Conversar sobre um caso parecido</span><span aria-hidden="true">→</span></a>
             </p>
           </div>
-          <div class="max-w-6xl mx-auto w-full py-4">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
-              <!-- Contact Form -->
-              <div class="contact-form">
-                <div class="flex items-center gap-3 mb-8">
-                  <div class="contact-line h-px w-12 bg-[#4F4A4A]"></div>
-                  <span
-                    class="text-xs text-[#4F4A4A]/50 uppercase tracking-wider"
-                    >Formulário</span
-                  >
+        </div>
+      </section>
+
+      <!-- ═══════════════ SERVIÇOS ═══════════════ -->
+      <section class="section" id="services">
+        <div class="wrap wrap--wide">
+          <header class="sec-head" data-reveal>
+            <div class="sec-head__rule" data-rule></div>
+            <p class="text-overline">05 / Serviços</p>
+            <h2 class="sec-head__title">Como eu posso ajudar</h2>
+            <p class="sec-head__lede">
+              Soluções digitais sob medida — de aplicações complexas a presença
+              online elegante.
+            </p>
+          </header>
+
+          <div class="services__grid">
+            <a class="service-item" href="/fullstack.html" data-service="fullstack" data-reveal>
+              <figure class="service-card-peek" aria-hidden="true">
+                <img class="service-card-peek__img" src="f.png" alt="" width="256" height="256" loading="lazy" decoding="async" />
+              </figure>
+              <span class="service-item__badge" aria-hidden="true">F</span>
+              <span class="text-overline service-item__label">Desenvolvimento</span>
+              <h3 class="service-item__title">Desenvolvimento Full Stack</h3>
+              <ul class="service-item__list">
+                <li>Aplicações completas com Next.js + Node</li>
+                <li>Dashboards e sistemas de controle</li>
+                <li>Painéis administrativos</li>
+              </ul>
+              <span class="service-item__cta">
+                <span class="btn btn--secondary btn--sm">Saiba mais <span class="btn__arrow" aria-hidden="true">→</span></span>
+              </span>
+            </a>
+
+            <a class="service-item" href="/institutional.html" data-service="institutional" data-reveal>
+              <figure class="service-card-peek" aria-hidden="true">
+                <img class="service-card-peek__img" src="i.png" alt="" width="256" height="256" loading="lazy" decoding="async" />
+              </figure>
+              <span class="service-item__badge" aria-hidden="true">I</span>
+              <span class="text-overline service-item__label">Sites institucionais</span>
+              <h3 class="service-item__title">Sites Institucionais</h3>
+              <ul class="service-item__list">
+                <li>Landing pages</li>
+                <li>Sites empresariais</li>
+                <li>HTML + CSS puro ou Next.js</li>
+              </ul>
+              <span class="service-item__cta">
+                <span class="btn btn--secondary btn--sm">Saiba mais <span class="btn__arrow" aria-hidden="true">→</span></span>
+              </span>
+            </a>
+
+            <a class="service-item" href="/consulting.html" data-service="consulting" data-reveal>
+              <figure class="service-card-peek" aria-hidden="true">
+                <img class="service-card-peek__img" src="c.png" alt="" width="256" height="256" loading="lazy" decoding="async" />
+              </figure>
+              <span class="service-item__badge" aria-hidden="true">C</span>
+              <span class="text-overline service-item__label">Consultoria e suporte</span>
+              <h3 class="service-item__title">Consultoria e Suporte</h3>
+              <ul class="service-item__list">
+                <li>Digitalização da sua empresa</li>
+                <li>Correções em sites existentes</li>
+              </ul>
+              <span class="service-item__cta">
+                <span class="btn btn--secondary btn--sm">Saiba mais <span class="btn__arrow" aria-hidden="true">→</span></span>
+              </span>
+            </a>
+          </div>
+
+          <ul class="features-strip" data-reveal>
+            <li class="feature-item">
+              <svg class="ic ic--sm" aria-hidden="true"><use href="#i-fagulha" /></svg>
+              <div><strong>Performance</strong><p>Soluções rápidas e escaláveis</p></div>
+            </li>
+            <li class="feature-item">
+              <svg class="ic ic--sm" aria-hidden="true"><use href="#i-escudo" /></svg>
+              <div><strong>Segurança</strong><p>Proteção em cada camada</p></div>
+            </li>
+            <li class="feature-item">
+              <svg class="ic ic--sm" aria-hidden="true"><use href="#i-codigo" /></svg>
+              <div><strong>Código limpo</strong><p>Estruturas modernas e eficientes</p></div>
+            </li>
+            <li class="feature-item">
+              <svg class="ic ic--sm" aria-hidden="true"><use href="#i-camadas" /></svg>
+              <div><strong>Design premium</strong><p>Interfaces elegantes e intuitivas</p></div>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ═══════════════ DEPOIMENTOS — oculto até haver depoimentos reais ═══
+           Reativar: remover o atributo [hidden] e preencher com nome completo,
+           empresa verificável, foto e link de LinkedIn. -->
+      <section class="section section--alt" id="testimonials" hidden>
+        <div class="wrap wrap--wide">
+          <header class="sec-head">
+            <div class="sec-head__rule"></div>
+            <p class="text-overline">06 / Depoimentos</p>
+            <h2 class="sec-head__title">Quem trabalhou comigo</h2>
+          </header>
+          <div class="testimonials__grid"></div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ CONTATO ═══════════════ -->
+      <section class="section" id="contact">
+        <div class="wrap">
+          <header class="sec-head" data-reveal>
+            <div class="sec-head__rule" data-rule></div>
+            <p class="text-overline">06 / Contato</p>
+            <h2 class="sec-head__title">Vamos tirar isso do papel</h2>
+            <p class="sec-head__lede">
+              Conte o problema — não precisa vir com a solução pronta. Costumo
+              responder em até 24 horas.
+            </p>
+          </header>
+
+          <div class="contact__grid">
+            <div data-reveal>
+              <p class="contact__block-head">
+                <span class="rule" aria-hidden="true"></span>
+                <span class="text-overline">Formulário</span>
+              </p>
+
+              <form
+                id="contact-form"
+                action="https://api.web3forms.com/submit"
+                method="POST"
+                class="contact-form"
+              >
+                <!-- Honeypot Web3Forms: não marcar; não usar .value no JS -->
+                <input type="checkbox" name="botcheck" style="display: none" tabindex="-1" autocomplete="off" />
+                <p id="contact-form-status" class="contact-form-status" role="status" aria-live="polite" hidden></p>
+
+                <div class="field">
+                  <span class="field__label"><label class="text-label" for="name">Nome</label></span>
+                  <span class="field__bar">
+                    <input class="field__control" type="text" id="name" name="name" required placeholder="Como devo te chamar?" autocomplete="name" />
+                  </span>
                 </div>
-                <form
-                  id="contact-form"
-                  action="https://api.web3forms.com/submit"
-                  method="POST"
-                  class="space-y-6"
-                >
-                  <!-- Honeypot Web3Forms: não marcar; não usar .value no JS -->
-                  <input
-                    type="checkbox"
-                    name="botcheck"
-                    style="display: none"
-                    tabindex="-1"
-                    autocomplete="off"
-                  />
-                  <p
-                    id="contact-form-status"
-                    class="contact-form-status"
-                    role="status"
-                    aria-live="polite"
-                    hidden
-                  ></p>
+
+                <div class="field">
+                  <span class="field__label"><label class="text-label" for="email">E-mail</label></span>
+                  <span class="field__bar">
+                    <input class="field__control" type="email" id="email" name="email" required placeholder="seu@email.com" autocomplete="email" />
+                  </span>
+                </div>
+
+                <div class="field">
+                  <span class="field__label"><label class="text-label" for="subject">Assunto</label></span>
+                  <span class="field__bar">
+                    <input class="field__control" type="text" id="subject" name="subject" required placeholder="Sobre o que vamos conversar?" />
+                  </span>
+                </div>
+
+                <div class="field">
+                  <span class="field__label">
+                    <label class="text-label" for="message">Mensagem</label>
+                    <span class="text-helper">o contexto ajuda</span>
+                  </span>
+                  <span class="field__bar">
+                    <textarea class="field__control" id="message" name="message" rows="5" required placeholder="Conta a ideia sem pressa — o que existe hoje e o que incomoda."></textarea>
+                  </span>
+                </div>
+
+                <button class="btn btn--primary btn--block" type="submit">
+                  <span>Enviar mensagem</span>
+                  <span class="btn__arrow" aria-hidden="true">→</span>
+                </button>
+              </form>
+            </div>
+
+            <div class="contact-info" data-reveal>
+              <p class="contact__block-head">
+                <span class="rule" aria-hidden="true"></span>
+                <span class="text-overline">Informações</span>
+              </p>
+
+              <div class="contact-info__list">
+                <div class="contact-item">
+                  <span class="contact-item__rule" aria-hidden="true"></span>
                   <div>
-                    <label for="name" class="block text-sm text-[#4F4A4A] mb-2">
-                      Nome
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      required
-                      class="w-full px-4 py-3 border border-[#4F4A4A]/20 bg-transparent text-[#4F4A4A] focus:outline-none focus:border-[#4F4A4A] transition-colors"
-                      placeholder="Seu nome"
-                    />
+                    <h3>E-mail</h3>
+                    <div class="contact-item__links">
+                      <a class="link-line" href="mailto:contato@rafaelgois.com">contato@rafaelgois.com</a>
+                    </div>
                   </div>
+                </div>
+
+                <div class="contact-item">
+                  <span class="contact-item__rule" aria-hidden="true"></span>
                   <div>
-                    <label
-                      for="email"
-                      class="block text-sm text-[#4F4A4A] mb-2"
-                    >
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      required
-                      class="w-full px-4 py-3 border border-[#4F4A4A]/20 bg-transparent text-[#4F4A4A] focus:outline-none focus:border-[#4F4A4A] transition-colors"
-                      placeholder="seu@email.com"
-                    />
+                    <h3>Redes sociais</h3>
+                    <div class="contact-item__links">
+                      <a class="link-arrow" href="https://br.linkedin.com/in/rafaelfbgois" target="_blank" rel="noopener noreferrer"><span>LinkedIn</span><span aria-hidden="true">→</span></a>
+                      <a class="link-arrow" href="https://github.com/RafaGois" target="_blank" rel="noopener noreferrer"><span>GitHub</span><span aria-hidden="true">→</span></a>
+                    </div>
                   </div>
+                </div>
+
+                <div class="contact-item">
+                  <span class="contact-item__rule" aria-hidden="true"></span>
                   <div>
-                    <label
-                      for="subject"
-                      class="block text-sm text-[#4F4A4A] mb-2"
-                    >
-                      Assunto
-                    </label>
-                    <input
-                      type="text"
-                      id="subject"
-                      name="subject"
-                      required
-                      class="w-full px-4 py-3 border border-[#4F4A4A]/20 bg-transparent text-[#4F4A4A] focus:outline-none focus:border-[#4F4A4A] transition-colors"
-                      placeholder="Sobre o que você gostaria de conversar?"
-                    />
+                    <h3>Disponibilidade</h3>
+                    <p class="text-body-sm u-soft" style="margin-top: var(--sp-2)">
+                      Aberto a novos projetos e colaborações. Geralmente
+                      respondo em até 24 horas.
+                    </p>
                   </div>
-                  <div>
-                    <label
-                      for="message"
-                      class="block text-sm text-[#4F4A4A] mb-2"
-                    >
-                      Mensagem
-                    </label>
-                    <textarea
-                      id="message"
-                      name="message"
-                      rows="4"
-                      required
-                      class="w-full px-4 py-3 border border-[#4F4A4A]/20 bg-transparent text-[#4F4A4A] focus:outline-none focus:border-[#4F4A4A] transition-colors resize-none"
-                      placeholder="Conte-me mais sobre sua ideia..."
-                    ></textarea>
-                  </div>
-                  <button
-                    type="submit"
-                    class="w-full border border-[#4F4A4A] px-6 py-3 text-[#4F4A4A] hover:bg-[#4F4A4A] hover:text-[#EDEDED] transition-all duration-300 flex items-center justify-center gap-2 group"
-                  >
-                    <span>Enviar mensagem</span>
-                    <span class="group-hover:translate-x-1 transition-transform"
-                      >→</span
-                    >
-                  </button>
-                </form>
+                </div>
               </div>
 
-              <!-- Contact Info -->
-              <div class="contact-info">
-                <div class="flex items-center gap-3 mb-8">
-                  <div class="contact-line h-px w-12 bg-[#4F4A4A]"></div>
-                  <span
-                    class="text-xs text-[#4F4A4A]/50 uppercase tracking-wider"
-                    >Informações</span
-                  >
-                </div>
-                <div class="space-y-6">
-                  <div class="contact-item">
-                    <div class="flex items-start gap-4 mb-4">
-                      <div
-                        class="contact-icon-line h-px w-8 bg-[#4F4A4A] mt-2"
-                      ></div>
-                      <div>
-                        <h3 class="text-xl mb-2 text-[#4F4A4A]">Email</h3>
-                        <a
-                          href="mailto:contato@rafaelgois.com"
-                          class="text-sm text-[#4F4A4A]/70 hover:text-[#4F4A4A] transition-colors"
-                        >
-                          contato@rafaelgois.com
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="contact-item">
-                    <div class="flex items-start gap-4 mb-4">
-                      <div
-                        class="contact-icon-line h-px w-8 bg-[#4F4A4A] mt-2"
-                      ></div>
-                      <div>
-                        <h3 class="text-xl mb-2 text-[#4F4A4A]">
-                          Redes Sociais
-                        </h3>
-                        <div class="flex flex-col gap-2">
-                          <a
-                            href="https://br.linkedin.com/in/rafaelfbgois"
-                            target="_blank"
-                            class="text-sm text-[#4F4A4A]/70 hover:text-[#4F4A4A] transition-colors inline-flex items-center gap-2 group"
-                          >
-                            <span>LinkedIn</span>
-                            <span
-                              class="group-hover:translate-x-1 transition-transform"
-                              >→</span
-                            >
-                          </a>
-                          <a
-                            href="https://github.com/RafaGois"
-                            target="_blank"
-                            class="text-sm text-[#4F4A4A]/70 hover:text-[#4F4A4A] transition-colors inline-flex items-center gap-2 group"
-                          >
-                            <span>GitHub</span>
-                            <span
-                              class="group-hover:translate-x-1 transition-transform"
-                              >→</span
-                            >
-                          </a>
-                          <!--             <a
-                          href="#"
-                          class="text-sm text-[#4F4A4A]/70 hover:text-[#4F4A4A] transition-colors inline-flex items-center gap-2 group"
-                        >
-                          <span>Instagram</span>
-                          <span class="group-hover:translate-x-1 transition-transform"
-                            >→</span
-                          >
-                        </a> -->
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="contact-item">
-                    <div class="flex items-start gap-4 mb-4">
-                      <div
-                        class="contact-icon-line h-px w-8 bg-[#4F4A4A] mt-2"
-                      ></div>
-                      <div>
-                        <h3 class="text-xl mb-2 text-[#4F4A4A]">
-                          Disponibilidade
-                        </h3>
-                        <p class="text-sm text-[#4F4A4A]/70 leading-relaxed">
-                          Disponível para novos projetos e colaborações.
-                          Geralmente respondo em até 24 horas.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Decorative Element -->
-                <div class="mt-8 pt-4 border-t border-[#4F4A4A]/20">
-                  <div class="flex items-center justify-center gap-4">
-                    <div class="h-px w-16 bg-[#4F4A4A]/30"></div>
-                    <div
-                      class="w-2 h-2 border border-[#4F4A4A]/40 rounded-full"
-                    ></div>
-                    <div class="h-px w-16 bg-[#4F4A4A]/30"></div>
-                  </div>
-                </div>
-              </div>
+              <p class="contact-info__ornament" aria-hidden="true">
+                <span class="line"></span><span class="dot"></span><span class="line"></span>
+              </p>
             </div>
           </div>
         </div>
       </section>
     </main>
-    <footer class="border-t border-[#4F4A4A]/20 py-12 px-10">
-      <div class="max-w-7xl mx-auto">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
-          <!-- Brand -->
-          <div class="footer-brand">
-            <h3 class="text-2xl mb-4">Rafael Gois</h3>
-            <p class="text-sm text-[#4F4A4A]/70 leading-relaxed max-w-xs">
-              Desenvolvedor de software focado em criar soluções que impactam
-              positivamente a vida das pessoas.
+
+    <!-- ═══════════════ FOOTER ═══════════════ -->
+    <footer class="site-footer">
+      <div class="wrap wrap--wide site-footer__inner">
+        <p class="text-overline" style="color: rgba(255, 251, 239, 0.5)">Vamos conversar</p>
+        <p class="site-footer__name">Rafael Gois<em>.</em></p>
+
+        <div class="site-footer__grid">
+          <div>
+            <h4>O que eu faço</h4>
+            <p>
+              Engenharia de software com obsessão por experiência do usuário —
+              do sistema de controle industrial ao produto digital.
             </p>
           </div>
 
-          <!-- Navigation -->
-          <div class="footer-nav">
-            <h4
-              class="text-sm font-semibold text-[#4F4A4A] mb-4 uppercase tracking-wider"
-            >
-              Navegação
-            </h4>
-            <ul class="space-y-3">
-              <li>
-                <a
-                  href="#about"
-                  class="text-sm text-[#4F4A4A]/70 hover:text-[#4F4A4A] transition-colors inline-flex items-center gap-2 group"
-                >
-                  <span>Sobre mim</span>
-                  <span class="group-hover:translate-x-1 transition-transform"
-                    >→</span
-                  >
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#skills"
-                  class="text-sm text-[#4F4A4A]/70 hover:text-[#4F4A4A] transition-colors inline-flex items-center gap-2 group"
-                >
-                  <span>Habilidades</span>
-                  <span class="group-hover:translate-x-1 transition-transform"
-                    >→</span
-                  >
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#projects"
-                  class="text-sm text-[#4F4A4A]/70 hover:text-[#4F4A4A] transition-colors inline-flex items-center gap-2 group"
-                >
-                  <span>Projetos</span>
-                  <span class="group-hover:translate-x-1 transition-transform"
-                    >→</span
-                  >
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#services"
-                  class="text-sm text-[#4F4A4A]/70 hover:text-[#4F4A4A] transition-colors inline-flex items-center gap-2 group"
-                >
-                  <span>Serviços</span>
-                  <span class="group-hover:translate-x-1 transition-transform"
-                    >→</span
-                  >
-                </a>
-              </li>
-              <!-- Depoimentos oculto temporariamente -->
-              <li>
-                <a
-                  href="#contact"
-                  class="text-sm text-[#4F4A4A]/70 hover:text-[#4F4A4A] transition-colors inline-flex items-center gap-2 group"
-                >
-                  <span>Contato</span>
-                  <span class="group-hover:translate-x-1 transition-transform"
-                    >→</span
-                  >
-                </a>
-              </li>
+          <nav aria-label="Navegação do rodapé">
+            <h4>Navegação</h4>
+            <ul>
+              <li><a class="link-line" href="#about">Sobre mim</a></li>
+              <li><a class="link-line" href="#skills">Habilidades</a></li>
+              <li><a class="link-line" href="#projects">Projetos</a></li>
+              <li><a class="link-line" href="#services">Serviços</a></li>
+              <li><a class="link-line" href="#contact">Contato</a></li>
             </ul>
-          </div>
+          </nav>
 
-          <!-- Social & Contact -->
-          <div class="footer-social">
-            <h4
-              class="text-sm font-semibold text-[#4F4A4A] mb-4 uppercase tracking-wider"
-            >
-              Redes Sociais
-            </h4>
-            <ul class="space-y-3 mb-8">
-              <li>
-                <a
-                  href="https://br.linkedin.com/in/rafaelfbgois"
-                  target="_blank"
-                  class="text-sm text-[#4F4A4A]/70 hover:text-[#4F4A4A] transition-colors inline-flex items-center gap-2 group"
-                >
-                  <span>LinkedIn</span>
-                  <span class="group-hover:translate-x-1 transition-transform"
-                    >→</span
-                  >
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://github.com/RafaGois"
-                  target="_blank"
-                  class="text-sm text-[#4F4A4A]/70 hover:text-[#4F4A4A] transition-colors inline-flex items-center gap-2 group"
-                >
-                  <span>GitHub</span>
-                  <span class="group-hover:translate-x-1 transition-transform"
-                    >→</span
-                  >
-                </a>
-              </li>
-              <!--  <li>
-                <a
-                  href="#"
-                  class="text-sm text-[#4F4A4A]/70 hover:text-[#4F4A4A] transition-colors inline-flex items-center gap-2 group"
-                >
-                  <span>Instagram</span>
-                  <span class="group-hover:translate-x-1 transition-transform"
-                    >→</span
-                  >
-                </a>
-              </li> -->
+          <div>
+            <h4>Contato</h4>
+            <ul>
+              <li><a class="link-line" href="mailto:contato@rafaelgois.com">contato@rafaelgois.com</a></li>
+              <li><a class="link-line" href="https://br.linkedin.com/in/rafaelfbgois" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+              <li><a class="link-line" href="https://github.com/RafaGois" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+              <li><a class="link-line" href="https://www.instagram.com/_rgoiss" target="_blank" rel="noopener noreferrer">Instagram</a></li>
             </ul>
-            <div>
-              <h4
-                class="text-sm font-semibold text-[#4F4A4A] mb-2 uppercase tracking-wider"
-              >
-                Email
-              </h4>
-              <a
-                href="mailto:contato@rafaelgois.com"
-                class="text-sm text-[#4F4A4A]/70 hover:text-[#4F4A4A] transition-colors"
-              >
-                contato@rafaelgois.com
-              </a>
-            </div>
           </div>
         </div>
 
-        <!-- Bottom Bar -->
-        <div class="pt-8 border-t border-[#4F4A4A]/10">
-          <div
-            class="flex flex-col md:flex-row justify-between items-center gap-4"
-          >
-            <p class="text-xs text-[#4F4A4A]/50">
-              ©
-              <span id="current-year">2025</span>
-              Rafael Gois. Todos os direitos reservados.
-            </p>
-            <div class="flex items-center gap-2">
-              <div class="h-px w-8 bg-[#4F4A4A]/30"></div>
-              <p class="text-xs text-[#4F4A4A]/50">
-                Desenvolvido com dedicação e atenção aos detalhes
-              </p>
-              <div class="h-px w-8 bg-[#4F4A4A]/30"></div>
-            </div>
-          </div>
+        <div class="site-footer__bottom">
+          <p>© <span id="current-year">2026</span> Rafael Gois. Todos os direitos reservados.</p>
+          <p>Feito à mão, com um traço de amarelo</p>
         </div>
       </div>
     </footer>
-    <div
-      id="mobileMenu"
-      class="mobile-menu w-full h-svh bg-[#EDEDED] fixed flex-col top-0 left-0 z-[99999] hidden"
-    >
-      <!-- Header do Menu -->
-      <div
-        class="flex justify-between items-center w-full px-6 py-6 border-b border-[#4F4A4A]/10"
-      >
-        <p class="text-xl text-[#4F4A4A]">Rafael Gois</p>
-        <button
-          id="mobileCloseButton"
-          onclick="closeMenu()"
-          class="cursor-pointer w-10 h-10 border border-[#4F4A4A]/20 hover:border-[#4F4A4A] rounded-sm flex items-center justify-center transition-colors duration-300"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            class="text-[#4F4A4A]"
-          >
-            <path
-              d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
-            />
-          </svg>
+
+    <!-- ═══════════════ MENU MOBILE ═══════════════ -->
+    <div class="mobile-menu" id="mobileMenu" role="dialog" aria-modal="true" aria-label="Menu de navegação">
+      <div class="mobile-menu__head">
+        <p class="mobile-menu__brand">Rafael Gois<em>.</em></p>
+        <button class="mobile-menu__close" id="menu-close" type="button" aria-label="Fechar menu">
+          <svg class="ic ic--sm" aria-hidden="true"><use href="#i-x" /></svg>
         </button>
       </div>
 
-      <!-- Links de Navegação -->
-      <div
-        class="flex-1 flex flex-col justify-center items-center px-6 py-12 gap-4 overflow-y-auto"
-      >
-        <a
-          href="#about"
-          onclick="closeMenu()"
-          class="mobile-menu-link group w-full max-w-sm border border-[#4F4A4A]/10 hover:border-[#4F4A4A]/30 p-6 transition-all duration-300"
-        >
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-4">
-              <div
-                class="mobile-menu-line h-px w-8 bg-[#4F4A4A] transition-all duration-300"
-              ></div>
-              <div>
-                <h3
-                  class="text-xl text-[#4F4A4A] group-hover:tracking-wider transition-all duration-300"
-                >
-                  Sobre mim
-                </h3>
-              </div>
-            </div>
-            <span
-              class="text-[#4F4A4A]/50 group-hover:text-[#4F4A4A] group-hover:translate-x-1"
-              >→</span
-            >
-          </div>
+      <div class="mobile-menu__body">
+        <a class="mobile-menu__link" href="#about" data-menu-link>
+          <span><span class="mobile-menu__num">01</span><h3>Sobre mim</h3></span>
+          <span aria-hidden="true">→</span>
         </a>
-
-        <a
-          href="#skills"
-          onclick="closeMenu()"
-          class="mobile-menu-link group w-full max-w-sm border border-[#4F4A4A]/10 hover:border-[#4F4A4A]/30 p-6"
-        >
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-4">
-              <div
-                class="mobile-menu-line h-px w-8 bg-[#4F4A4A] transition-all duration-300"
-              ></div>
-              <div>
-                <h3
-                  class="text-xl text-[#4F4A4A] group-hover:tracking-wider transition-all duration-300"
-                >
-                  Habilidades
-                </h3>
-              </div>
-            </div>
-            <span
-              class="text-[#4F4A4A]/50 group-hover:text-[#4F4A4A] group-hover:translate-x-1 transition-all duration-300"
-              >→</span
-            >
-          </div>
+        <a class="mobile-menu__link" href="#manifesto" data-menu-link>
+          <span><span class="mobile-menu__num">02</span><h3>Manifesto</h3></span>
+          <span aria-hidden="true">→</span>
         </a>
-
-        <a
-          href="#projects"
-          onclick="closeMenu()"
-          class="mobile-menu-link group w-full max-w-sm border border-[#4F4A4A]/10 hover:border-[#4F4A4A]/30 p-6"
-        >
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-4">
-              <div
-                class="mobile-menu-line h-px w-8 bg-[#4F4A4A] transition-all duration-300"
-              ></div>
-              <div>
-                <h3
-                  class="text-xl text-[#4F4A4A] group-hover:tracking-wider transition-all duration-300"
-                >
-                  Projetos
-                </h3>
-              </div>
-            </div>
-            <span
-              class="text-[#4F4A4A]/50 group-hover:text-[#4F4A4A] group-hover:translate-x-1 transition-all duration-300"
-              >→</span
-            >
-          </div>
+        <a class="mobile-menu__link" href="#skills" data-menu-link>
+          <span><span class="mobile-menu__num">03</span><h3>Habilidades</h3></span>
+          <span aria-hidden="true">→</span>
         </a>
-
-        <a
-          href="#services"
-          onclick="closeMenu()"
-          class="mobile-menu-link group w-full max-w-sm border border-[#4F4A4A]/10 hover:border-[#4F4A4A]/30 p-6"
-        >
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-4">
-              <div
-                class="mobile-menu-line h-px w-8 bg-[#4F4A4A] transition-all duration-300"
-              ></div>
-              <div>
-                <h3
-                  class="text-xl text-[#4F4A4A] group-hover:tracking-wider transition-all duration-300"
-                >
-                  Serviços
-                </h3>
-              </div>
-            </div>
-            <span
-              class="text-[#4F4A4A]/50 group-hover:text-[#4F4A4A] group-hover:translate-x-1 transition-all duration-300"
-              >→</span
-            >
-          </div>
+        <a class="mobile-menu__link" href="#projects" data-menu-link>
+          <span><span class="mobile-menu__num">04</span><h3>Projetos</h3></span>
+          <span aria-hidden="true">→</span>
         </a>
-
-        <!-- Depoimentos oculto temporariamente -->
-        <a
-          href="#testimonials-disabled"
-          onclick="closeMenu()"
-          class="mobile-menu-link group w-full max-w-sm border border-[#4F4A4A]/10 hover:border-[#4F4A4A]/30 p-6 hidden"
-        >
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-4">
-              <div
-                class="mobile-menu-line h-px w-8 bg-[#4F4A4A] transition-all duration-300"
-              ></div>
-              <div>
-                <h3
-                  class="text-xl text-[#4F4A4A] group-hover:tracking-wider transition-all duration-300"
-                >
-                  Depoimentos
-                </h3>
-              </div>
-            </div>
-            <span
-              class="text-[#4F4A4A]/50 group-hover:text-[#4F4A4A] group-hover:translate-x-1"
-              >→</span
-            >
-          </div>
+        <a class="mobile-menu__link" href="#services" data-menu-link>
+          <span><span class="mobile-menu__num">05</span><h3>Serviços</h3></span>
+          <span aria-hidden="true">→</span>
         </a>
-
-        <a
-          href="#contact"
-          onclick="closeMenu()"
-          class="mobile-menu-link group w-full max-w-sm border border-[#4F4A4A] p-6 hover:bg-[#4F4A4A] hover:text-[#EDEDED]"
-        >
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-4">
-              <div
-                class="mobile-menu-line h-px w-8 bg-[#4F4A4A] group-hover:bg-[#EDEDED] transition-all duration-300"
-              ></div>
-              <div>
-                <h3
-                  class="text-xl text-[#4F4A4A] group-hover:text-[#EDEDED] group-hover:tracking-wider transition-all duration-300"
-                >
-                  Contato
-                </h3>
-              </div>
-            </div>
-            <span
-              class="text-[#4F4A4A] group-hover:text-[#EDEDED] group-hover:translate-x-1 transition-all duration-300"
-              >→</span
-            >
-          </div>
+        <a class="mobile-menu__link mobile-menu__link--cta" href="#contact" data-menu-link>
+          <span><span class="mobile-menu__num">06</span><h3>Contato</h3></span>
+          <span aria-hidden="true">→</span>
         </a>
       </div>
 
-      <!-- Footer com Redes Sociais -->
-      <div class="border-t border-[#4F4A4A]/10 px-6 py-6">
-        <div class="flex items-center justify-center gap-6">
-          <a
-            href="https://br.linkedin.com/in/rafaelfbgois"
-            target="_blank"
-            rel="noopener noreferrer"
-            onclick="closeMenu()"
-            class="w-12 h-12 border border-[#4F4A4A]/20 rounded-sm flex items-center justify-center hover:border-[#4F4A4A] hover:bg-[#4F4A4A] hover:text-[#EDEDED] transition-all duration-300 group"
-            aria-label="LinkedIn"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              class="group-hover:scale-110 transition-transform"
-            >
-              <path
-                d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
-              />
-            </svg>
-          </a>
-          <a
-            href="https://github.com/RafaGois"
-            target="_blank"
-            rel="noopener noreferrer"
-            onclick="closeMenu()"
-            class="w-12 h-12 border border-[#4F4A4A]/20 rounded-sm flex items-center justify-center hover:border-[#4F4A4A] hover:bg-[#4F4A4A] hover:text-[#EDEDED] transition-all duration-300 group"
-            aria-label="GitHub"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              class="group-hover:scale-110 transition-transform"
-            >
-              <path
-                d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
-              />
-            </svg>
-          </a>
-          <a
-            href="https://www.instagram.com/_rgoiss"
-            target="_blank"
-            rel="noopener noreferrer"
-            onclick="closeMenu()"
-            class="w-12 h-12 border border-[#4F4A4A]/20 rounded-sm flex items-center justify-center hover:border-[#4F4A4A] hover:bg-[#4F4A4A] hover:text-[#EDEDED] transition-all duration-300 group"
-            aria-label="Instagram"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              class="group-hover:scale-110 transition-transform"
-            >
-              <path
-                d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"
-              />
-            </svg>
-          </a>
-        </div>
+      <div class="mobile-menu__foot">
+        <a class="mobile-menu__social" href="https://br.linkedin.com/in/rafaelfbgois" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+          <svg class="ic ic--sm" aria-hidden="true"><use href="#i-linkedin" /></svg>
+        </a>
+        <a class="mobile-menu__social" href="https://github.com/RafaGois" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+          <svg class="ic ic--sm" aria-hidden="true"><use href="#i-github" /></svg>
+        </a>
+        <a class="mobile-menu__social" href="https://www.instagram.com/_rgoiss" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+          <svg class="ic ic--sm" aria-hidden="true"><use href="#i-instagram" /></svg>
+        </a>
       </div>
     </div>
 
-    <!-- Scripts movidos para o final do body com defer para não bloquear renderização -->
-    <script
-      src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"
-      defer
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"
-      defer
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"
-      defer
-    ></script>
+    <!-- Cursor custom (desktop, ponteiro fino) -->
+    <span class="cursor__dot" id="cursor-dot" aria-hidden="true"></span>
+    <span class="cursor__ring" id="cursor-ring" aria-hidden="true"></span>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrambleTextPlugin.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.25/dist/lenis.min.js" defer></script>
     <script src="contact-config.js?v=2" defer></script>
     <script src="contact-form.js?v=3" defer></script>
-    <script src="index.js?v=20" defer></script>
-    <script type="module" src="three-entry.js?v=5"></script>
+    <script src="site.js?v=1" defer></script>
+    <!-- 3D: teclado do hero (no load) + GLBs da dobra #box (lazy). Só ≥ 900px. -->
+    <script type="module" src="three-entry.js?v=6"></script>
   </body>
 </html>

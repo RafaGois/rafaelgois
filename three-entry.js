@@ -3,7 +3,7 @@
  * Hero no load; dobra #box via box-3d-loader (lazy + fila de GLBs).
  */
 const CACHE_VERSION = '5';
-const MD_MIN_WIDTH = '(min-width: 768px)';
+const MD_MIN_WIDTH = '(min-width: 900px)';
 
 let started = false;
 

@@ -11,7 +11,7 @@ const BOX_3D_MODULES = [
   `./box-left-top-3d.js?v=${CACHE_VERSION}`,
 ];
 
-const MD_MIN_WIDTH = '(min-width: 768px)';
+const MD_MIN_WIDTH = '(min-width: 900px)';
 
 function isBox3dViewport() {
   return (

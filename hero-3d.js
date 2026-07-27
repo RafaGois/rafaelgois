@@ -19,10 +19,12 @@ const renderVisibility = createRenderVisibilityWatcher(container, {
 });
 
 /**
- * Teclado fixo: some na dobra “Pensando fora da caixa” (#box) e daí em diante
- * (#projects…), mas permanece visível em Hero, Sobre e Habilidades (#skills).
- * Ordem no DOM: #about → #box → #skills → #projects — por isso não dá para
- * usar só #box como limite (em Habilidades o #box já está acima da tela).
+ * Teclado fixo: some na dobra “Pensando fora da caixa” (#box) / #manifesto e
+ * de #projects em diante, mas permanece visível em Hero, Sobre e Habilidades.
+ * Ordem no DOM: #about → #box → #manifesto → #skills → #projects — por isso não
+ * dá para usar só #box como limite (em Habilidades o #box já saiu da tela).
+ * O intervalo box+manifesto é coberto por `inBoxFoldOnly` (box entrou, skills
+ * ainda não), e o #manifesto tem fundo âmbar opaco que já esconde o canvas.
  */
 function syncHero3dSuppressed() {
   const box = document.querySelector('#box');
@@ -80,11 +82,14 @@ key.shadow.camera.bottom = -5;
 key.shadow.bias          = -0.0005;
 scene.add(key);
 
-const fill = new THREE.DirectionalLight(0xc8d4e8, 0.8);
+// Preenchimento em creme (era azul-frio): sobre fundo #FFFBEF, luz fria
+// deixava o teclado com aparência acinzentada, fora da paleta.
+const fill = new THREE.DirectionalLight(0xf6eedb, 0.9);
 fill.position.set(-5, 2, -3);
 scene.add(fill);
 
-const rim = new THREE.DirectionalLight(0xffffff, 0.3);
+// Contraluz âmbar — o acento #FFB000 do design system tocando as bordas.
+const rim = new THREE.DirectionalLight(0xffb000, 0.55);
 rim.position.set(0, -5, -5);
 scene.add(rim);
 
@@ -218,6 +223,11 @@ registerRenderLayer({
   toneMappingExposure: 1.0,
   update(dt, t) {
     animationMixerMaybeUpdate(gltfMixer, dt);
+
+    // Enquanto o hero manda, o scroll comanda a pose e as teclas. Passada a
+    // narrativa (active=false), quem assume são os ScrollTriggers das seções.
+    const nar = window.__heroNarrative;
+    if (modelLoaded && nar && nar.active) applyNarrative(nar);
     pointerSmoother.update(targetMouseX, targetMouseY, dt);
 
     const idleA = motionIdleAmp();
@@ -259,30 +269,66 @@ function playHeroIntro() {
     typeof window.matchMedia === 'function' &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  if (reduced) {
-    gsap.to(pose, { opacity: 1, duration: 0.6, ease: 'power2.out' });
-    return;
-  }
+  // Só a opacidade: a pose (rotação/posição/escala) agora é comandada pelo
+  // progresso da narrativa do hero — ver applyNarrative().
+  gsap.to(pose, {
+    opacity: 1,
+    duration: reduced ? 0.6 : 1.2,
+    ease: 'power2.out',
+  });
+}
 
-  gsap.fromTo(
-    pose,
-    {
-      opacity: 0,
-      scale: 0.62,
-      posZ: -1.85,
-      rotX: rad(34),
-      rotY: rad(32),
-    },
-    {
-      opacity: 1,
-      scale: 1,
-      posZ: 0,
-      rotX: BASE_ROT_X,
-      rotY: BASE_ROT_Y,
-      duration: 2.35,
-      ease: 'power3.out',
-    },
-  );
+/**
+ * Narrativa do hero: o teclado é conduzido pelo mesmo progresso suavizado que
+ * move os capítulos (publicado por site.js em window.__heroNarrative).
+ *
+ * As curvas terminam exatamente na pose canônica (rotY 38°, rotX 22°, tudo em
+ * zero, escala 1) — a mesma que o tween Hero→About usa como estado inicial.
+ * Sem isso haveria um salto no handoff entre o scroll do hero e o ScrollTrigger.
+ */
+function applyNarrative(nar) {
+  const p = nar.p;
+  const seg = (a, b) => {
+    const x = Math.min(1, Math.max(0, (p - a) / (b - a)));
+    return x * x * (3 - 2 * x);
+  };
+
+  // Capítulo III (texto à direita, p≈0.46–0.72): o teclado cruza para a
+  // esquerda da tela e vira de frente para o texto, segura no platô de
+  // leitura e SÓ ENTÃO — num único gesto contínuo, sem recuar e trocar de
+  // direção — segue até a pose final. Cada trecho do progresso empurra o
+  // valor para um único lado; nada aqui desfaz o que o trecho anterior fez.
+  pose.rotY = BASE_ROT_Y
+    + rad(-58) * seg(0.02, 0.42)   // vira para o gesto dos capítulos I/II
+    + rad(50)  * seg(0.42, 0.52)   // vira de frente para o Capítulo III (segura até 0.62)
+    + rad(8)   * seg(0.62, 0.95);  // segue direto para a pose final — sem voltar antes
+  pose.rotX = BASE_ROT_X + rad(28) * seg(0.0, 0.48) - rad(28) * seg(0.6, 0.96);
+  pose.posX = 0.6 * seg(0.08, 0.4)    // desliza para a direita (texto do Capítulo II está à esquerda)
+    - 1.3   * seg(0.4, 0.52)          // cruza para a esquerda (texto do Capítulo III está à direita)
+    + 0.7   * seg(0.62, 0.95);        // segue direto de volta ao centro
+  pose.posY = -0.3 * seg(0.0, 0.42) + 0.3 * seg(0.58, 0.94) - nar.impact * 0.06;
+  pose.posZ = -0.9 * seg(0.0, 0.45) + 0.9 * seg(0.58, 0.96);
+  pose.scale = 1 + 0.14 * seg(0, 0.3) - 0.14 * seg(0.45, 0.95);
+
+  if (keyMeshes.length === 0) return;
+
+  // Espalhar e remontar: as teclas saem do lugar durante os capítulos e voltam
+  // no beat do "impacto" — o kata levado ao pé da letra.
+  const s = Math.min(1.35, nar.scatter + Math.abs(nar.v) * 2.2);
+  for (let i = 0; i < keyMeshes.length; i++) {
+    const k = keyMeshes[i];
+    const d = k.userData;
+    k.position.set(
+      d.initialPos.x + d.driftX * s,
+      d.initialPos.y + d.lift * s,
+      d.initialPos.z + d.driftZ * s,
+    );
+    k.rotation.set(
+      d.initialRot.x + d.tiltX * s,
+      d.initialRot.y + d.tiltY * s,
+      d.initialRot.z + d.tiltZ * s,
+    );
+  }
 }
 
 function requestHeroIntro() {
@@ -297,7 +343,10 @@ if (window.__heroIntroRequested) {
 
 function setupScrollAnimations() {
   if (!window.gsap || !window.ScrollTrigger || !modelLoaded) {
-    requestAnimationFrame(setupScrollAnimations);
+    // setTimeout, não requestAnimationFrame: em aba de fundo o rAF congela e o
+    // registro dos ScrollTriggers nunca aconteceria — as posições precisam
+    // estar prontas antes de o usuário olhar para a aba.
+    setTimeout(setupScrollAnimations, 100);
     return;
   }
 
@@ -308,10 +357,14 @@ function setupScrollAnimations() {
   playHeroIntro();
 
   // Configuração padrão para as transições entre seções
+  // `top 85%` (e não `top bottom`): com o hero fixado (pin) pela narrativa em
+  // capítulos, a dobra #about começa exatamente onde o pin termina — disparar
+  // no rodapé fazia as teclas explodirem por cima da assinatura e do CTA, dois
+  // gestos disputando a mesma tela. O atraso dá ao hero tempo de subir.
   const trigger = (id, scrub = 1.5) => ({
     trigger:        id,
-    start:          'top bottom',  // inicia quando o topo da seção entra pelo rodapé
-    end:            'top top',     // termina quando o topo da seção chega no topo
+    start:          'top 85%',
+    end:            'top top',
     scrub,
   });
 
@@ -350,7 +403,7 @@ function setupScrollAnimations() {
     const keysTl = gsap.timeline({
       scrollTrigger: {
         trigger: '#about',
-        start:   'top bottom',
+        start:   'top 85%',     // alinhado ao `trigger()`: ver nota acima
         end:     'top 30%',     // termina cedo — antes do pose acabar de sumir
         scrub:   1.2,
       },
