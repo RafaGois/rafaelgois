@@ -487,18 +487,41 @@
     chapters.forEach(function (ch) {
       ch.style.opacity = "1";
       if (!hasST || reduced) return;
-      /* fromTo + immediateRender:false: o capítulo só é escondido no instante em
-         que o trigger dispara. Com gsap.from(), o estado oculto é aplicado de
-         imediato e o texto fica invisível se o trigger nunca rodar. */
+      /* Capítulos com lado (data-side) entram de onde entrariam no palco
+         cinematográfico — esquerda ou direita —, só que em scrub contínuo
+         preso ao scroll da própria pilha vertical, não num fromTo de "uma
+         vez só". É o scrub (não duration/once) que faz a pilha responder ao
+         scroll como o resto do site já faz (ver about mobile, box fold), e
+         o xPercent alternado que recria a sensação de "indo e vindo" do
+         desktop em vez de tudo nascer igual, centralizado. */
+      var side = ch.dataset.side;
+      var xFrom = side === "right" ? 7 : side === "left" ? -7 : 0;
       gsap.fromTo(ch,
-        { y: 32, opacity: 0 },
+        { y: 34, xPercent: xFrom, scale: 0.97, opacity: 0 },
         {
-          y: 0, opacity: 1, duration: 0.8, ease: EASE.gesture, immediateRender: false,
-          scrollTrigger: { trigger: ch, start: "top 85%", once: true },
+          y: 0, xPercent: 0, scale: 1, opacity: 1, ease: "none",
+          scrollTrigger: { trigger: ch, start: "top 92%", end: "top 55%", scrub: 0.6 },
         });
     });
     var restStroke = $(".hero-chapter--rest .sig-stroke");
     if (restStroke) restStroke.classList.add("is-drawn");
+
+    /* Textura de fundo do hero: mesmo cuidado do motor cinematográfico (linha
+       ~440 acima) — ela é position:fixed, então só pode ficar acesa enquanto
+       a dobra do hero está em tela, senão vaza por trás das seções seguintes.
+       Aqui não tem câmera por rAF: um ScrollTrigger liga/desliga a opacidade,
+       a deriva lenta em si é só CSS (ds.css). */
+    var bgImage = $(".hero__bg-image");
+    if (bgImage && hasST) {
+      ScrollTrigger.create({
+        trigger: heroTrack,
+        start: "top bottom",
+        end: "bottom top",
+        onToggle: function (self) {
+          bgImage.style.opacity = self.isActive ? "0.22" : "0";
+        },
+      });
+    }
   }
 
   if (cinematic) buildHeroCinematic();

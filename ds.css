@@ -593,8 +593,11 @@ p { max-width: var(--measure); }
 .hero-rest__name em { font-style: normal; position: relative; white-space: nowrap; display: inline-block; }
 .hero-rest__name .sig-stroke { position: absolute; left: 4%; bottom: -0.16em; width: 94%; z-index: -1; }
 /* No hero cinematográfico o traço é desenhado pelo progresso do scroll (site.js),
-   não pela animação CSS — por isso a transição fica desligada aqui. */
-.js .hero-rest__name .sig-stroke path { animation: none; }
+   não pela animação CSS — por isso a transição fica desligada aqui. No fluxo
+   (mobile / reduced-motion) é o oposto: não tem progresso de scroll para
+   ler, então é a animação CSS (.is-drawn, ligada em buildHeroFlow) que
+   desenha a assinatura — por isso o desligamento não entra em is-flow. */
+.hero:not(.is-flow) .hero-rest__name .sig-stroke path { animation: none; }
 .hero-rest__role {
   margin-top: var(--sp-4);
   font-family: var(--font-mono);
@@ -693,6 +696,46 @@ p { max-width: var(--measure); }
 .hero.is-flow .hero__cue,
 .hero.is-flow .hero__flash { display: none; }
 .hero.is-flow .hero__vignette { background: radial-gradient(ellipse at 50% 20%, transparent 30%, rgba(255, 251, 239, 0.8) 100%); }
+
+/* Alternância esquerda/direita: no fluxo (sem sticky) os capítulos com lado
+   ganham o mesmo alinhamento e a mesma entrada lateral do palco cinematográfico
+   (site.js) — sem isso a pilha vertical achata tudo pro centro e perde o
+   ritmo de "indo e vindo" que faz o hero parecer uma narrativa, não uma lista
+   de parágrafos idênticos. */
+.hero.is-flow .hero-chapter[data-side] { text-align: left; }
+.hero.is-flow .hero-chapter[data-side] .hero-chapter__over,
+.hero.is-flow .hero-chapter[data-side] .hero-chapter__line { margin-inline: 0; }
+.hero.is-flow .hero-chapter[data-side="right"] { text-align: right; }
+.hero.is-flow .hero-chapter[data-side="right"] .hero-chapter__over,
+.hero.is-flow .hero-chapter[data-side="right"] .hero-chapter__line { margin-left: auto; margin-right: 0; }
+
+/* Atmosfera do rig (luz/névoa) sem o motor por rAF do desktop: uma deriva
+   lenta só de transform, sempre rodando — essas camadas já ficam contidas na
+   altura do próprio .hero em fluxo, então não vazam pra seção seguinte. */
+.hero.is-flow .hero__light,
+.hero.is-flow .hero__rays,
+.hero.is-flow .hero__fog--back,
+.hero.is-flow .hero__fog--front {
+  animation: heroAtmosphereDrift 24s var(--ease-breath) infinite;
+}
+.hero.is-flow .hero__rays { animation-duration: 30s; animation-delay: -9s; }
+.hero.is-flow .hero__fog--back { animation-duration: 26s; animation-delay: -4s; }
+.hero.is-flow .hero__fog--front { animation-duration: 21s; animation-delay: -14s; }
+@keyframes heroAtmosphereDrift {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(2.5%, -2%, 0) scale(1.06); }
+}
+
+/* Textura de fundo: acesa/apagada por scroll em site.js (mesmo cuidado do
+   motor cinematográfico — é position:fixed, só pode aparecer enquanto a
+   dobra do hero está em tela). Aqui só a deriva lenta é CSS. */
+.hero.is-flow .hero__bg-image {
+  animation: heroBgDriftMobile 22s var(--ease-breath) infinite;
+}
+@keyframes heroBgDriftMobile {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1.1); }
+  50% { transform: translate3d(-2%, 1.6%, 0) scale(1.16); }
+}
 
 /* ─── 11. SOBRE — a história em três atos (scroll horizontal) ──────────── */
 .about-scroll__pin {
