@@ -1054,6 +1054,60 @@ p { max-width: var(--measure); }
    entre os blocos de habilidade — ver hero-3d.js. Com o fundo opaco herdado
    de .section, o canvas fixo ficava tampado atrás da dobra inteira. */
 #skills { background: transparent; }
+
+/* Mesma textura do .hero__bg-image (ver seção 10), mesma receita: fixa e
+   abaixo do --z-canvas, para o teclado 3D pintar por cima dela em vez de
+   atrás. Aqui o pan lateral não segue o lado do texto — segue o teclado 3D,
+   que alterna direita → esquerda → direita ao cruzar os três blocos (ver
+   initSkillsBg em site.js, sincronizado com os mesmos ScrollTriggers que
+   movem o teclado em hero-3d.js). Começa oculta; só o scroll acende. */
+.skills__bg-image {
+  position: fixed;
+  inset: -22%;
+  z-index: 0;
+  pointer-events: none;
+  background-image: url("https://res.cloudinary.com/dn454izoh/image/upload/f_auto,q_auto,w_2200/v1785193132/textured_engineering_hero_background_hxi79m.png");
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+/* Atmosfera que evita o teclado 3D "duro" sobre o fundo — mesma receita do
+   hero (ver .hero__light/.hero__fog/.hero__vignette, seção 10): neblina e
+   luz quente ficam ACIMA do canvas 3D (--z-canvas: 1) e abaixo do conteúdo
+   da seção, pintando por cima do teclado com cor translúcida em vez de
+   deixá-lo como um recorte nítido sobre a textura. O vinhete por cima de
+   tudo esmaece as bordas retas da área renderizada contra o creme da
+   seção. Fixas, fade e drift lento controlados por initSkillsBg em site.js. */
+.skills__fog,
+.skills__light {
+  position: fixed;
+  inset: -16%;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+.skills__light {
+  background: radial-gradient(circle at 50% 46%, rgba(255, 176, 0, 0.32), transparent 58%);
+}
+.skills__fog--back {
+  background: radial-gradient(ellipse 68% 50% at 30% 60%, rgba(255, 215, 120, 0.32), transparent 70%);
+}
+.skills__fog--front {
+  background: radial-gradient(ellipse 60% 45% at 74% 34%, rgba(255, 251, 239, 0.6), transparent 72%);
+}
+.skills__vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(ellipse at 50% 46%, transparent 36%, rgba(255, 251, 239, 0.85) 100%);
+  will-change: opacity;
+}
+
 .skills__wrapper { position: relative; }
 #skills-svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
 #skills-svg path {
@@ -1105,80 +1159,124 @@ p { max-width: var(--measure); }
   user-select: none;
 }
 .skill-node__title { font-family: var(--font-display); font-size: var(--text-h3); }
+/* Palavras do título entram de lado como no hero (ver .hero-chapter__line
+   .w, seção 10) — precisa de inline-block para o transform pegar. Animado
+   por initSkillNodeReveals em site.js. */
+.skill-node__title .w { display: inline-block; will-change: transform, opacity; }
 .skill-node__lede { margin-top: var(--sp-2); color: var(--color-ink-soft); font-size: var(--text-body-sm); }
 .skill-node__list { margin-top: var(--sp-6); display: grid; gap: var(--sp-2); }
 
 .skill-item {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  align-items: center;
-  gap: var(--sp-4);
+  display: block;
   padding: var(--sp-3);
   margin-inline: calc(var(--sp-3) * -1);
   border-radius: var(--radius-md);
-  transition: background var(--dur-base) var(--ease-gesture), transform var(--dur-base) var(--ease-gesture);
 }
-.skill-item:hover {
-  background: rgba(255, 176, 0, 0.08);
-  transform: translateX(var(--sp-2));
-}
-/* Mesmo gesto do .service-item__badge: contorno vira preenchido e gira
-   levemente — reaproveita um motivo que já existe no site em vez de
-   inventar uma nova animação (o giro do ✦ antigo destoava do resto). */
-.skill-item__idx {
-  display: inline-grid;
-  place-items: center;
-  width: 1.9rem;
-  height: 1.9rem;
-  flex-shrink: 0;
-  border: 1px solid var(--color-line-strong);
-  border-radius: var(--radius-sm);
-  font-family: var(--font-mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.02em;
-  color: var(--color-ink-mute);
-  transition: background var(--dur-fast) var(--ease-gesture), color var(--dur-fast) var(--ease-gesture),
-              border-color var(--dur-fast) var(--ease-gesture), transform var(--dur-fast) var(--ease-gesture);
-}
-.skill-item:hover .skill-item__idx {
-  background: var(--color-amber);
-  border-color: var(--color-amber);
-  color: var(--color-ink);
-  transform: rotate(-6deg);
-}
-.skill-item__body { min-width: 0; }
 .skill-item__name {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--sp-4);
-  list-style: none;
+  display: block;
   font-weight: 600;
   font-size: var(--text-body);
-  transition: color var(--dur-fast) var(--ease-gesture);
 }
-.skill-item__name::-webkit-details-marker { display: none; }
-.skill-item:hover .skill-item__name { color: var(--color-amber-ink); }
-.skill-item__ctx { display: block; font-size: var(--text-body-sm); color: var(--color-ink-mute); margin: 2px 0 0; }
 
-/* Ícone +/× — mesmo motivo do .acc do design system (seção 15), só que
-   aplicado aqui: no mobile ele avisa que o contexto está a um toque; no
-   desktop ele some porque o contexto já fica sempre visível (ver 22). */
-.skill-item__x { position: relative; width: 12px; height: 12px; flex-shrink: 0; }
-.skill-item__x::before, .skill-item__x::after {
+/* ─── 15. TRABALHOS — lista editorial ────────────────────────────────────
+   Inspirado em listas de "journal" editorial: linhas separadas por um
+   filete (hairline), e a linha em hover se destaca das demais com um
+   preenchimento cheio que sangra até a borda do viewport — mesmo
+   --grad-ink usado no footer (seção 17) — enquanto as outras permanecem
+   discretas, só texto sobre o fundo da seção. Numeral romano reaproveita
+   .act__roman / .skill-node__roman (seções 11 e 14). */
+.works__list { border-top: 1px solid var(--color-line); }
+
+.work-row {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  gap: var(--sp-4);
+  padding-block: clamp(var(--sp-8), 6vw, var(--sp-16));
+  border-bottom: 1px solid var(--color-line);
+  text-align: center;
+  transition: border-color var(--dur-base) var(--ease-gesture);
+}
+@media (min-width: 900px) {
+  .work-row {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(var(--sp-8), 4vw, var(--sp-16));
+  }
+  .work-row__body { text-align: left; }
+}
+.work-row:hover { border-color: transparent; }
+
+/* Sangramento até a borda do viewport (left:50% + width:100vw +
+   translateX(-50%)): html/body já usam overflow-x:clip (seção 2) para a
+   textura da dobra #box, então esse sangramento não cria scroll horizontal. */
+.work-row::before {
   content: "";
-  position: absolute; top: 50%; left: 0;
-  width: 100%; height: 1.5px;
-  background: currentColor;
-  opacity: 0.5;
-  border-radius: 2px;
-  transform: translateY(-50%);
-  transition: transform var(--dur-base) var(--ease-gesture);
+  position: absolute;
+  top: 0; bottom: 0;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%) scaleY(0.92);
+  background: var(--grad-ink);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease-gesture), transform var(--dur-base) var(--ease-gesture);
 }
-.skill-item__x::after { transform: translateY(-50%) rotate(90deg); }
-.skill-item__body[open] .skill-item__x::after { transform: translateY(-50%) rotate(0deg); }
+.work-row:hover::before { opacity: 1; transform: translateX(-50%) scaleY(1); }
 
-/* ─── 15. PROJETOS — cases ──────────────────────────────────────────────── */
+.work-row__head { position: relative; overflow: hidden; }
+.work-row__roman {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: clamp(6rem, 5vw + 4rem, 11rem);
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: var(--color-amber-soft);
+  opacity: 0.22;
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+  z-index: 0;
+  transition: color var(--dur-base) var(--ease-gesture), opacity var(--dur-base) var(--ease-gesture);
+}
+.work-row:hover .work-row__roman { color: var(--color-amber); opacity: 0.55; }
+
+.work-row__title {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
+  transition: color var(--dur-base) var(--ease-gesture);
+}
+.work-row:hover .work-row__title { color: var(--color-cream); }
+
+.work-row__body { position: relative; z-index: 1; }
+.work-row__lede {
+  color: var(--color-ink-soft);
+  font-size: var(--text-body);
+  transition: color var(--dur-base) var(--ease-gesture);
+}
+.work-row:hover .work-row__lede { color: rgba(255, 251, 239, 0.78); }
+
+.work-row__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-top: var(--sp-6);
+  font-size: var(--text-body-sm);
+  font-weight: 600;
+  color: var(--color-amber-ink);
+  transition: color var(--dur-base) var(--ease-gesture);
+}
+.work-row__cta .btn__arrow { transition: transform var(--dur-fast) var(--ease-gesture); }
+.work-row:hover .work-row__cta { color: var(--color-amber); }
+.work-row:hover .work-row__cta .btn__arrow { transform: translateX(5px); }
+
+/* ─── 15b. PROJETOS — cases (reservado: entra nas futuras subpáginas de
+     categoria, não é mais usado na home — ver docs/dobra-trabalhos.md) ──── */
 .cases { display: grid; gap: clamp(var(--sp-24), 14vh, var(--sp-32)); }
 .case { display: grid; gap: var(--sp-8); }
 @media (min-width: 900px) {
@@ -1198,7 +1296,6 @@ p { max-width: var(--measure); }
 .case:hover .case__rule { width: 4rem; }
 .case__num { font-family: var(--font-mono); font-size: var(--text-caption); letter-spacing: 0.18em; color: var(--color-ink-mute); }
 .case__name { margin-top: var(--sp-6); font-family: var(--font-body); font-weight: 700; font-size: var(--text-h5); }
-.case__solution { margin-top: var(--sp-2); color: var(--color-ink-soft); font-size: var(--text-body-sm); }
 .case__result {
   margin-top: var(--sp-4);
   padding-left: var(--sp-4);
@@ -1236,104 +1333,8 @@ p { max-width: var(--measure); }
 .cases__closing p { margin: var(--sp-4) auto 0; color: var(--color-ink-soft); }
 .cases__closing .sig-stroke { width: clamp(120px, 20vw, 220px); margin: 0 auto var(--sp-6); }
 
-/* ─── 16. SERVIÇOS ──────────────────────────────────────────────────────── */
-.services__grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: clamp(var(--sp-8), 3vw, var(--sp-8));
-}
-@media (min-width: 900px) { .services__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 
-.service-item {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  padding: clamp(6.5rem, 13vw, 8.5rem) var(--sp-6) var(--sp-8);
-  border-radius: var(--radius-lg);
-  background: var(--color-paper);
-  border: 1px solid var(--color-line);
-  box-shadow: var(--shadow-1);
-  text-align: center;
-  overflow: visible;
-  isolation: isolate;
-  transition: transform var(--dur-base) var(--ease-gesture), box-shadow var(--dur-base) var(--ease-gesture);
-}
-.service-item:hover { transform: translateY(-4px); box-shadow: var(--shadow-3); }
-.service-card-peek {
-  position: absolute;
-  left: 50%; top: 0;
-  z-index: 2;
-  width: min(60%, 14rem);
-  margin: 0;
-  transform: translate(-50%, -48%);
-  pointer-events: none;
-  transition: transform 0.55s var(--ease-gesture);
-}
-.service-card-peek__img {
-  width: 100%;
-  object-fit: contain;
-  filter: drop-shadow(0 18px 32px rgba(90, 60, 10, 0.20));
-  transition: filter 0.55s ease;
-}
-.service-item:hover .service-card-peek { transform: translate(-50%, calc(-48% - 0.5rem)); }
-.service-item:hover .service-card-peek__img { filter: drop-shadow(0 28px 48px rgba(90, 60, 10, 0.28)); }
-
-.service-item__badge {
-  display: inline-grid; place-items: center;
-  width: 2rem; height: 2rem;
-  margin-inline: auto;
-  border: 1px solid var(--color-line-strong);
-  border-radius: var(--radius-sm);
-  font-family: var(--font-mono);
-  font-size: var(--text-caption);
-  color: var(--color-ink-mute);
-  transition: background var(--dur-fast) var(--ease-gesture), color var(--dur-fast) var(--ease-gesture),
-              border-color var(--dur-fast) var(--ease-gesture), transform var(--dur-fast) var(--ease-gesture);
-}
-.service-item:hover .service-item__badge {
-  background: var(--color-amber);
-  border-color: var(--color-amber);
-  color: var(--color-ink);
-  transform: rotate(-6deg);
-}
-.service-item__label { display: block; margin-top: var(--sp-2); }
-.service-item__title { margin-top: var(--sp-4); font-family: var(--font-display); font-size: var(--text-h4); }
-.service-item__list { margin-top: var(--sp-4); display: grid; gap: var(--sp-2); }
-.service-item__list li { font-size: var(--text-body-sm); color: var(--color-ink-soft); }
-.service-item__cta { margin-top: auto; padding-top: var(--sp-6); display: flex; justify-content: center; }
-
-.features-strip {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  width: min(60rem, 100%);
-  margin: var(--sp-12) auto 0;
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  background: rgba(255, 253, 247, 0.6);
-  backdrop-filter: blur(14px) saturate(140%);
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
-  box-shadow: var(--shadow-1);
-}
-@media (min-width: 900px) { .features-strip { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
-.feature-item {
-  display: flex; align-items: flex-start; gap: var(--sp-3);
-  padding: var(--sp-4);
-  border-right: 1px solid var(--color-line);
-  border-bottom: 1px solid var(--color-line);
-}
-.feature-item:nth-child(2n) { border-right: none; }
-.feature-item:nth-last-child(-n+2) { border-bottom: none; }
-@media (min-width: 900px) {
-  .feature-item { border-bottom: none; }
-  .feature-item:nth-child(2n) { border-right: 1px solid var(--color-line); }
-  .feature-item:last-child { border-right: none; }
-}
-.feature-item .ic { color: var(--color-amber-ink); flex-shrink: 0; margin-top: 2px; }
-.feature-item strong { display: block; font-size: var(--text-body-sm); }
-.feature-item p { font-size: var(--text-caption); color: var(--color-ink-mute); line-height: 1.5; }
-
-/* ─── 17. CONTATO ───────────────────────────────────────────────────────── */
+/* ─── 16. CONTATO ───────────────────────────────────────────────────────── */
 .contact__grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -1403,7 +1404,7 @@ textarea.field__control { resize: vertical; min-height: 120px; line-height: 1.6;
 .contact-info__ornament .line { height: 1px; width: 4rem; background: var(--color-line-strong); }
 .contact-info__ornament .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-amber); }
 
-/* ─── 18. FOOTER ────────────────────────────────────────────────────────── */
+/* ─── 17. FOOTER ────────────────────────────────────────────────────────── */
 .site-footer {
   position: relative;
   z-index: var(--z-section);
@@ -1456,7 +1457,7 @@ textarea.field__control { resize: vertical; min-height: 120px; line-height: 1.6;
   color: rgba(255, 251, 239, 0.5);
 }
 
-/* ─── 19. CURSOR CUSTOM ─────────────────────────────────────────────────── */
+/* ─── 18. CURSOR CUSTOM ─────────────────────────────────────────────────── */
 .cursor__dot, .cursor__ring {
   position: fixed;
   top: 0; left: 0;
@@ -1466,24 +1467,30 @@ textarea.field__control { resize: vertical; min-height: 120px; line-height: 1.6;
   opacity: 0;
 }
 .cursor__dot { width: 7px; height: 7px; background: var(--color-amber); }
+/* Escala do anel (repouso/hover/press) é controlada via GSAP em initCursor
+   (site.js) — ele já é dono do `transform` por causa do quickTo que segue o
+   mouse, então só as propriedades abaixo (não-transform) mudam por CSS. */
 .cursor__ring {
   width: 34px; height: 34px;
   border: 1.5px solid var(--color-amber-ink);
-  transition: transform var(--dur-fast) var(--ease-gesture), opacity var(--dur-fast);
+  background: transparent;
+  transition: border-color var(--dur-slow) var(--ease-breath), background var(--dur-slow) var(--ease-breath);
 }
-body.has-custom-cursor.is-cursor-hover .cursor__ring { transform: scale(1.7); opacity: 0.5; }
-body.has-custom-cursor.is-cursor-down .cursor__ring { transform: scale(0.8); }
+body.has-custom-cursor.is-cursor-hover .cursor__ring {
+  border-color: var(--color-amber);
+  background: rgba(255, 176, 0, 0.14);
+}
 @media (hover: hover) and (pointer: fine) {
   body.has-custom-cursor, body.has-custom-cursor a, body.has-custom-cursor button { cursor: none; }
 }
 
-/* ─── 20. REVELAÇÕES ────────────────────────────────────────────────────── */
+/* ─── 19. REVELAÇÕES ────────────────────────────────────────────────────── */
 /* O estado escondido só existe quando há JS para revelar (classe .js posta
    inline no <head>). Sem JS, o conteúdo aparece normalmente. */
 .js [data-reveal] { opacity: 0; transform: translateY(28px); }
 .js.no-anim [data-reveal] { opacity: 1; transform: none; }
 
-/* ─── 21. DEPOIMENTOS (oculto — reativar removendo [hidden]) ─────────────── */
+/* ─── 20. DEPOIMENTOS (oculto — reativar removendo [hidden]) ─────────────── */
 .testimonials__grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -1502,7 +1509,7 @@ body.has-custom-cursor.is-cursor-down .cursor__ring { transform: scale(0.8); }
 .testimonial-item__avatar { width: 42px; height: 42px; border-radius: 50%; background: var(--grad-dawn); flex-shrink: 0; }
 [hidden] { display: none !important; }
 
-/* ─── 22. RESPONSIVO ────────────────────────────────────────────────────── */
+/* ─── 21. RESPONSIVO ────────────────────────────────────────────────────── */
 @media (max-width: 899px) {
   .navbar__links, .navbar__cta { display: none; }
   .navbar__burger { display: flex; }
@@ -1528,15 +1535,8 @@ body.has-custom-cursor.is-cursor-down .cursor__ring { transform: scale(0.8); }
   .skill-node[data-align="right"] { justify-content: flex-start; }
   #skills-svg { display: none; }
 
-  /* Habilidades: os 16 itens com nome + contexto sempre visíveis inflavam
-     essa dobra bem além da tela. <details> nativo colapsa o contexto por
-     padrão — só o nome fica à mostra, um toque revela o resto. Sem JS: o
-     navegador já cuida do toggle, do teclado e do aria-expanded. */
   .skills__nodes { gap: var(--sp-16); }
   .skill-node__list { gap: 0; }
-  .skill-item { align-items: flex-start; padding-block: var(--sp-2); }
-  .skill-item__name { cursor: pointer; }
-  .skill-item__body[open] .skill-item__ctx { margin-top: var(--sp-1); }
 
   /* Sobre mim: no mobile os três atos empilham. Miniatura ao lado do texto
      em vez do retrato em corpo inteiro repetido três vezes — era isso que
@@ -1578,17 +1578,9 @@ body.has-custom-cursor.is-cursor-down .cursor__ring { transform: scale(0.8); }
 
 @media (min-width: 900px) {
   .skills__nodes { gap: clamp(var(--sp-24), 18vh, 16rem); }
-
-  /* Desktop mantém o comportamento de sempre: contexto sempre visível, sem
-     precisar de toque — o hover já cumpre o papel de destaque. O <details>
-     nasce fechado (bom pro mobile); site.js marca `open` de saída quando a
-     tela não é estreita — display:none do estado fechado é nativo do
-     browser, não dá pra sobrepor só com CSS no conteúdo. */
-  .skill-item__name { cursor: default; }
-  .skill-item__x { display: none; }
 }
 
-/* ─── 23. REDUCED MOTION ────────────────────────────────────────────────── */
+/* ─── 22. REDUCED MOTION ────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after {
@@ -1603,7 +1595,7 @@ body.has-custom-cursor.is-cursor-down .cursor__ring { transform: scale(0.8); }
   .cursor__dot, .cursor__ring { display: none; }
 }
 
-/* ─── 24. PRINT ─────────────────────────────────────────────────────────── */
+/* ─── 23. PRINT ─────────────────────────────────────────────────────────── */
 @media print {
   .navbar, .hero__cue, .mobile-menu, .cursor__dot, .cursor__ring,
   .three-composite-root, .hero__bg-image, .grain::after { display: none !important; }
@@ -1611,7 +1603,7 @@ body.has-custom-cursor.is-cursor-down .cursor__ring { transform: scale(0.8); }
   .section, .manifesto, .site-footer { background: #fff !important; color: #000 !important; padding-block: 1.5rem; }
 }
 
-/* ─── 25. ÂNCORAS ───────────────────────────────────────────────────────── */
+/* ─── 24. ÂNCORAS ───────────────────────────────────────────────────────── */
 /* A navbar é fixa: âncoras precisam de folga para não ficar sob ela. */
 section[id], header[id] { scroll-margin-top: 88px; }
 
@@ -1620,10 +1612,9 @@ section[id], header[id] { scroll-margin-top: 88px; }
    recentra a caixa antes de o text-align agir. */
 .hero__stage p,
 .manifesto__inner p,
-.cases__closing p,
-.features-strip + p { margin-inline: auto; }
+.cases__closing p { margin-inline: auto; }
 
-/* ─── 26. LEGIBILIDADE SOBRE O TECLADO 3D ───────────────────────────────────
+/* ─── 25. LEGIBILIDADE SOBRE O TECLADO 3D ───────────────────────────────────
    O teclado desenha atrás do texto do hero. Um halo creme mantém o contraste
    do texto sem precisar de véu opaco (que apagaria o 3D). */
 .hero-chapter__line,

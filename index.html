@@ -123,6 +123,20 @@
          dobra do hero sai da tela. -->
     <div class="hero__bg-image" aria-hidden="true"></div>
 
+    <!-- Mesma textura, mesma família de z, agora atrás da dobra de habilidades.
+         Fica escondida (opacity 0) até o scroll entrar em #skills; o pan lateral
+         acompanha o teclado 3D alternando de lado (ver initSkillsBg em site.js). -->
+    <div class="skills__bg-image" aria-hidden="true"></div>
+
+    <!-- Neblina + luz + vinhete: mesma família da dobra do hero, agora acima
+         do canvas 3D (--z-canvas) — pintam por cima do teclado em vez de atrás,
+         então ele se mistura à cena em vez de ficar "duro"/recortado sobre o
+         fundo. Fade e drift controlados por initSkillsBg em site.js. -->
+    <div class="skills__fog skills__fog--back" aria-hidden="true"></div>
+    <div class="skills__light" aria-hidden="true"></div>
+    <div class="skills__fog skills__fog--front" aria-hidden="true"></div>
+    <div class="skills__vignette" aria-hidden="true"></div>
+
     <!-- Canvas WebGL único: teclado do hero + GLBs da dobra "fora da caixa".
          Fixo atrás do conteúdo; as seções opacas o cobrem, o hero e a dobra
          #box são transparentes para deixá-lo aparecer. (desktop) -->
@@ -142,8 +156,7 @@
       <ul class="navbar__links">
         <li><a class="link-line" href="#about">Sobre mim</a></li>
         <li><a class="link-line" href="#skills">Habilidades</a></li>
-        <li><a class="link-line" href="#projects">Projetos</a></li>
-        <li><a class="link-line" href="#services">Serviços</a></li>
+        <li><a class="link-line" href="#projects">Trabalhos</a></li>
       </ul>
       <a class="btn btn--primary btn--sm navbar__cta" href="#contact">Fale comigo</a>
       <button
@@ -189,7 +202,7 @@
                 </p>
                 <div class="hero-rest__actions">
                   <a class="btn btn--primary" href="#projects">
-                    Ver projetos <span class="btn__arrow" aria-hidden="true">→</span>
+                    Ver trabalhos <span class="btn__arrow" aria-hidden="true">→</span>
                   </a>
                   <a class="btn btn--secondary" href="#contact">Fale comigo</a>
                 </div>
@@ -440,7 +453,7 @@
 
             <div class="skills__nodes">
               <!-- 01 Frontend -->
-              <article class="skill-node" data-align="left" data-reveal>
+              <article class="skill-node" data-align="left">
                 <div class="skill-node__content">
                   <span class="skill-node__roman" aria-hidden="true">I</span>
                   <div class="skill-node__head">
@@ -453,18 +466,18 @@
                     </div>
                   </div>
                   <ul class="skill-node__list">
-                    <li class="skill-item"><span class="skill-item__idx" aria-hidden="true">I</span><details class="skill-item__body"><summary class="skill-item__name">React<span class="skill-item__x" aria-hidden="true"></span></summary><p class="skill-item__ctx">Dashboards industriais com atualização em tempo real</p></details></li>
-                    <li class="skill-item"><span class="skill-item__idx" aria-hidden="true">II</span><details class="skill-item__body"><summary class="skill-item__name">Next.js<span class="skill-item__x" aria-hidden="true"></span></summary><p class="skill-item__ctx">Sites e plataformas que precisam ser rápidos e achados no Google</p></details></li>
-                    <li class="skill-item"><span class="skill-item__idx" aria-hidden="true">III</span><details class="skill-item__body"><summary class="skill-item__name">JavaScript &amp; TypeScript<span class="skill-item__x" aria-hidden="true"></span></summary><p class="skill-item__ctx">Base de tudo — tipagem onde o erro sai caro</p></details></li>
-                    <li class="skill-item"><span class="skill-item__idx" aria-hidden="true">IV</span><details class="skill-item__body"><summary class="skill-item__name">React Native<span class="skill-item__x" aria-hidden="true"></span></summary><p class="skill-item__ctx">Coleta de dados em campo, longe da mesa</p></details></li>
-                    <li class="skill-item"><span class="skill-item__idx" aria-hidden="true">V</span><details class="skill-item__body"><summary class="skill-item__name">GSAP<span class="skill-item__x" aria-hidden="true"></span></summary><p class="skill-item__ctx">Movimento com intenção — inclusive neste site</p></details></li>
-                    <li class="skill-item"><span class="skill-item__idx" aria-hidden="true">VI</span><details class="skill-item__body"><summary class="skill-item__name">HTML5 &amp; CSS3<span class="skill-item__x" aria-hidden="true"></span></summary><p class="skill-item__ctx">Semântica e acessibilidade antes de qualquer framework</p></details></li>
+                    <li class="skill-item"><span class="skill-item__name">React</span></li>
+                    <li class="skill-item"><span class="skill-item__name">Next.js</span></li>
+                    <li class="skill-item"><span class="skill-item__name">JavaScript &amp; TypeScript</span></li>
+                    <li class="skill-item"><span class="skill-item__name">React Native</span></li>
+                    <li class="skill-item"><span class="skill-item__name">GSAP</span></li>
+                    <li class="skill-item"><span class="skill-item__name">HTML5 &amp; CSS3</span></li>
                   </ul>
                 </div>
               </article>
 
               <!-- 02 Backend -->
-              <article class="skill-node" id="skills-backend" data-align="right" data-reveal>
+              <article class="skill-node" id="skills-backend" data-align="right">
                 <div class="skill-node__content">
                   <span class="skill-node__roman" aria-hidden="true">II</span>
                   <div class="skill-node__head">
@@ -477,17 +490,17 @@
                     </div>
                   </div>
                   <ul class="skill-node__list">
-                    <li class="skill-item"><span class="skill-item__idx" aria-hidden="true">I</span><details class="skill-item__body"><summary class="skill-item__name">Node.js<span class="skill-item__x" aria-hidden="true"></span></summary><p class="skill-item__ctx">APIs de ordens de fabricação e apontamento de produção</p></details></li>
-                    <li class="skill-item"><span class="skill-item__idx" aria-hidden="true">II</span><details class="skill-item__body"><summary class="skill-item__name">Nest.js &amp; Express<span class="skill-item__x" aria-hidden="true"></span></summary><p class="skill-item__ctx">Arquitetura que outro dev consegue manter depois de mim</p></details></li>
-                    <li class="skill-item"><span class="skill-item__idx" aria-hidden="true">III</span><details class="skill-item__body"><summary class="skill-item__name">SQL Server<span class="skill-item__x" aria-hidden="true"></span></summary><p class="skill-item__ctx">Bases legadas de indústria — consultar sem quebrar o que roda</p></details></li>
-                    <li class="skill-item"><span class="skill-item__idx" aria-hidden="true">IV</span><details class="skill-item__body"><summary class="skill-item__name">Prisma<span class="skill-item__x" aria-hidden="true"></span></summary><p class="skill-item__ctx">Modelagem versionada, migrações sem susto</p></details></li>
-                    <li class="skill-item"><span class="skill-item__idx" aria-hidden="true">V</span><details class="skill-item__body"><summary class="skill-item__name">Integrações<span class="skill-item__x" aria-hidden="true"></span></summary><p class="skill-item__ctx">Conversar com o ERP e com o chão de fábrica ao mesmo tempo</p></details></li>
+                    <li class="skill-item"><span class="skill-item__name">Node.js</span></li>
+                    <li class="skill-item"><span class="skill-item__name">Nest.js &amp; Express</span></li>
+                    <li class="skill-item"><span class="skill-item__name">SQL Server</span></li>
+                    <li class="skill-item"><span class="skill-item__name">Prisma</span></li>
+                    <li class="skill-item"><span class="skill-item__name">Integrações</span></li>
                   </ul>
                 </div>
               </article>
 
               <!-- 03 Ofício -->
-              <article class="skill-node" id="skills-outros" data-align="left" data-reveal>
+              <article class="skill-node" id="skills-outros" data-align="left">
                 <div class="skill-node__content">
                   <span class="skill-node__roman" aria-hidden="true">III</span>
                   <div class="skill-node__head">
@@ -500,11 +513,11 @@
                     </div>
                   </div>
                   <ul class="skill-node__list">
-                    <li class="skill-item"><span class="skill-item__idx" aria-hidden="true">I</span><details class="skill-item__body"><summary class="skill-item__name">UI/UX<span class="skill-item__x" aria-hidden="true"></span></summary><p class="skill-item__ctx">Entender a rotina de quem usa antes de desenhar a tela</p></details></li>
-                    <li class="skill-item"><span class="skill-item__idx" aria-hidden="true">II</span><details class="skill-item__body"><summary class="skill-item__name">Performance<span class="skill-item__x" aria-hidden="true"></span></summary><p class="skill-item__ctx">Orçamento de 60fps e de segundos até o primeiro conteúdo</p></details></li>
-                    <li class="skill-item"><span class="skill-item__idx" aria-hidden="true">III</span><details class="skill-item__body"><summary class="skill-item__name">Acessibilidade &amp; responsividade<span class="skill-item__x" aria-hidden="true"></span></summary><p class="skill-item__ctx">De 320px ao monitor da sala de controle</p></details></li>
-                    <li class="skill-item"><span class="skill-item__idx" aria-hidden="true">IV</span><details class="skill-item__body"><summary class="skill-item__name">SEO técnico<span class="skill-item__x" aria-hidden="true"></span></summary><p class="skill-item__ctx">Ser encontrado por quem procura o serviço</p></details></li>
-                    <li class="skill-item"><span class="skill-item__idx" aria-hidden="true">V</span><details class="skill-item__body"><summary class="skill-item__name">Git &amp; versionamento<span class="skill-item__x" aria-hidden="true"></span></summary><p class="skill-item__ctx">Histórico legível — o projeto não morre comigo</p></details></li>
+                    <li class="skill-item"><span class="skill-item__name">UI/UX</span></li>
+                    <li class="skill-item"><span class="skill-item__name">Performance</span></li>
+                    <li class="skill-item"><span class="skill-item__name">Acessibilidade &amp; responsividade</span></li>
+                    <li class="skill-item"><span class="skill-item__name">SEO técnico</span></li>
+                    <li class="skill-item"><span class="skill-item__name">Git &amp; versionamento</span></li>
                   </ul>
                 </div>
               </article>
@@ -513,248 +526,66 @@
         </div>
       </section>
 
-      <!-- ═══════════════ PROJETOS — cases ═══════════════ -->
+      <!-- ═══════════════ TRABALHOS — categorias ═══════════════ -->
       <section class="section section--alt" id="projects">
         <div class="wrap wrap--wide">
           <header class="sec-head" data-reveal>
             <div class="sec-head__rule" data-rule></div>
-            <p class="text-overline">04 / Projetos</p>
-            <h2 class="sec-head__title">Cada projeto começa<br />com um problema</h2>
+            <p class="text-overline">04 / Trabalhos</p>
+            <h2 class="sec-head__title">Três formas de resolver<br />o mesmo tipo de problema</h2>
             <p class="sec-head__lede">
-              O que você vê é o resultado. O que não aparece é o processo de
-              entender o negócio antes de escrever a primeira linha de código.
+              Cada categoria reúne um jeito diferente de aplicar a mesma
+              régua: entender o negócio antes de escrever a primeira linha
+              de código.
             </p>
           </header>
 
-          <div class="cases">
-            <!-- Case 01 -->
-            <article class="case" data-project="elevate">
-              <div class="case__content">
-                <div class="case__meta">
-                  <span class="case__rule" aria-hidden="true"></span>
-                  <span class="case__num">Case 01 · Agência</span>
-                </div>
-                <h3 class="case__problem">
-                  Uma agência que fazia trabalho premium — e um site que não dizia isso.
-                </h3>
-                <p class="case__name">Elevate Pro Media</p>
-                <p class="case__solution">
-                  Reconstruímos a plataforma do zero, tratando hierarquia visual
-                  e clareza de proposta como requisito, não como enfeite: cada
-                  visita passou a funcionar como uma reunião de apresentação.
-                </p>
-                <p class="case__result">
-                  ↳ Proposta de valor legível nos primeiros segundos e caminho
-                  único até o contato
-                </p>
-                <ul class="case__stack">
-                  <li class="badge badge--mono">Next.js</li>
-                  <li class="badge badge--mono">Node.js</li>
-                  <li class="badge badge--mono">MySQL</li>
-                </ul>
-                <p class="case__actions">
-                  <a class="link-arrow" href="https://www.sistemaselevate.com" target="_blank" rel="noopener noreferrer">
-                    <span>Ver projeto</span><span aria-hidden="true">→</span>
-                  </a>
-                </p>
+          <div class="works__list">
+            <a class="work-row" href="/sistemas-de-controle.html" data-work="sistemas-de-controle" data-reveal>
+              <div class="work-row__head">
+                <span class="work-row__roman" aria-hidden="true">I</span>
+                <h3 class="work-row__title">Sistemas de Controle</h3>
               </div>
-              <div class="case__visual">
-                <div class="case__frame">
-                  <img
-                    src="https://res.cloudinary.com/dn454izoh/image/upload/v1763988368/Captura_de_Tela_2025-11-24_a%CC%80s_09.36.57_sdefbv.png"
-                    alt="Elevate Pro Media - Plataforma completa para agência de marketing digital desenvolvida por Rafael Gois com Next.js, Node.js e MySQL"
-                    title="Elevate Pro Media - Projeto desenvolvido por Rafael Gois"
-                    width="1200" height="675" loading="lazy" decoding="async"
-                  />
-                </div>
+              <div class="work-row__body">
+                <p class="work-row__lede">
+                  Painéis de chão de fábrica, ordens de fabricação e
+                  automação — sistemas sob confidencialidade, rodando em
+                  ambiente crítico, usados por operadores que não têm
+                  margem para aprender software ruim.
+                </p>
+                <span class="work-row__cta"><span>Ver trabalhos</span><span class="btn__arrow" aria-hidden="true">→</span></span>
               </div>
-            </article>
-
-            <!-- Case 02 -->
-            <article class="case case--flip" data-project="pollen">
-              <div class="case__content">
-                <div class="case__meta">
-                  <span class="case__rule" aria-hidden="true"></span>
-                  <span class="case__num">Case 02 · Dados</span>
-                </div>
-                <h3 class="case__problem">
-                  Dados complexos que só faziam sentido para quem já era especialista.
-                </h3>
-                <p class="case__name">Pollen Intelligence</p>
-                <p class="case__solution">
-                  Projetei a interface em torno do fluxo de decisão — o que o
-                  gestor precisa ver primeiro, o que pode esperar — priorizando
-                  clareza de leitura em vez de densidade de informação.
-                </p>
-                <p class="case__result">
-                  ↳ Leitura dos dados sem treinamento prévio
-                </p>
-                <ul class="case__stack">
-                  <li class="badge badge--mono">HTML5</li>
-                  <li class="badge badge--mono">CSS3</li>
-                  <li class="badge badge--mono">JavaScript</li>
-                </ul>
-                <p class="case__actions">
-                  <a class="link-arrow" href="https://pollenintelligence.com" target="_blank" rel="noopener noreferrer">
-                    <span>Ver projeto</span><span aria-hidden="true">→</span>
-                  </a>
-                </p>
-              </div>
-              <div class="case__visual">
-                <div class="case__frame">
-                  <img
-                    src="https://res.cloudinary.com/dn454izoh/image/upload/v1773058932/Captura_de_Tela_2026-03-09_a%CC%80s_09.21.17_t1lflt.png"
-                    alt="Pollen Intelligence - Solução tecnológica para análise e inteligência de dados desenvolvida por Rafael Gois com HTML5, CSS3 e JavaScript"
-                    title="Pollen Intelligence - Projeto desenvolvido por Rafael Gois"
-                    width="1200" height="675" loading="lazy" decoding="async"
-                  />
-                </div>
-              </div>
-            </article>
-
-            <!-- Case 03 -->
-            <article class="case" data-project="codinome">
-              <div class="case__content">
-                <div class="case__meta">
-                  <span class="case__rule" aria-hidden="true"></span>
-                  <span class="case__num">Case 03 · Serviço local</span>
-                </div>
-                <h3 class="case__problem">
-                  Identidade forte na cadeira, invisível na tela.
-                </h3>
-                <p class="case__name">Codinome Barbearia</p>
-                <p class="case__solution">
-                  Traduzi o posicionamento premium da barbearia para a web e
-                  desenhei o percurso do visitante para terminar sempre no mesmo
-                  lugar: o agendamento.
-                </p>
-                <p class="case__result">
-                  ↳ Do primeiro contato ao agendamento em um caminho só
-                </p>
-                <ul class="case__stack">
-                  <li class="badge badge--mono">Next.js</li>
-                  <li class="badge badge--mono">React</li>
-                  <li class="badge badge--mono">JavaScript</li>
-                </ul>
-                <p class="case__actions">
-                  <a class="link-arrow" href="https://codinomebarbearia.com.br" target="_blank" rel="noopener noreferrer">
-                    <span>Ver projeto</span><span aria-hidden="true">→</span>
-                  </a>
-                </p>
-              </div>
-              <div class="case__visual">
-                <div class="case__frame">
-                  <img
-                    src="https://res.cloudinary.com/dn454izoh/image/upload/v1773058932/Captura_de_Tela_2026-03-09_a%CC%80s_09.21.43_m9dlvl.png"
-                    alt="Codinome Barbearia - Website elegante para barbearia moderna desenvolvida por Rafael Gois com Next.js, React e JavaScript"
-                    title="Codinome Barbearia - Projeto desenvolvido por Rafael Gois"
-                    width="1200" height="675" loading="lazy" decoding="async"
-                  />
-                </div>
-              </div>
-            </article>
-          </div>
-
-          <div class="cases__closing" data-reveal>
-            <svg class="sig-stroke" viewBox="0 0 300 40" aria-hidden="true"><path d="M6 28 C 60 12, 120 34, 170 22 S 260 14, 294 24"/></svg>
-            <h3>E os sistemas que não cabem em screenshot</h3>
-            <p>
-              Controle siderúrgico, painéis de ordens de fabricação,
-              ferramentas de automação para chão de fábrica. Projetos sob
-              confidencialidade, rodando em ambiente crítico, usados por
-              operadores que não têm margem para aprender software ruim — e que
-              seguem em uso.
-            </p>
-            <p style="margin-top: var(--sp-6)">
-              <a class="link-arrow" href="#contact"><span>Conversar sobre um caso parecido</span><span aria-hidden="true">→</span></a>
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <!-- ═══════════════ SERVIÇOS ═══════════════ -->
-      <section class="section" id="services">
-        <div class="wrap wrap--wide">
-          <header class="sec-head" data-reveal>
-            <div class="sec-head__rule" data-rule></div>
-            <p class="text-overline">05 / Serviços</p>
-            <h2 class="sec-head__title">Como eu posso ajudar</h2>
-            <p class="sec-head__lede">
-              Soluções digitais sob medida — de aplicações complexas a presença
-              online elegante.
-            </p>
-          </header>
-
-          <div class="services__grid">
-            <a class="service-item" href="/fullstack.html" data-service="fullstack" data-reveal>
-              <figure class="service-card-peek" aria-hidden="true">
-                <img class="service-card-peek__img" src="f.png" alt="" width="256" height="256" loading="lazy" decoding="async" />
-              </figure>
-              <span class="service-item__badge" aria-hidden="true">F</span>
-              <span class="text-overline service-item__label">Desenvolvimento</span>
-              <h3 class="service-item__title">Desenvolvimento Full Stack</h3>
-              <ul class="service-item__list">
-                <li>Aplicações completas com Next.js + Node</li>
-                <li>Dashboards e sistemas de controle</li>
-                <li>Painéis administrativos</li>
-              </ul>
-              <span class="service-item__cta">
-                <span class="btn btn--secondary btn--sm">Saiba mais <span class="btn__arrow" aria-hidden="true">→</span></span>
-              </span>
             </a>
 
-            <a class="service-item" href="/institutional.html" data-service="institutional" data-reveal>
-              <figure class="service-card-peek" aria-hidden="true">
-                <img class="service-card-peek__img" src="i.png" alt="" width="256" height="256" loading="lazy" decoding="async" />
-              </figure>
-              <span class="service-item__badge" aria-hidden="true">I</span>
-              <span class="text-overline service-item__label">Sites institucionais</span>
-              <h3 class="service-item__title">Sites Institucionais</h3>
-              <ul class="service-item__list">
-                <li>Landing pages</li>
-                <li>Sites empresariais</li>
-                <li>HTML + CSS puro ou Next.js</li>
-              </ul>
-              <span class="service-item__cta">
-                <span class="btn btn--secondary btn--sm">Saiba mais <span class="btn__arrow" aria-hidden="true">→</span></span>
-              </span>
+            <a class="work-row" href="/sites-institucionais.html" data-work="sites-institucionais" data-reveal>
+              <div class="work-row__head">
+                <span class="work-row__roman" aria-hidden="true">II</span>
+                <h3 class="work-row__title">Sites Institucionais</h3>
+              </div>
+              <div class="work-row__body">
+                <p class="work-row__lede">
+                  Sites empresariais e páginas de serviço local — a
+                  identidade do negócio traduzida em segundos, com um
+                  caminho único até o contato.
+                </p>
+                <span class="work-row__cta"><span>Ver trabalhos</span><span class="btn__arrow" aria-hidden="true">→</span></span>
+              </div>
             </a>
 
-            <a class="service-item" href="/consulting.html" data-service="consulting" data-reveal>
-              <figure class="service-card-peek" aria-hidden="true">
-                <img class="service-card-peek__img" src="c.png" alt="" width="256" height="256" loading="lazy" decoding="async" />
-              </figure>
-              <span class="service-item__badge" aria-hidden="true">C</span>
-              <span class="text-overline service-item__label">Consultoria e suporte</span>
-              <h3 class="service-item__title">Consultoria e Suporte</h3>
-              <ul class="service-item__list">
-                <li>Digitalização da sua empresa</li>
-                <li>Correções em sites existentes</li>
-              </ul>
-              <span class="service-item__cta">
-                <span class="btn btn--secondary btn--sm">Saiba mais <span class="btn__arrow" aria-hidden="true">→</span></span>
-              </span>
+            <a class="work-row" href="/aplicacoes-sob-medida.html" data-work="aplicacoes-sob-medida" data-reveal>
+              <div class="work-row__head">
+                <span class="work-row__roman" aria-hidden="true">III</span>
+                <h3 class="work-row__title">Aplicações sob Medida</h3>
+              </div>
+              <div class="work-row__body">
+                <p class="work-row__lede">
+                  Plataformas e produtos web sob medida — dados complexos e
+                  fluxos próprios, onde nenhum template genérico resolve.
+                </p>
+                <span class="work-row__cta"><span>Ver trabalhos</span><span class="btn__arrow" aria-hidden="true">→</span></span>
+              </div>
             </a>
           </div>
-
-          <ul class="features-strip" data-reveal>
-            <li class="feature-item">
-              <svg class="ic ic--sm" aria-hidden="true"><use href="#i-fagulha" /></svg>
-              <div><strong>Performance</strong><p>Soluções rápidas e escaláveis</p></div>
-            </li>
-            <li class="feature-item">
-              <svg class="ic ic--sm" aria-hidden="true"><use href="#i-escudo" /></svg>
-              <div><strong>Segurança</strong><p>Proteção em cada camada</p></div>
-            </li>
-            <li class="feature-item">
-              <svg class="ic ic--sm" aria-hidden="true"><use href="#i-codigo" /></svg>
-              <div><strong>Código limpo</strong><p>Estruturas modernas e eficientes</p></div>
-            </li>
-            <li class="feature-item">
-              <svg class="ic ic--sm" aria-hidden="true"><use href="#i-camadas" /></svg>
-              <div><strong>Design premium</strong><p>Interfaces elegantes e intuitivas</p></div>
-            </li>
-          </ul>
         </div>
       </section>
 
@@ -765,7 +596,7 @@
         <div class="wrap wrap--wide">
           <header class="sec-head">
             <div class="sec-head__rule"></div>
-            <p class="text-overline">06 / Depoimentos</p>
+            <p class="text-overline">05 / Depoimentos</p>
             <h2 class="sec-head__title">Quem trabalhou comigo</h2>
           </header>
           <div class="testimonials__grid"></div>
@@ -777,7 +608,7 @@
         <div class="wrap">
           <header class="sec-head" data-reveal>
             <div class="sec-head__rule" data-rule></div>
-            <p class="text-overline">06 / Contato</p>
+            <p class="text-overline">05 / Contato</p>
             <h2 class="sec-head__title">Vamos tirar isso do papel</h2>
             <p class="sec-head__lede">
               Conte o problema — não precisa vir com a solução pronta. Costumo
@@ -909,8 +740,7 @@
             <ul>
               <li><a class="link-line" href="#about">Sobre mim</a></li>
               <li><a class="link-line" href="#skills">Habilidades</a></li>
-              <li><a class="link-line" href="#projects">Projetos</a></li>
-              <li><a class="link-line" href="#services">Serviços</a></li>
+              <li><a class="link-line" href="#projects">Trabalhos</a></li>
               <li><a class="link-line" href="#contact">Contato</a></li>
             </ul>
           </nav>
@@ -956,15 +786,11 @@
           <span aria-hidden="true">→</span>
         </a>
         <a class="mobile-menu__link" href="#projects" data-menu-link>
-          <span><span class="mobile-menu__num">04</span><h3>Projetos</h3></span>
-          <span aria-hidden="true">→</span>
-        </a>
-        <a class="mobile-menu__link" href="#services" data-menu-link>
-          <span><span class="mobile-menu__num">05</span><h3>Serviços</h3></span>
+          <span><span class="mobile-menu__num">04</span><h3>Trabalhos</h3></span>
           <span aria-hidden="true">→</span>
         </a>
         <a class="mobile-menu__link mobile-menu__link--cta" href="#contact" data-menu-link>
-          <span><span class="mobile-menu__num">06</span><h3>Contato</h3></span>
+          <span><span class="mobile-menu__num">05</span><h3>Contato</h3></span>
           <span aria-hidden="true">→</span>
         </a>
       </div>

@@ -68,17 +68,6 @@
   var yearEl = $("#current-year");
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
-  /* ─── Habilidades: contexto sempre visível no desktop ──────────────────
-     Cada item usa <details> nativo pra colapsar o contexto no mobile sem
-     JS (ver ds.css, seção 22) — nasce fechado, um toque revela o resto.
-     No desktop o contexto sempre foi visível por padrão (o hover já cumpre
-     esse papel), então aqui só se marca `open` de saída quando a tela não
-     é estreita — não dá pra fingir isso só com CSS por cima do estado
-     fechado nativo do browser. */
-  if (!isNarrow) {
-    $$(".skill-item__body").forEach(function (d) { d.open = true; });
-  }
-
   /* ─── Fundo do hero: orbes âmbar em canvas 2D ──────────────────────────
      Pausa fora da tela; dpr limitado; menos orbes no mobile. */
   function createOrbField(canvas, count) {
@@ -679,20 +668,181 @@
     });
   }
 
-  /* ─── Habilidades: itens da lista entram em cascata ────────────────────── */
-  function initSkillItemsReveal() {
+  /* ─── Habilidades: os blocos entram varrendo de lado, como no hero ──────
+     Mesmo motivo de writeWords() em buildHeroCinematic (título em palavras,
+     splitWords() reaproveitado) — só que aqui cada skill-node entra do seu
+     próprio lado (data-align), não do lado de uma câmera. Isso amarra o
+     bloco de texto ao resto da coreografia da dobra: o fundo (initSkillsBg)
+     e o teclado 3D (hero-3d.js) já alternam direita→esquerda→direita ao
+     cruzar os três blocos — o texto entrando do mesmo lado do seu bloco
+     reforça esse "ir para os lados" em vez de competir com ele. No mobile
+     os blocos viram coluna única (ver ds.css §22) — sem alternância, todos
+     entram da esquerda. Um scrub por bloco, não um reveal único: o texto
+     literalmente se monta conforme o scroll passa por ele, do mesmo jeito
+     que os capítulos do hero. */
+  function initSkillNodeReveals() {
     if (!hasST || reduced) return;
-    $$(".skill-node__list").forEach(function (list) {
-      var items = $$(".skill-item", list);
-      if (!items.length) return;
-      gsap.from(items, {
-        opacity: 0,
-        x: -16,
-        duration: 0.55,
-        ease: EASE.gesture,
-        stagger: 0.07,
-        scrollTrigger: { trigger: list, start: "top 85%", once: true },
+    $$(".skill-node").forEach(function (node) {
+      var dir = !isNarrow && node.dataset.align === "right" ? 1 : -1;
+      var num = $(".skill-node__num", node);
+      var title = $(".skill-node__title", node);
+      var lede = $(".skill-node__lede", node);
+      var items = $$(".skill-item", node);
+      var words = title ? splitWords(title) : [];
+
+      var tl = gsap.timeline({
+        scrollTrigger: { trigger: node, start: "top 88%", end: "top 45%", scrub: 0.7 },
       });
+      if (num) tl.from(num, { x: dir * 56, opacity: 0, ease: "none", duration: 0.6 }, 0);
+      if (words.length) {
+        tl.from(words, { xPercent: dir * 85, opacity: 0, stagger: 0.05, ease: "none", duration: 0.6 }, 0.05);
+      }
+      if (lede) tl.from(lede, { x: dir * 34, opacity: 0, ease: "none", duration: 0.5 }, 0.22);
+      if (items.length) {
+        tl.from(items, { x: dir * 24, opacity: 0, stagger: 0.045, ease: "none", duration: 0.5 }, 0.32);
+      }
+    });
+  }
+
+  /* ─── Habilidades: o fundo acompanha o teclado 3D ───────────────────────
+     Mesma textura do hero (.hero__bg-image), mas aqui o pan lateral não
+     segue o lado do texto — segue o teclado 3D, que alterna direita →
+     esquerda → direita ao cruzar os três blocos (ver hero-3d.js: pose.posX
+     vai de 1.6 para -1.35 no bloco Backend, depois para 1.85 no bloco
+     Ofício). Os quatro trechos abaixo reusam exatamente os mesmos gatilhos
+     de scroll usados lá para o fundo ficar em sincronia com o teclado sem
+     acoplar os dois arquivos. Desktop-only: o teclado 3D nem existe no
+     mobile (#hero-3d-container some abaixo de 900px, ver ds.css §22). */
+  function initSkillsBg() {
+    if (!hasST || isNarrow || reduced) return;
+    var bgImage = $(".skills__bg-image");
+    var fogBack = $(".skills__fog--back");
+    var light = $(".skills__light");
+    var fogFront = $(".skills__fog--front");
+    var vignette = $(".skills__vignette");
+    var skills = $("#skills");
+    var backend = $("#skills-backend");
+    var outros = $("#skills-outros");
+    var projects = $("#projects");
+    if (!bgImage || !fogBack || !light || !fogFront || !vignette || !skills || !backend || !outros || !projects) return;
+
+    // Entrada: acende junto com o teclado chegando pela direita (bloco I).
+    gsap.fromTo(bgImage,
+      { xPercent: 7, yPercent: -2, rotate: 1.4, opacity: 0, scale: 1.14 },
+      { xPercent: 4.5, yPercent: -1, rotate: 0.6, opacity: 0.36, scale: 1.09,
+        immediateRender: false,
+        scrollTrigger: { trigger: skills, start: "top bottom", end: "top center", scrub: 1 },
+      }
+    );
+
+    // Bloco II (Backend): o teclado gira e desliza para a esquerda — o fundo acompanha.
+    gsap.fromTo(bgImage,
+      { xPercent: 4.5, yPercent: -1, rotate: 0.6, opacity: 0.36, scale: 1.09 },
+      { xPercent: -5.5, yPercent: 0.4, rotate: -1.3, opacity: 0.44, scale: 1.12,
+        ease: "power2.inOut",
+        immediateRender: false,
+        scrollTrigger: { trigger: backend, start: "top 90%", end: "top 52%", scrub: 1.2 },
+      }
+    );
+
+    // Bloco III (Ofício): o teclado sobe e desliza de volta para a direita.
+    gsap.fromTo(bgImage,
+      { xPercent: -5.5, yPercent: 0.4, rotate: -1.3, opacity: 0.44, scale: 1.12 },
+      { xPercent: 6, yPercent: 1.6, rotate: 1.1, opacity: 0.36, scale: 1.08,
+        ease: "power1.inOut",
+        immediateRender: false,
+        scrollTrigger: { trigger: outros, start: "top 88%", end: "top 38%", scrub: 1.1 },
+      }
+    );
+
+    // Saída: apaga em bloom leve enquanto o teclado se desmonta rumo a Projetos.
+    gsap.fromTo(bgImage,
+      { xPercent: 6, yPercent: 1.6, rotate: 1.1, opacity: 0.36, scale: 1.08 },
+      { xPercent: 6, yPercent: 1.6, rotate: 1.1, opacity: 0, scale: 1.16,
+        ease: "power1.inOut",
+        immediateRender: false,
+        scrollTrigger: { trigger: projects, start: "top 52%", end: "top 8%", scrub: 1.2 },
+      }
+    );
+
+    /* Neblina + luz: mesma lógica do rig do hero (ver frame() em
+       buildHeroCinematic) — pintam translúcidas por cima do canvas 3D para
+       o teclado se misturar à cena em vez de ficar "duro"/recortado. Ao
+       contrário da 1ª versão (drift lento e genérico), agora seguem os
+       MESMOS quatro trechos de scroll do bgImage acima — a neblina literalmente
+       acompanha o teclado enquanto ele alterna de lado, então o esfumaçado
+       sempre fica por cima de onde o teclado está, não só ambiente solto no
+       fundo. fogFront tem a maior amplitude (mais perto da "câmera"); fogBack,
+       a menor (mais atrás); light fica mais colada na posição do teclado. */
+    function atmoPhase(el, from, to, trigger, start, end, scrub, ease) {
+      to.ease = ease || "none";
+      to.immediateRender = false;
+      to.scrollTrigger = { trigger: trigger, start: start, end: end, scrub: scrub };
+      gsap.fromTo(el, from, to);
+    }
+
+    atmoPhase(fogBack,
+      { xPercent: 4, opacity: 0, scale: 1.1 },
+      { xPercent: 2.5, opacity: 0.24, scale: 1.06 },
+      skills, "top bottom", "top center", 1.3);
+    atmoPhase(fogBack,
+      { xPercent: 2.5, opacity: 0.24, scale: 1.06 },
+      { xPercent: -6, opacity: 0.3, scale: 1.1 },
+      backend, "top 90%", "top 52%", 1.5, "power2.inOut");
+    atmoPhase(fogBack,
+      { xPercent: -6, opacity: 0.3, scale: 1.1 },
+      { xPercent: 4, opacity: 0.24, scale: 1.06 },
+      outros, "top 88%", "top 38%", 1.4, "power1.inOut");
+    atmoPhase(fogBack,
+      { xPercent: 4, opacity: 0.24, scale: 1.06 },
+      { xPercent: 4, opacity: 0, scale: 1.14 },
+      projects, "top 52%", "top 8%", 1.5, "power1.inOut");
+
+    atmoPhase(light,
+      { xPercent: 3.5, opacity: 0, scale: 1.02 },
+      { xPercent: 2, opacity: 0.3, scale: 1.08 },
+      skills, "top bottom", "top center", 1.1);
+    atmoPhase(light,
+      { xPercent: 2, opacity: 0.3, scale: 1.08 },
+      { xPercent: -4.5, opacity: 0.36, scale: 1.16 },
+      backend, "top 90%", "top 52%", 1.3, "power2.inOut");
+    atmoPhase(light,
+      { xPercent: -4.5, opacity: 0.36, scale: 1.16 },
+      { xPercent: 3, opacity: 0.3, scale: 1.08 },
+      outros, "top 88%", "top 38%", 1.2, "power1.inOut");
+    atmoPhase(light,
+      { xPercent: 3, opacity: 0.3, scale: 1.08 },
+      { xPercent: 3, opacity: 0, scale: 1.02 },
+      projects, "top 52%", "top 8%", 1.3, "power1.inOut");
+
+    atmoPhase(fogFront,
+      { xPercent: 9, opacity: 0, scale: 1.14 },
+      { xPercent: 5.5, opacity: 0.3, scale: 1.1 },
+      skills, "top bottom", "top center", 1.4);
+    atmoPhase(fogFront,
+      { xPercent: 5.5, opacity: 0.3, scale: 1.1 },
+      { xPercent: -7.5, opacity: 0.38, scale: 1.16 },
+      backend, "top 90%", "top 52%", 1.6, "power2.inOut");
+    atmoPhase(fogFront,
+      { xPercent: -7.5, opacity: 0.38, scale: 1.16 },
+      { xPercent: 8, opacity: 0.3, scale: 1.1 },
+      outros, "top 88%", "top 38%", 1.5, "power1.inOut");
+    atmoPhase(fogFront,
+      { xPercent: 8, opacity: 0.3, scale: 1.1 },
+      { xPercent: 8, opacity: 0, scale: 1.2 },
+      projects, "top 52%", "top 8%", 1.6, "power1.inOut");
+
+    /* Vinhete: só esmaece as bordas retas contra o creme da seção — não
+       precisa seguir o teclado, então segue solto num scrub único. */
+    gsap.to(vignette, {
+      keyframes: {
+        "0%":   { opacity: 0 },
+        "15%":  { opacity: 0.85 },
+        "88%":  { opacity: 0.85 },
+        "100%": { opacity: 0 },
+      },
+      ease: "none",
+      scrollTrigger: { trigger: skills, start: "top bottom", endTrigger: projects, end: "top 8%", scrub: 1.5 },
     });
   }
 
@@ -874,7 +1024,7 @@
     }
 
     document.body.classList.add("has-custom-cursor");
-    gsap.set([dot, ring], { xPercent: -50, yPercent: -50 });
+    gsap.set([dot, ring], { xPercent: -50, yPercent: -50, scale: 1 });
 
     var dotX = gsap.quickTo(dot, "x", { duration: 0.08, ease: "power2.out" });
     var dotY = gsap.quickTo(dot, "y", { duration: 0.08, ease: "power2.out" });
@@ -897,22 +1047,50 @@
       gsap.to([dot, ring], { opacity: 0, duration: 0.25, overwrite: "auto" });
     });
 
+    /* Feedback de hover sobre algo clicável: o anel cresce devagar e fica
+       "respirando" (loop lento, mesmo espírito de --ease-breath usado em
+       outros elementos vivos do site — ver .badge__dot--pulse, .hero__cue).
+       Controlado por aqui (não por CSS) porque o GSAP já é dono do
+       `transform` do anel via quickTo acima — uma transição CSS na mesma
+       propriedade brigaria com ele e seria sobrescrita a cada pointermove. */
+    var hoverBreath = null;
+    var isHoveringInteractive = false;
+
+    function startHoverBreath() {
+      if (hoverBreath) hoverBreath.kill();
+      hoverBreath = gsap.timeline({ defaults: { overwrite: "auto" } })
+        .to(ring, { scale: 1.8, duration: 0.5, ease: EASE.gesture })
+        .to(ring, { scale: 2.05, duration: 1.3, ease: EASE.breath, yoyo: true, repeat: -1 });
+    }
+    function stopHoverBreath(targetScale) {
+      if (hoverBreath) { hoverBreath.kill(); hoverBreath = null; }
+      gsap.to(ring, { scale: targetScale, duration: 0.4, ease: EASE.gesture, overwrite: "auto" });
+    }
+
     var INTERACTIVE = "a, button, input, textarea, select, label, [role='button']";
     document.addEventListener("pointerover", function (e) {
       if (e.target.closest && e.target.closest(INTERACTIVE)) {
         document.body.classList.add("is-cursor-hover");
+        isHoveringInteractive = true;
+        startHoverBreath();
       }
     });
     document.addEventListener("pointerout", function (e) {
       if (e.target.closest && e.target.closest(INTERACTIVE)) {
         document.body.classList.remove("is-cursor-hover");
+        isHoveringInteractive = false;
+        stopHoverBreath(1);
       }
     });
     window.addEventListener("pointerdown", function () {
       document.body.classList.add("is-cursor-down");
+      if (hoverBreath) hoverBreath.kill();
+      gsap.to(ring, { scale: isHoveringInteractive ? 1.5 : 0.85, duration: 0.15, ease: "power2.out", overwrite: "auto" });
     });
     window.addEventListener("pointerup", function () {
       document.body.classList.remove("is-cursor-down");
+      if (isHoveringInteractive) startHoverBreath();
+      else gsap.to(ring, { scale: 1, duration: 0.3, ease: EASE.gesture, overwrite: "auto" });
     });
   })();
 
@@ -1091,7 +1269,8 @@
   initAboutScroll();
   initBoxFold();
   initConstellation();
-  initSkillItemsReveal();
+  initSkillNodeReveals();
+  initSkillsBg();
 
   /* ─── ScrollTrigger: recalcular quando fontes/imagens mudam a altura ──── */
   if (hasST) {
