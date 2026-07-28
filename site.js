@@ -68,6 +68,17 @@
   var yearEl = $("#current-year");
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
+  /* ─── Habilidades: contexto sempre visível no desktop ──────────────────
+     Cada item usa <details> nativo pra colapsar o contexto no mobile sem
+     JS (ver ds.css, seção 22) — nasce fechado, um toque revela o resto.
+     No desktop o contexto sempre foi visível por padrão (o hover já cumpre
+     esse papel), então aqui só se marca `open` de saída quando a tela não
+     é estreita — não dá pra fingir isso só com CSS por cima do estado
+     fechado nativo do browser. */
+  if (!isNarrow) {
+    $$(".skill-item__body").forEach(function (d) { d.open = true; });
+  }
+
   /* ─── Fundo do hero: orbes âmbar em canvas 2D ──────────────────────────
      Pausa fora da tela; dpr limitado; menos orbes no mobile. */
   function createOrbField(canvas, count) {
@@ -931,6 +942,28 @@
           });
         }
       });
+
+      // Mobile: versão simples da linha torta, vertical e sem pin — só
+      // desenha conforme a seção passa pela tela, acompanhando a leitura
+      // de cima para baixo em vez de deslizar na horizontal.
+      if (isNarrow && hasST && !reduced) {
+        var curveMobile = $(".about-curve-path--mobile", pin);
+        if (curveMobile) {
+          var mobileCurveLen = curveMobile.getTotalLength();
+          curveMobile.style.strokeDasharray = mobileCurveLen;
+          curveMobile.style.strokeDashoffset = mobileCurveLen;
+          gsap.to(curveMobile, {
+            strokeDashoffset: 0,
+            ease: "none",
+            scrollTrigger: {
+              trigger: track,
+              start: "top 85%",
+              end: "bottom 15%",
+              scrub: 0.6,
+            },
+          });
+        }
+      }
       return;
     }
 

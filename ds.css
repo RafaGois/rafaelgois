@@ -714,10 +714,12 @@ p { max-width: var(--measure); }
 .about-panel__media { width: min(100%, 320px); }
 .about-panel__text { text-align: left; width: 100%; max-width: var(--measure); }
 
-/* Linha torta ao fundo do scroll horizontal — "a vida segue suas próprias
-   linhas tortas". Só existe na variante desktop pinada: no fluxo vertical
-   (mobile / reduced-motion) os atos já têm respiro de sobra sem ela. */
-.about-curve-svg { display: none; }
+/* Linha torta ao fundo — "a vida segue suas próprias linhas tortas". No
+   desktop pinado ela é horizontal (about-curve-svg); no fluxo vertical do
+   mobile vira uma linha vertical mais simples atrás da coluna de miniaturas
+   (about-curve-svg--mobile). Reduced-motion não usa nenhuma das duas: os
+   atos já têm respiro de sobra sem ela. */
+.about-curve-svg, .about-curve-svg--mobile { display: none; }
 .about-hud { display: none; }
 .about-stepper { display: none; }
 .about-curve-path {
@@ -727,6 +729,7 @@ p { max-width: var(--measure); }
   stroke-linejoin: round;
 }
 .about-curve-path--main { stroke-width: 3.5; opacity: 0.4; }
+.about-curve-path--mobile { stroke-width: 3; opacity: 0.35; }
 
 /* Deriva lenta da linha — só transform: barato e composto pela GPU. */
 .about-curve-drift {
@@ -735,6 +738,7 @@ p { max-width: var(--measure); }
   transform-origin: center;
 }
 .about-curve-drift--main{ animation-duration: 19s; animation-delay: -6s; }
+.about-curve-drift--mobile{ animation-duration: 16s; animation-delay: -3s; }
 
 @keyframes curveDrift {
   0%, 100% { transform: translate(0, 0) rotate(0deg); }
@@ -1142,9 +1146,37 @@ p { max-width: var(--measure); }
   color: var(--color-ink);
   transform: rotate(-6deg);
 }
-.skill-item__name { display: block; font-weight: 600; font-size: var(--text-body); transition: color var(--dur-fast) var(--ease-gesture); }
+.skill-item__body { min-width: 0; }
+.skill-item__name {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  list-style: none;
+  font-weight: 600;
+  font-size: var(--text-body);
+  transition: color var(--dur-fast) var(--ease-gesture);
+}
+.skill-item__name::-webkit-details-marker { display: none; }
 .skill-item:hover .skill-item__name { color: var(--color-amber-ink); }
-.skill-item__ctx { display: block; font-size: var(--text-body-sm); color: var(--color-ink-mute); margin-top: 2px; }
+.skill-item__ctx { display: block; font-size: var(--text-body-sm); color: var(--color-ink-mute); margin: 2px 0 0; }
+
+/* Ícone +/× — mesmo motivo do .acc do design system (seção 15), só que
+   aplicado aqui: no mobile ele avisa que o contexto está a um toque; no
+   desktop ele some porque o contexto já fica sempre visível (ver 22). */
+.skill-item__x { position: relative; width: 12px; height: 12px; flex-shrink: 0; }
+.skill-item__x::before, .skill-item__x::after {
+  content: "";
+  position: absolute; top: 50%; left: 0;
+  width: 100%; height: 1.5px;
+  background: currentColor;
+  opacity: 0.5;
+  border-radius: 2px;
+  transform: translateY(-50%);
+  transition: transform var(--dur-base) var(--ease-gesture);
+}
+.skill-item__x::after { transform: translateY(-50%) rotate(90deg); }
+.skill-item__body[open] .skill-item__x::after { transform: translateY(-50%) rotate(0deg); }
 
 /* ─── 15. PROJETOS — cases ──────────────────────────────────────────────── */
 .cases { display: grid; gap: clamp(var(--sp-24), 14vh, var(--sp-32)); }
@@ -1484,18 +1516,48 @@ body.has-custom-cursor.is-cursor-down .cursor__ring { transform: scale(0.8); }
   #box-left-img, #box-right-img, #box-icaro { display: none; }
 
   #box { min-height: 0; padding-block: var(--sp-24); }
-  /* Mantém nowrap e reduz o corpo: quebrar palavra no meio ("PENSA/NDO")
-     destrói a piada visual do texto saindo da moldura. */
-  .box-headline { font-size: clamp(2.2rem, 11vw, 3.6rem); }
+  /* Mantém nowrap: o texto tem que extrapolar a moldura no mobile também,
+     igual à piada visual do desktop. Mas o corpo precisa ficar bem menor que
+     no desktop — em telas estreitas o clamp anterior (até 6.5rem) fazia cada
+     linha ("PENSANDO", "DA CAIXA") passar da largura da viewport, cortando
+     nas bordas da tela (não só na moldura) e criando um "arrastão" horizontal
+     visual conforme a headline se desembaralhava durante o scroll. */
+  .box-headline { font-size: clamp(2.6rem, 1.6rem + 7vw, 4rem); }
   .box-tagline { margin-top: var(--sp-12); }
 
   .skill-node[data-align="right"] { justify-content: flex-start; }
   #skills-svg { display: none; }
 
+  /* Habilidades: os 16 itens com nome + contexto sempre visíveis inflavam
+     essa dobra bem além da tela. <details> nativo colapsa o contexto por
+     padrão — só o nome fica à mostra, um toque revela o resto. Sem JS: o
+     navegador já cuida do toggle, do teclado e do aria-expanded. */
+  .skills__nodes { gap: var(--sp-16); }
+  .skill-node__list { gap: 0; }
+  .skill-item { align-items: flex-start; padding-block: var(--sp-2); }
+  .skill-item__name { cursor: pointer; }
+  .skill-item__body[open] .skill-item__ctx { margin-top: var(--sp-1); }
+
   /* Sobre mim: no mobile os três atos empilham. Miniatura ao lado do texto
      em vez do retrato em corpo inteiro repetido três vezes — era isso que
      inflava a dobra na vertical. */
-  .about-scroll__track { gap: var(--sp-12); }
+  .about-scroll__pin { position: relative; }
+  /* Linha torta vertical atrás da coluna de miniaturas — versão mobile do
+     fio que corre atrás dos atos no desktop. Sem pin: ela só ocupa a altura
+     real do track e se desenha conforme o scroll passa pela seção
+     (site.js). Largura igual à da miniatura para ficar "encaixada" atrás
+     dela, aparecendo só nos vãos entre um ato e outro. */
+  .about-curve-svg--mobile {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: clamp(4.5rem, 22vw, 6.5rem);
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .about-scroll__track { position: relative; z-index: 1; gap: var(--sp-12); }
   .about-panel {
     flex-direction: row;
     align-items: flex-start;
@@ -1504,12 +1566,26 @@ body.has-custom-cursor.is-cursor-down .cursor__ring { transform: scale(0.8); }
   }
   .about-panel__media { width: clamp(4.5rem, 22vw, 6.5rem); flex: 0 0 auto; }
   .about-panel__text { padding-top: var(--sp-1); }
+  /* No Ato II o HTML inverte texto/imagem (para o row-reverse do desktop) —
+     sem o reverse, o row simples do mobile expõe essa ordem crua e o texto
+     nasce colado à esquerda, sem o recuo da miniatura como nos Atos I e III.
+     Força a miniatura de volta para o início visualmente, sem mexer na
+     ordem de leitura (DOM) para leitor de tela. */
+  .about-panel--reverse .about-panel__media { order: -1; }
   .about__portrait figcaption { display: none; }
   .act { padding-left: var(--sp-6); }
 }
 
 @media (min-width: 900px) {
   .skills__nodes { gap: clamp(var(--sp-24), 18vh, 16rem); }
+
+  /* Desktop mantém o comportamento de sempre: contexto sempre visível, sem
+     precisar de toque — o hover já cumpre o papel de destaque. O <details>
+     nasce fechado (bom pro mobile); site.js marca `open` de saída quando a
+     tela não é estreita — display:none do estado fechado é nativo do
+     browser, não dá pra sobrepor só com CSS no conteúdo. */
+  .skill-item__name { cursor: default; }
+  .skill-item__x { display: none; }
 }
 
 /* ─── 23. REDUCED MOTION ────────────────────────────────────────────────── */
