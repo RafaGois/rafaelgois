@@ -53,7 +53,7 @@ let potLoaded = false;
 let gltfMixer = null;
 const rad = THREE.MathUtils.degToRad;
 
-loadBoxGltf('./pokebola.glb', (gltf) => {
+loadBoxGltf('assets/models/pokebola.glb', (gltf) => {
   const model = gltf.scene;
   fitModel(model, 0.56);
   configureGltfSceneMaterials(model);

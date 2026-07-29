@@ -52,7 +52,7 @@ let benchLoaded = false;
 let gltfMixer = null;
 const rad = THREE.MathUtils.degToRad;
 
-loadBoxGltf('./retro_computer__low.glb', (gltf) => {
+loadBoxGltf('assets/models/retro_computer__low.glb', (gltf) => {
   const model = gltf.scene;
   const box   = new THREE.Box3().setFromObject(model);
   const ctr   = box.getCenter(new THREE.Vector3());

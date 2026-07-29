@@ -123,7 +123,7 @@ let baseMeshes  = [];   // case/PCB, ficam fixos
 let gltfMixer = null;
 
 loadHeroGltf(
-  './keyboard.glb',
+  'assets/models/keyboard.glb',
   (gltf) => {
     const model  = gltf.scene;
     const box    = new THREE.Box3().setFromObject(model);
