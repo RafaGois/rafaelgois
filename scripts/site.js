@@ -195,9 +195,9 @@
   /* Cada capítulo: quando entra e quando sai, em fração do progresso. */
   var SCENES = [
     { inFrom: null, inTo: null, outFrom: 0.10, outTo: 0.24, num: "01", label: "A assinatura" },
-    { inFrom: 0.20, inTo: 0.32, outFrom: 0.38, outTo: 0.50, num: "02", label: "O gesto" },
-    { inFrom: 0.46, inTo: 0.58, outFrom: 0.62, outTo: 0.72, num: "03", label: "O ofício" },
-    { inFrom: 0.74, inTo: 0.90, outFrom: null, outTo: null, num: "04", label: "O leitor" },
+    { inFrom: 0.20, inTo: 0.32, outFrom: 0.38, outTo: 0.50, num: "02", label: "A origem" },
+    { inFrom: 0.46, inTo: 0.58, outFrom: 0.62, outTo: 0.72, num: "03", label: "A virada" },
+    { inFrom: 0.74, inTo: 0.90, outFrom: null, outTo: null, num: "04", label: "O hoje" },
   ];
   var WORD_STAGGER = 0.055;
 
@@ -852,7 +852,6 @@
     if (!box || !hasST) return;
 
     var headline = $("#box-text");
-    var tagline = $("#box-tagline");
     var moldura = $("#box-moldura");
 
     // Headline "desembaralha" em sincronia com o scroll: cada linha começa
@@ -894,13 +893,6 @@
       gsap.from(moldura, {
         scale: 0.94, opacity: 0, duration: 1.1, ease: EASE.settle,
         scrollTrigger: { trigger: box, start: "top 70%", once: true },
-      });
-    }
-
-    if (!reduced && tagline) {
-      gsap.from(tagline.children, {
-        y: 20, opacity: 0, stagger: 0.12, duration: 0.8, ease: EASE.gesture,
-        scrollTrigger: { trigger: tagline, start: "top 88%", once: true },
       });
     }
 
@@ -1008,6 +1000,52 @@
         if (!e.matches && menu.classList.contains("is-open")) close();
       });
     }
+  })();
+
+  /* ─── Lightbox: fotos da timeline "Sobre mim" expandem em tela cheia ──── */
+  (function initAboutLightbox() {
+    var track = $("#about-scroll-track");
+    var lightbox = $("#about-lightbox");
+    var lightboxImg = $("#about-lightbox-img");
+    var closeBtn = $("#about-lightbox-close");
+    if (!track || !lightbox || !lightboxImg) return;
+
+    var lastFocus = null;
+
+    function onKeydown(e) {
+      if (e.key === "Escape") close();
+    }
+
+    function open(img) {
+      lastFocus = document.activeElement;
+      lightboxImg.src = img.currentSrc || img.src;
+      lightboxImg.alt = img.alt || "";
+      lightbox.classList.add("is-open");
+      lightbox.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+      if (lenis) lenis.stop();
+      document.addEventListener("keydown", onKeydown);
+      if (closeBtn) closeBtn.focus();
+    }
+
+    function close() {
+      lightbox.classList.remove("is-open");
+      lightbox.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+      if (lenis) lenis.start();
+      document.removeEventListener("keydown", onKeydown);
+      if (lastFocus && lastFocus.focus) lastFocus.focus();
+    }
+
+    track.addEventListener("click", function (e) {
+      var img = e.target.closest && e.target.closest(".about__portrait img");
+      if (!img) return;
+      open(img);
+    });
+    if (closeBtn) closeBtn.addEventListener("click", close);
+    lightbox.addEventListener("click", function (e) {
+      if (e.target === lightbox) close();
+    });
   })();
 
   /* ─── Cursor custom: ponto firme + anel que respira atrás ─────────────── */
@@ -1184,7 +1222,7 @@
     var hudBar = $("#about-hud-bar", pin);
     var stepperItems = $$(".about-stepper__item", pin);
     var ACT_ROMAN = ["I", "II", "III"];
-    var ACT_LABEL = ["O contexto", "A virada", "O hoje"];
+    var ACT_LABEL = ["A origem", "A virada", "O hoje"];
     var lastActive = -1;
 
     function updateHud(overallProgress) {

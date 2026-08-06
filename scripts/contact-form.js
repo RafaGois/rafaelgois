@@ -116,7 +116,7 @@
     form.reset();
     showStatus(
       "success",
-      "Mensagem enviada com sucesso. Obrigado — responderei em breve.",
+      "Mensagem enviada. Obrigado, respondo em breve.",
     );
   }
 
