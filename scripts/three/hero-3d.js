@@ -653,7 +653,7 @@ function setupScrollAnimations() {
     ScrollTrigger.create({
       trigger: '#projects',
       start: 'top 52%',
-      endTrigger: '#services',
+      endTrigger: '#contact',
       end: 'top top',
       onEnter: () => container.classList.add('hero-3d-suppressed'),
       onEnterBack: () => container.classList.add('hero-3d-suppressed'),
