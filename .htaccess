@@ -1,3 +1,11 @@
+# SEO: redirecionar URLs legadas / canibalizadas
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^institutional\.html$ /sites-institucionais.html [R=301,L]
+  RewriteRule ^fullstack\.html$ /aplicacoes-sob-medida.html [R=301,L]
+  RewriteRule ^consulting\.html$ / [R=301,L]
+</IfModule>
+
 # Habilitar compressão GZIP para arquivos de texto
 <IfModule mod_deflate.c>
   AddOutputFilterByType DEFLATE text/html
