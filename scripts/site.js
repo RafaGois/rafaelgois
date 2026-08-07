@@ -481,24 +481,77 @@
     requestAnimationFrame(frame);
   }
 
+  /**
+   * Hero em fluxo (mobile / sem palco sticky): sem câmera nem teclado 3D, mas
+   * a mesma ideia narrativa do desktop — cada capítulo aparece e some conforme
+   * o scroll, um de cada vez. Em vez do motor por-frame (buildHeroCinematic),
+   * cada capítulo ganha seu próprio ScrollTrigger com scrub: a opacidade,
+   * o deslocamento e o desfoque ficam amarrados à posição do scroll, então o
+   * gesto acompanha o dedo do usuário (para frente e para trás) em vez de
+   * disparar uma vez só.
+   */
   function buildHeroFlow() {
     if (!hero) return;
     hero.classList.add("is-flow");
+    chapters.forEach(function (ch) { ch.style.opacity = "1"; });
+    if (!hasST || reduced) return;
+
+    /* Um único tween por capítulo, guiado por keyframes % e escrubado pelo
+       próprio ScrollTrigger. Importante: cada capítulo usa só UM tween para
+       toda a jornada (entra → mantém → sai) — dois tweens independentes
+       disputando as mesmas propriedades (opacity/y/filter) no mesmo elemento
+       se pisam (o segundo sempre assume o controle assim que é criado),
+       então a saída "engolia" a entrada antes mesmo do scroll começar. */
     chapters.forEach(function (ch) {
-      ch.style.opacity = "1";
-      if (!hasST || reduced) return;
-      /* fromTo + immediateRender:false: o capítulo só é escondido no instante em
-         que o trigger dispara. Com gsap.from(), o estado oculto é aplicado de
-         imediato e o texto fica invisível se o trigger nunca rodar. */
-      gsap.fromTo(ch,
-        { y: 32, opacity: 0 },
-        {
-          y: 0, opacity: 1, duration: 0.8, ease: EASE.gesture, immediateRender: false,
-          scrollTrigger: { trigger: ch, start: "top 85%", once: true },
+      var inner = ch.firstElementChild || ch;
+      var isRest = ch.classList.contains("hero-chapter--rest");
+      var isLast = !isRest && !ch.dataset.side;
+
+      if (isRest) {
+        /* Assinatura: já nasce visível na primeira dobra (o "pop" de entrada
+           é só CSS, ver .hero-chapter--rest > div em ds.css) — aqui só a
+           saída, amarrada à base do capítulo para começar a esmaecer assim
+           que o scroll começa. */
+        gsap.to(inner, {
+          ease: "power1.in",
+          keyframes: {
+            "0%":   { y: 0,   opacity: 1, filter: "blur(0px)" },
+            "100%": { y: -26, opacity: 0, filter: "blur(6px)" },
+          },
+          scrollTrigger: { trigger: ch, start: "bottom 95%", end: "bottom 45%", scrub: 0.3 },
         });
+        var restStroke = $(".sig-stroke", ch);
+        if (restStroke) restStroke.classList.add("is-drawn");
+        return;
+      }
+
+      /* Capítulos I e II: entra, mantém-se legível, sai — o mesmo envelope
+         "entra-mantém-sai" da narrativa desktop (ver range() acima). Janela
+         generosa (center 97%→3%) para que a entrada de um capítulo já se
+         sobreponha à saída do anterior, sem vão em branco no meio. Usa o
+         CENTRO do capítulo como referência, não o topo: como cada capítulo é
+         uma caixa alta (min-height) com o texto centralizado por flex (ver
+         ds.css), o texto vive no meio da caixa — amarrar ao topo faria a
+         entrada disparar bem antes de o texto (centralizado, bem mais abaixo)
+         sequer entrar na tela.
+         Capítulo III (o hoje) fecha a sequência: só entra e permanece — como
+         no desktop (SCENES[3] não tem outFrom/outTo), a cena final não some
+         antes da dobra do hero acabar. */
+      gsap.to(inner, {
+        ease: "power1.inOut",
+        keyframes: isLast ? {
+          "0%":   { y: 44, opacity: 0, filter: "blur(8px)" },
+          "38%":  { y: 0,  opacity: 1, filter: "blur(0px)" },
+          "100%": { y: 0,  opacity: 1, filter: "blur(0px)" },
+        } : {
+          "0%":   { y: 44,  opacity: 0, filter: "blur(8px)" },
+          "20%":  { y: 0,   opacity: 1, filter: "blur(0px)" },
+          "76%":  { y: 0,   opacity: 1, filter: "blur(0px)" },
+          "100%": { y: -40, opacity: 0, filter: "blur(7px)" },
+        },
+        scrollTrigger: { trigger: ch, start: "center 97%", end: "center 3%", scrub: 0.3 },
+      });
     });
-    var restStroke = $(".hero-chapter--rest .sig-stroke");
-    if (restStroke) restStroke.classList.add("is-drawn");
   }
 
   if (cinematic) buildHeroCinematic();

@@ -603,8 +603,10 @@ p { max-width: var(--measure); }
 .hero-rest__name em { font-style: normal; position: relative; white-space: nowrap; display: inline-block; }
 .hero-rest__name .sig-stroke { position: absolute; left: 4%; bottom: -0.16em; width: 94%; z-index: -1; }
 /* No hero cinematográfico o traço é desenhado pelo progresso do scroll (site.js),
-   não pela animação CSS — por isso a transição fica desligada aqui. */
-.js .hero-rest__name .sig-stroke path { animation: none; }
+   não pela animação CSS — por isso a transição fica desligada aqui. No fluxo
+   mobile (.is-flow) não há motor por-frame, então a animação CSS via
+   .sig-stroke.is-drawn (disparada em buildHeroFlow) segue ativa. */
+.js .hero:not(.is-flow) .hero-rest__name .sig-stroke path { animation: none; }
 .hero-rest__role {
   margin-top: var(--sp-4);
   font-family: var(--font-mono);
@@ -698,6 +700,36 @@ p { max-width: var(--measure); }
   padding-inline: var(--gutter);
   margin-bottom: var(--sp-16);
 }
+/* Assinatura: ocupa quase a primeira tela inteira, como um cartão de abertura —
+   garante que o Capítulo I comece abaixo da dobra, revelado só ao rolar, em
+   vez de já entrar parcialmente visível no load. */
+.hero.is-flow .hero-chapter--rest {
+  min-height: 82svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* Pop de entrada da assinatura no load — puro CSS (não GSAP), para não
+   disputar opacity/transform/filter com o tween de saída escrubado pelo
+   scroll em buildHeroFlow (site.js). Roda uma vez e termina antes de o
+   usuário rolar até o ponto em que a saída começa a agir. */
+.hero.is-flow .hero-chapter--rest > div {
+  animation: heroRestIn 900ms var(--ease-gesture) 150ms backwards;
+}
+@keyframes heroRestIn {
+  from { opacity: 0; transform: translateY(24px); filter: blur(6px); }
+  to   { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+/* Capítulos I–III em fluxo: cada um ocupa boa parte da tela, um de cada vez,
+   para que a entrada/saída (site.js) tenha espaço para ser lida em vez de
+   os três ficarem empilhados e visíveis ao mesmo tempo. */
+.hero.is-flow .hero-chapter[data-chapter]:not(.hero-chapter--rest) {
+  min-height: 62svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hero.is-flow .hero-chapter[data-chapter] > div { width: 100%; }
 .hero.is-flow .hero__rig { inset: 0; }
 .hero.is-flow .hero__hud,
 .hero.is-flow .hero__cue,
