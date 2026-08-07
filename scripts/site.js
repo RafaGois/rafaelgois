@@ -553,18 +553,29 @@
         strokeObserver.unobserve(e.target);
       });
     }, { threshold: 0.4 });
-    $$(".cases__closing .sig-stroke").forEach(function (s) { strokeObserver.observe(s); });
+    $$(".cases__closing .sig-stroke, .manifesto__cite-stroke").forEach(function (s) { strokeObserver.observe(s); });
   }
 
-  /* ─── Manifesto: a citação entra palavra por palavra ──────────────────── */
+  /* ─── Manifesto: aspas decorativa entra antes da citação, girando e
+     encaixando no lugar — a assinatura visual da seção 100% âmbar. ──────── */
+  var manifestoMark = $(".manifesto__mark");
+  if (manifestoMark && hasST && !reduced) {
+    gsap.to(manifestoMark, {
+      opacity: 0.4, scale: 1, rotate: 0, duration: 1.3, ease: EASE.settle,
+      scrollTrigger: { trigger: manifestoMark, start: "top 88%", once: true },
+    });
+  }
+
+  /* ─── Manifesto: a citação entra palavra por palavra, com um leve
+     desfoque que resolve em foco — mais cinematográfico que um fade puro. */
   var quote = $("[data-quote]");
   if (quote && hasST) {
     if (hasSplit && !reduced) {
       var qWords = splitWords(quote);
       gsap.fromTo(qWords,
-        { yPercent: 110, opacity: 0 },
+        { yPercent: 110, opacity: 0, filter: "blur(10px)" },
         {
-          yPercent: 0, opacity: 1, stagger: 0.07, duration: 1, ease: EASE.gesture,
+          yPercent: 0, opacity: 1, filter: "blur(0px)", stagger: 0.07, duration: 1.1, ease: EASE.gesture,
           scrollTrigger: { trigger: quote, start: "top 78%", once: true },
         });
     } else if (!reduced) {

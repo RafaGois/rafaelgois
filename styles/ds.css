@@ -1262,6 +1262,21 @@ p { max-width: var(--measure); }
   to   { transform: translate3d(-2.5%, 3%, 0) scale(1.1); opacity: 1; }
 }
 .manifesto__inner { position: relative; z-index: 1; text-align: center; }
+
+/* Aspas decorativa: sobe atrás do overline, encolhida e girada, e se acomoda
+   no lugar quando a seção entra — um floreio que assina o "manifesto" antes
+   mesmo da citação aparecer. */
+.manifesto__mark {
+  display: block;
+  font-family: var(--font-display);
+  font-size: clamp(5rem, 3rem + 8vw, 11rem);
+  line-height: 1;
+  color: var(--color-ink);
+  opacity: 0.4;
+  margin-bottom: clamp(-2.5rem, -1rem - 4vw, -1rem);
+}
+.js .manifesto__mark { opacity: 0; transform: scale(0.7) rotate(-8deg); }
+.js.no-anim .manifesto__mark { opacity: 0.4; transform: none; }
 .manifesto__over { color: var(--color-ink); opacity: 0.62; }
 .manifesto__quote {
   font-family: var(--font-display);
@@ -1272,13 +1287,28 @@ p { max-width: var(--measure); }
   margin: var(--sp-6) auto 0;
   text-wrap: balance;
 }
-.manifesto__quote .w { display: inline-block; }
+.manifesto__quote .w { display: inline-block; will-change: transform, opacity, filter; }
 .manifesto__cite {
+  position: relative;
+  display: inline-block;
   margin: var(--sp-4) auto 0;
   font-size: var(--text-body-sm);
   letter-spacing: 0.04em;
   color: var(--color-ink);
   opacity: 0.62;
+}
+.manifesto__cite-stroke {
+  position: absolute;
+  left: 0;
+  bottom: -0.5em;
+  width: 100%;
+  height: 0.6em;
+}
+.manifesto__cite-stroke path {
+  stroke: var(--color-ink);
+  stroke-width: 2.5;
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
 }
 .manifesto__proof {
   margin: clamp(var(--sp-16), 10vh, var(--sp-24)) auto 0;
@@ -1844,6 +1874,7 @@ body.has-custom-cursor.is-cursor-hover .cursor__ring {
   .sig-stroke path { stroke-dashoffset: 0 !important; }
   .mark-amber { background-size: 100% 0.62em; }
   .js [data-reveal] { opacity: 1; transform: none; }
+  .js .manifesto__mark { opacity: 0.4; transform: none; }
   .hero__cue-line::after { animation: none; }
   .cursor__dot, .cursor__ring { display: none; }
 }

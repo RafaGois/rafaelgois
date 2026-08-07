@@ -2,19 +2,37 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://rafaelgois.com/</loc>
+    <lastmod>2026-08-07</lastmod>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://rafaelgois.com/fullstack.html</loc>
+    <loc>https://rafaelgois.com/sistemas-de-controle.html</loc>
+    <lastmod>2026-08-07</lastmod>
     <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://rafaelgois.com/sites-institucionais.html</loc>
+    <lastmod>2026-08-07</lastmod>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://rafaelgois.com/aplicacoes-sob-medida.html</loc>
+    <lastmod>2026-08-07</lastmod>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://rafaelgois.com/fullstack.html</loc>
+    <lastmod>2026-08-07</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://rafaelgois.com/institutional.html</loc>
-    <priority>0.9</priority>
+    <lastmod>2026-08-07</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://rafaelgois.com/consulting.html</loc>
-    <priority>0.9</priority>
+    <lastmod>2026-08-07</lastmod>
+    <priority>0.8</priority>
   </url>
 </urlset>
-
