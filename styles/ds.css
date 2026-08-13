@@ -1586,13 +1586,25 @@ p { max-width: var(--measure); }
 .work-row:hover .work-row__cta { color: var(--color-amber); }
 .work-row:hover .work-row__cta .btn__arrow { transform: translateX(5px); }
 
-/* ─── 15b. PROJETOS — cases (reservado: entra nas futuras subpáginas de
-     categoria, não é mais usado na home — ver docs/dobra-trabalhos.md) ──── */
-.cases { display: grid; gap: clamp(var(--sp-24), 14vh, var(--sp-32)); }
-.case { display: grid; gap: var(--sp-8); }
+/* ─── 15b. PROJETOS — carrossel de cases ──────────────────────────────────
+   Um case por tela: .cases__viewport rola na horizontal com scroll-snap
+   nativo (funciona de fábrica em touch/trackpad), e .cases__nav dá o
+   controle explícito — as duas setas + contador que a dobra pediu. Ver
+   initCasesCarousel em reveal.js (sincroniza contador/estado das setas
+   com o scroll, e faz as setas rolarem um card por vez). */
+.cases { display: grid; gap: clamp(var(--sp-8), 4vw, var(--sp-12)); }
+.cases__viewport {
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.cases__viewport::-webkit-scrollbar { display: none; }
+.cases__track { display: flex; }
+.case { flex: 0 0 100%; min-width: 0; display: grid; gap: var(--sp-8); scroll-snap-align: start; }
 @media (min-width: 900px) {
   .case { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: center; gap: clamp(var(--sp-8), 4vw, var(--sp-16)); }
-  .case--flip .case__visual { order: -1; }
 }
 .case__problem {
   font-family: var(--font-display);
@@ -1607,15 +1619,27 @@ p { max-width: var(--measure); }
 .case:hover .case__rule { width: 4rem; }
 .case__num { font-family: var(--font-mono); font-size: var(--text-caption); letter-spacing: 0.18em; color: var(--color-ink-mute); }
 .case__name { margin-top: var(--sp-6); font-family: var(--font-body); font-weight: 700; font-size: var(--text-h5); }
-.case__result {
-  margin-top: var(--sp-4);
+/* Bullets do case (ver imagem de referência) — pontinho âmbar em vez do
+   marcador padrão do navegador, mesma cor de acento do resto da dobra. */
+.case__points { margin-top: var(--sp-6); display: grid; gap: var(--sp-2); }
+.case__points li {
+  position: relative;
   padding-left: var(--sp-4);
-  border-left: 2px solid var(--color-amber);
-  font-size: var(--text-body-sm);
-  font-weight: 600;
-  color: var(--color-amber-ink);
+  color: var(--color-ink-soft);
+  font-size: var(--text-body);
+  line-height: 1.5;
 }
-.case__stack { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-top: var(--sp-4); }
+.case__points li::before {
+  content: "";
+  position: absolute;
+  left: 0.15rem;
+  top: 0.6em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-amber);
+}
+.case__stack { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-top: var(--sp-6); }
 .case__actions { margin-top: var(--sp-4); }
 .case__visual { position: relative; }
 .case__frame {
@@ -1632,17 +1656,283 @@ p { max-width: var(--measure); }
    logo e a navegação, justamente o que o case precisa mostrar. */
 .case__frame img { width: 100%; height: 100%; object-fit: contain; object-position: center; }
 
-.cases__closing {
-  margin-top: clamp(var(--sp-16), 10vh, var(--sp-24));
-  padding: clamp(var(--sp-8), 5vw, var(--sp-16));
-  border-radius: var(--radius-lg);
+/* Case mockado (sem projeto real ainda): mesma moldura, sem screenshot —
+   uma barra de "navegador" fake + rótulo, honesto sobre ser placeholder
+   em vez de fingir uma tela que não existe. */
+.case__frame--mock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-3);
+  background: linear-gradient(160deg, var(--color-cream-dark) 0%, var(--color-paper) 100%);
+}
+.case__frame-bar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2rem;
+  border-bottom: 1px solid var(--color-line);
   background: var(--color-paper);
-  border: 1px solid var(--color-line);
+}
+.case__frame-bar::before {
+  content: "";
+  position: absolute;
+  left: var(--sp-3);
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-line-strong);
+  box-shadow: 12px 0 var(--color-line-strong), 24px 0 var(--color-line-strong);
+  transform: translateY(-50%);
+}
+.case__frame-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-ink-mute);
+}
+
+/* Transição "wipe" ao trocar de case pelas setas — mesmo princípio da
+   animação de confirmação de compra do Mercado Livre: um círculo cresce a
+   partir do botão clicado até cobrir a tela inteira, o case troca por
+   baixo enquanto ela está coberta, e o círculo só se apaga depois — quando
+   ele some, quem olha já está vendo o próximo case. Escala/posição são
+   controladas via GSAP inline (initCasesWipe, reveal.js); aqui só o
+   estado de repouso. */
+.case-wipe {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-top: -1.25rem;
+  margin-left: -1.25rem;
+  border-radius: 50%;
+  background: var(--color-amber);
+  transform: scale(0);
+  opacity: 1;
+  pointer-events: none;
+  z-index: 950;
+  will-change: transform, opacity;
+}
+
+.cases__nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-6);
+  margin-top: clamp(var(--sp-4), 3vw, var(--sp-6));
+}
+.cases__arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  flex-shrink: 0;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-line-strong);
+  background: var(--color-cream);
+  color: var(--color-ink);
+  font-size: 1.1rem;
+  line-height: 1;
+  transition: background var(--dur-fast) var(--ease-gesture), border-color var(--dur-fast) var(--ease-gesture), transform var(--dur-fast) var(--ease-gesture);
+}
+.cases__arrow:hover:not(:disabled) { background: var(--color-amber); border-color: var(--color-amber); transform: translateY(-2px); }
+.cases__arrow:disabled { opacity: 0.3; pointer-events: none; }
+.cases__count { font-family: var(--font-mono); font-size: var(--text-caption); letter-spacing: 0.18em; color: var(--color-ink-mute); }
+.cases__count #cases-current { color: var(--color-amber-ink); font-weight: 600; }
+
+/* ─── STACK TÍPICA — preenchimento de fundo da dobra ──────────────────────
+   A dobra é só texto + grade, sem foto — reaproveita o vocabulário que o
+   resto do site já usa pra dar corpo a uma seção "vazia": o glow radial
+   âmbar pontual de .closing-cta/.reason-scroll__light (dois, em cantos
+   opostos, pra dar profundidade sem virar um flood só) e um glifo-fantasma
+   gigante e quase invisível (mesmo motivo de .deliver-mod__watermark /
+   .stack-cell__watermark, só que em escala de seção): um "</>" de código,
+   coerente com o assunto da dobra ("como eu construo"). Tudo abaixo do
+   conteúdo (z-index 0) e não-interativo. */
+.stack-section { position: relative; overflow: hidden; }
+.stack-section > .wrap { position: relative; z-index: 1; }
+
+.stack-section__glow {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  top: -12%;
+  left: -8%;
+  width: min(46vw, 34rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 176, 0, 0.16) 0%, transparent 68%);
+}
+.stack-section__glow--alt {
+  top: auto;
+  left: auto;
+  bottom: -18%;
+  right: -10%;
+  width: min(50vw, 38rem);
+  background: radial-gradient(circle, rgba(255, 215, 120, 0.22) 0%, transparent 70%);
+}
+
+.stack-section__glyph {
+  position: absolute;
+  z-index: 0;
+  top: -6%;
+  right: -6%;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: clamp(9rem, 5rem + 14vw, 18rem);
+  line-height: 1;
+  color: var(--color-ink);
+  opacity: 0.028;
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+}
+
+@media (max-width: 899px) {
+  .stack-section__glyph { top: -3%; font-size: clamp(6rem, 4rem + 16vw, 11rem); }
+}
+
+/* ─── STACK TÍPICA — grade editorial com numeral-fantasma ────────────────
+   Referência: seis tecnologias em grade 3 colunas × 2 linhas, cada uma com
+   seu algarismo romano em serifa grande e quase transparente atrás do
+   nome (mesmo motivo de .deliver-mod__watermark, seção 16), separadas por
+   uma única régua horizontal entre as duas linhas. Ordem do DOM é I→VI e
+   a grade usa grid-auto-flow:column pra empilhar os pares (I/II, III/IV,
+   V/VI) em cada coluna — sem precisar reordenar nada por breakpoint. */
+.stack-grid { position: relative; margin-top: clamp(var(--sp-16), 9vh, var(--sp-24)); }
+
+.stack-grid__divider {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: var(--color-line-strong);
+  transform-origin: left;
+}
+
+.stack-grid__list {
+  position: relative;
+  z-index: 1;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(2, auto);
+  grid-auto-flow: column;
+  column-gap: clamp(var(--sp-6), 4vw, var(--sp-12));
+  row-gap: clamp(var(--sp-12), 7vw, var(--sp-24));
+}
+
+.stack-cell { position: relative; }
+
+/* Numeral fica atrás do nome (não empilhado acima dele) — mesmo truque de
+   .deliver-mod__watermark: glifo grande e quase transparente, levemente
+   deslocado pra trás/acima do texto, que fica por cima (z-index) o
+   cobrindo na maior parte. Discreto por design: opacidade baixa e sem
+   disputar leitura com o nome/legenda. */
+.stack-cell__watermark {
+  position: absolute;
+  top: -0.3em;
+  left: -0.04em;
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 1.5rem + 4.5vw, 4.75rem);
+  line-height: 0.8;
+  color: var(--color-ink);
+  opacity: 0.09;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+
+.stack-cell__name {
+  position: relative;
+  z-index: 1;
+  display: block;
+  font-family: var(--font-display);
+  font-size: var(--text-h4);
+  color: var(--color-ink);
+}
+
+.stack-cell__desc {
+  position: relative;
+  z-index: 1;
+  display: block;
+  margin-top: var(--sp-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: 0.02em;
+  color: var(--color-ink-mute);
+}
+
+.stack-cell:hover .stack-cell__name { color: var(--color-amber-ink); }
+.stack-cell:hover .stack-cell__watermark { opacity: 0.14; }
+
+@media (max-width: 899px) {
+  .stack-grid__divider { display: none; }
+  .stack-grid__list {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    grid-auto-flow: row;
+    row-gap: 0;
+  }
+  .stack-cell {
+    padding-top: var(--sp-4);
+    padding-bottom: clamp(var(--sp-8), 5vw, var(--sp-12));
+    border-bottom: 1px solid var(--color-line);
+  }
+  .stack-cell--06 { border-bottom: none; }
+  .stack-cell__watermark { font-size: clamp(2.5rem, 1.5rem + 8vw, 3.75rem); }
+}
+
+/* Fechamento — clara, não o mergulho escuro que tinha antes (fica
+   melhor pra essa página: o creme mais denso separa a dobra do fundo sem
+   pesar visualmente, mesmo truque do .section--alt). O âmbar segue como
+   acento pontual (stroke, halo, botão) — o flood cheio fica reservado pro
+   .manifesto, que essa página já usa em "Por que isso importa". */
+.closing-cta {
+  position: relative;
+  z-index: var(--z-section);
+  overflow: hidden;
+  background: var(--color-cream-dark);
+  color: var(--color-ink);
+  padding-block: clamp(var(--sp-24), 16vh, var(--sp-32));
   text-align: center;
 }
-.cases__closing h3 { font-family: var(--font-display); font-size: var(--text-h3); }
-.cases__closing p { margin: var(--sp-4) auto 0; color: var(--color-ink-soft); }
-.cases__closing .sig-stroke { width: clamp(120px, 20vw, 220px); margin: 0 auto var(--sp-6); }
+.closing-cta::before {
+  content: "";
+  position: absolute;
+  right: -10%;
+  top: -30%;
+  width: min(60vw, 40rem);
+  aspect-ratio: 1;
+  background: radial-gradient(circle, rgba(255, 176, 0, 0.18) 0%, transparent 65%);
+  pointer-events: none;
+  z-index: 0;
+}
+.closing-cta__inner { position: relative; z-index: 1; max-width: 36rem; }
+.closing-cta__stroke { width: clamp(120px, 20vw, 220px); margin: 0 auto var(--sp-6); }
+.closing-cta__over { color: var(--color-ink-mute); }
+.closing-cta__title {
+  margin-top: var(--sp-4);
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 1.3rem + 4vw, 3.75rem);
+  line-height: 1.1;
+  color: var(--color-ink);
+}
+.closing-cta__lede {
+  margin: var(--sp-4) auto 0;
+  max-width: 32ch;
+  color: var(--color-ink-soft);
+  font-size: var(--text-body);
+}
+.closing-cta__action { margin-top: var(--sp-8); }
 
 /* ─── 15c. PÁGINAS DE TRABALHO — dobra de categoria ───────────────────────
    Compartilhado pelas 3 subpáginas (sites-institucionais, sistemas-de-
@@ -1725,7 +2015,7 @@ p { max-width: var(--measure); }
 }
 .reason-scroll > .wrap { position: relative; z-index: 2; }
 
-.reason-list { display: grid; gap: clamp(var(--sp-16), 11vh, var(--sp-24)); margin-top: clamp(var(--sp-12), 7vh, var(--sp-20)); }
+.reason-list { display: grid; gap: clamp(var(--sp-16), 11vh, var(--sp-24)); margin-top: clamp(var(--sp-12), 7vh, var(--sp-24)); }
 
 .reason-block { display: flex; }
 .reason-block[data-align="right"] { justify-content: flex-end; }
@@ -2110,6 +2400,12 @@ body.has-custom-cursor.is-cursor-hover .cursor__ring {
 .js.no-anim .deliver-mod__chip { opacity: 1; transform: none; }
 .js.no-anim .deliver-mod__mask-line { transform: none; }
 
+/* Células de "Stack típica" — stagger dedicado (initStackGrid), não o
+   [data-reveal] genérico. A régua entre as duas linhas usa [data-rule],
+   então já herda a animação de scaleX genérica lá de cima. */
+.js .stack-cell { opacity: 0; transform: translateY(24px); }
+.js.no-anim .stack-cell { opacity: 1; transform: none; }
+
 /* ─── 20. DEPOIMENTOS (oculto — reativar removendo [hidden]) ─────────────── */
 .testimonials__grid {
   display: grid;
@@ -2238,8 +2534,7 @@ section[id], header[id] { scroll-margin-top: 88px; }
    esquerda: a caixa é mais estreita que o container. margin-inline:auto
    recentra a caixa antes de o text-align agir. */
 .hero__stage p,
-.manifesto__inner p,
-.cases__closing p { margin-inline: auto; }
+.manifesto__inner p { margin-inline: auto; }
 
 /* ─── 25. LEGIBILIDADE SOBRE O TECLADO 3D ───────────────────────────────────
    O teclado desenha atrás do texto do hero. Um halo creme mantém o contraste

@@ -352,7 +352,12 @@
         </div>
       </section>
 
-      <!-- ═══════════════ CASE REAL ═══════════════ -->
+      <!-- ═══════════════ CASE REAL ═══════════════
+           Carrossel horizontal (scroll-snap nativo + botões prev/next):
+           um case por tela, com "passar para ver os demais". Os 2 últimos
+           cases são mockados (sem projeto real ainda) — sinalizados como
+           "exemplo" no meta e sem link "Ver projeto", pra não fingir uma
+           URL que não existe. Ver initCasesCarousel em reveal.js. -->
       <section class="section section--alt">
         <div class="wrap wrap--wide">
           <header class="sec-head" data-reveal>
@@ -360,99 +365,252 @@
             <p class="text-overline">Case</p>
             <h2 class="sec-head__title">Um exemplo real</h2>
             <p class="sec-head__lede">
-              Nem todo projeto pode ser mostrado — este pode.
+              Nem todo projeto pode ser mostrado — estes podem.
             </p>
           </header>
 
-          <div class="cases">
-            <article class="case" data-reveal>
-              <div class="case__content">
-                <div class="case__meta">
-                  <span class="case__rule" aria-hidden="true"></span>
-                  <span class="case__num">Case · Serviço local</span>
-                </div>
-                <h3 class="case__problem">
-                  Identidade forte na cadeira, invisível na tela.
-                </h3>
-                <p class="case__name">Codinome Barbearia</p>
-                <p class="case__solution">
-                  Traduzi o posicionamento premium da barbearia para a web e
-                  desenhei o percurso do visitante para terminar sempre no
-                  mesmo lugar: o agendamento.
-                </p>
-                <p class="case__result">
-                  ↳ Do primeiro contato ao agendamento em um caminho só
-                </p>
-                <ul class="case__stack">
-                  <li class="badge badge--mono">Next.js</li>
-                  <li class="badge badge--mono">React</li>
-                  <li class="badge badge--mono">JavaScript</li>
-                </ul>
-                <p class="case__actions">
-                  <a class="link-arrow" href="https://codinomebarbearia.com.br" target="_blank" rel="noopener noreferrer">
-                    <span>Ver projeto</span><span aria-hidden="true">→</span>
-                  </a>
-                </p>
+          <div class="cases" data-reveal>
+            <div class="cases__viewport">
+              <div class="cases__track" id="cases-track">
+                <article class="case">
+                  <div class="case__content">
+                    <div class="case__meta">
+                      <span class="case__rule" aria-hidden="true"></span>
+                      <span class="case__num">Case · Serviço local</span>
+                    </div>
+                    <h3 class="case__problem">
+                      Identidade forte na cadeira, invisível na tela.
+                    </h3>
+                    <p class="case__name">Codinome Barbearia</p>
+                    <ul class="case__points">
+                      <li>Posicionamento premium traduzido para a web.</li>
+                      <li>Percurso do visitante otimizado para agendamento.</li>
+                      <li>Redesenho visual para uma experiência superior.</li>
+                    </ul>
+                    <p class="case__actions">
+                      <a class="link-arrow" href="https://codinomebarbearia.com.br" target="_blank" rel="noopener noreferrer">
+                        <span>Ver projeto</span><span aria-hidden="true">→</span>
+                      </a>
+                    </p>
+                    <ul class="case__stack">
+                      <li class="badge badge--mono">Next.js</li>
+                      <li class="badge badge--mono">React</li>
+                      <li class="badge badge--mono">JavaScript</li>
+                    </ul>
+                  </div>
+                  <div class="case__visual">
+                    <div class="case__frame">
+                      <img
+                        src="https://res.cloudinary.com/dn454izoh/image/upload/v1773058932/Captura_de_Tela_2026-03-09_a%CC%80s_09.21.43_m9dlvl.png"
+                        alt="Codinome Barbearia - Website elegante para barbearia moderna desenvolvida por Rafael Gois com Next.js, React e JavaScript"
+                        title="Codinome Barbearia - Projeto desenvolvido por Rafael Gois"
+                        width="1200" height="675" loading="lazy" decoding="async"
+                      />
+                    </div>
+                  </div>
+                </article>
+
+                <article class="case">
+                  <div class="case__content">
+                    <div class="case__meta">
+                      <span class="case__rule" aria-hidden="true"></span>
+                      <span class="case__num">Case · Saúde (exemplo)</span>
+                    </div>
+                    <h3 class="case__problem">
+                      Confiança clínica, sem parecer um formulário.
+                    </h3>
+                    <p class="case__name">Clínica Vitta</p>
+                    <ul class="case__points">
+                      <li>Linguagem acolhedora traduzida para o digital.</li>
+                      <li>Agendamento simplificado em poucos cliques.</li>
+                      <li>Visual que transmite cuidado e credibilidade.</li>
+                    </ul>
+                    <ul class="case__stack">
+                      <li class="badge badge--mono">HTML5</li>
+                      <li class="badge badge--mono">CSS3</li>
+                      <li class="badge badge--mono">JavaScript</li>
+                    </ul>
+                  </div>
+                  <div class="case__visual">
+                    <div class="case__frame case__frame--mock" aria-hidden="true">
+                      <span class="case__frame-bar"></span>
+                      <span class="case__frame-label">Prévia em breve</span>
+                    </div>
+                  </div>
+                </article>
+
+                <article class="case">
+                  <div class="case__content">
+                    <div class="case__meta">
+                      <span class="case__rule" aria-hidden="true"></span>
+                      <span class="case__num">Case · Serviços profissionais (exemplo)</span>
+                    </div>
+                    <h3 class="case__problem">
+                      Portfólio que fecha reunião antes da reunião.
+                    </h3>
+                    <p class="case__name">Estúdio Craft</p>
+                    <ul class="case__points">
+                      <li>Portfólio organizado por tipo de projeto.</li>
+                      <li>Prova social logo acima da dobra.</li>
+                      <li>Caminho direto até o formulário de contato.</li>
+                    </ul>
+                    <ul class="case__stack">
+                      <li class="badge badge--mono">Next.js</li>
+                      <li class="badge badge--mono">React</li>
+                    </ul>
+                  </div>
+                  <div class="case__visual">
+                    <div class="case__frame case__frame--mock" aria-hidden="true">
+                      <span class="case__frame-bar"></span>
+                      <span class="case__frame-label">Prévia em breve</span>
+                    </div>
+                  </div>
+                </article>
               </div>
-              <div class="case__visual">
-                <div class="case__frame">
-                  <img
-                    src="https://res.cloudinary.com/dn454izoh/image/upload/v1773058932/Captura_de_Tela_2026-03-09_a%CC%80s_09.21.43_m9dlvl.png"
-                    alt="Codinome Barbearia - Website elegante para barbearia moderna desenvolvida por Rafael Gois com Next.js, React e JavaScript"
-                    title="Codinome Barbearia - Projeto desenvolvido por Rafael Gois"
-                    width="1200" height="675" loading="lazy" decoding="async"
-                  />
-                </div>
-              </div>
-            </article>
+            </div>
+
+            <div class="cases__nav">
+              <button class="cases__arrow cases__arrow--prev" type="button" aria-label="Case anterior">←</button>
+              <span class="cases__count"><span id="cases-current">01</span> / <span id="cases-total">03</span></span>
+              <button class="cases__arrow cases__arrow--next" type="button" aria-label="Próximo case">→</button>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- ═══════════════ STACK + FECHAMENTO ═══════════════ -->
-      <section class="section">
-        <div class="wrap">
-          <div data-reveal style="max-width: 34rem">
-            <h2 class="act__title">Stack típica</h2>
-            <p class="act__text">
+      <!-- ═══════════════ STACK + FECHAMENTO ═══════════════
+           Grade editorial com numeral-fantasma em serifa gigante atrás de
+           cada tecnologia (mesmo motivo do "O que é entregue" —
+           .deliver-mod__watermark — só que em grade 3×2 em vez de índice
+           vertical). Duas colunas de conteúdo por coluna de grade (par
+           ímpar/par empilhado), com uma régua horizontal só entre as duas
+           linhas — ver referência visual pedida. Entrada é um stagger
+           dedicado (initStackGrid em reveal.js), não o [data-reveal]
+           genérico. -->
+      <section class="section stack-section">
+        <div class="stack-section__glow" aria-hidden="true"></div>
+        <div class="stack-section__glow stack-section__glow--alt" aria-hidden="true"></div>
+        <span class="stack-section__glyph" aria-hidden="true">&lt;/&gt;</span>
+        <div class="wrap wrap--wide">
+          <header class="sec-head" data-reveal>
+            <div class="sec-head__rule" data-rule></div>
+            <p class="text-overline">Como eu construo</p>
+            <h2 class="sec-head__title">Stack típica</h2>
+            <p class="sec-head__lede">
               HTML, CSS e JavaScript quando a simplicidade basta. Next.js e
               React quando o projeto pede mais. Sempre com atenção a SEO,
               acessibilidade e velocidade.
             </p>
-            <ul class="case__stack">
-              <li class="badge badge--mono">HTML5</li>
-              <li class="badge badge--mono">CSS3</li>
-              <li class="badge badge--mono">JavaScript</li>
-              <li class="badge badge--mono">Next.js</li>
-              <li class="badge badge--mono">React</li>
-              <li class="badge badge--mono">SEO técnico</li>
+          </header>
+
+          <div class="stack-grid" id="stack-grid">
+            <div class="stack-grid__divider" id="stack-grid-divider" aria-hidden="true"></div>
+            <ul class="stack-grid__list">
+              <li class="stack-cell stack-cell--01" data-stack-cell>
+                <span class="stack-cell__watermark" aria-hidden="true">I</span>
+                <span class="stack-cell__name">HTML5</span>
+                <span class="stack-cell__desc">Estrutura semântica</span>
+              </li>
+              <li class="stack-cell stack-cell--02" data-stack-cell>
+                <span class="stack-cell__watermark" aria-hidden="true">II</span>
+                <span class="stack-cell__name">CSS3</span>
+                <span class="stack-cell__desc">Design responsivo</span>
+              </li>
+              <li class="stack-cell stack-cell--03" data-stack-cell>
+                <span class="stack-cell__watermark" aria-hidden="true">III</span>
+                <span class="stack-cell__name">JavaScript</span>
+                <span class="stack-cell__desc">Interatividade real</span>
+              </li>
+              <li class="stack-cell stack-cell--04" data-stack-cell>
+                <span class="stack-cell__watermark" aria-hidden="true">IV</span>
+                <span class="stack-cell__name">Next.js</span>
+                <span class="stack-cell__desc">Performance por padrão</span>
+              </li>
+              <li class="stack-cell stack-cell--05" data-stack-cell>
+                <span class="stack-cell__watermark" aria-hidden="true">V</span>
+                <span class="stack-cell__name">React</span>
+                <span class="stack-cell__desc">Interfaces dinâmicas</span>
+              </li>
+              <li class="stack-cell stack-cell--06" data-stack-cell>
+                <span class="stack-cell__watermark" aria-hidden="true">VI</span>
+                <span class="stack-cell__name">SEO técnico</span>
+                <span class="stack-cell__desc">Visibilidade no Google</span>
+              </li>
             </ul>
           </div>
+        </div>
+      </section>
 
-          <div class="cases__closing" data-reveal>
-            <svg class="sig-stroke" viewBox="0 0 300 40" aria-hidden="true"><path d="M6 28 C 60 12, 120 34, 170 22 S 260 14, 294 24"/></svg>
-            <h3>Vamos construir o seu?</h3>
-            <p>Me conta o que sua empresa faz e quem você quer atingir. A gente parte daí.</p>
-            <p style="margin-top: var(--sp-6)">
-              <a class="btn btn--primary" href="/#contact">
-                Quero um site assim <span class="btn__arrow" aria-hidden="true">→</span>
-              </a>
-            </p>
-          </div>
+      <!-- ═══════════════ FECHAMENTO — CTA final ═══════════════
+           Dobra escura de fechamento, mesma família --grad-ink do rodapé
+           logo abaixo — cria um mergulho contínuo pro escuro em vez de um
+           card claro solto. Não reusa o âmbar cheio do .manifesto (essa
+           página já tem essa dobra em "Por que isso importa") — aqui o
+           âmbar é só o acento pontual (stroke, halo, botão). -->
+      <section class="closing-cta">
+        <div class="wrap closing-cta__inner" data-reveal>
+          <svg class="sig-stroke closing-cta__stroke" viewBox="0 0 300 40" aria-hidden="true"><path d="M6 28 C 60 12, 120 34, 170 22 S 260 14, 294 24"/></svg>
+          <p class="text-overline closing-cta__over">Vamos conversar</p>
+          <h3 class="closing-cta__title">Vamos construir o seu?</h3>
+          <p class="closing-cta__lede">Me conta o que sua empresa faz e quem você quer atingir. A gente parte daí.</p>
+          <p class="closing-cta__action">
+            <a class="btn btn--primary" href="/#contact">
+              Quero um site assim <span class="btn__arrow" aria-hidden="true">→</span>
+            </a>
+          </p>
         </div>
       </section>
     </main>
 
+    <!-- Transição em tela cheia do carrossel de cases (ver initCasesWipe em
+         reveal.js): fica fora do <main> de propósito — um ancestral com
+         transform (o próprio .cases tem [data-reveal]) criaria um novo
+         "containing block" e quebraria o position:fixed contra a viewport
+         real. -->
+    <div class="case-wipe" id="case-wipe" aria-hidden="true"></div>
+
     <footer class="site-footer">
-      <div class="wrap site-footer__inner">
+      <div class="wrap wrap--wide site-footer__inner">
+        <p class="text-overline" style="color: rgba(255, 251, 239, 0.5)">Vamos conversar</p>
         <p class="site-footer__name">Rafael Gois<em>.</em></p>
-        <nav aria-label="Outros trabalhos">
-          <ul>
-            <li><a class="link-line" href="/sistemas-de-controle.html">Sistemas de Controle</a></li>
-            <li><a class="link-line" href="/aplicacoes-sob-medida.html">Aplicações sob Medida</a></li>
-            <li><a class="link-line" href="/">Início</a></li>
-          </ul>
-        </nav>
+
+        <div class="site-footer__grid">
+          <div>
+            <h4>O que eu faço</h4>
+            <p>
+              Engenharia de software com obsessão por experiência do usuário —
+              do sistema de controle industrial ao produto digital.
+            </p>
+          </div>
+
+          <nav aria-label="Navegação do rodapé">
+            <h4>Navegação</h4>
+            <ul>
+              <li><a class="link-line" href="/">Início</a></li>
+              <li><a class="link-line" href="/#about">Sobre mim</a></li>
+              <li><a class="link-line" href="/#skills">Habilidades</a></li>
+              <li><a class="link-line" href="/#projects">Trabalhos</a></li>
+              <li><a class="link-line" href="/sistemas-de-controle.html">Sistemas de Controle</a></li>
+              <li><a class="link-line" href="/aplicacoes-sob-medida.html">Aplicações sob Medida</a></li>
+              <li><a class="link-line" href="/#contact">Contato</a></li>
+            </ul>
+          </nav>
+
+          <div>
+            <h4>Contato</h4>
+            <ul>
+              <li><a class="link-line" href="mailto:contato@rafaelgois.com">contato@rafaelgois.com</a></li>
+              <li><a class="link-line" href="https://br.linkedin.com/in/rafaelfbgois" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+              <li><a class="link-line" href="https://github.com/RafaGois" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+              <li><a class="link-line" href="https://www.instagram.com/_rgoiss" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="site-footer__bottom">
+          <p>© <span id="current-year">2026</span> Rafael Gois. Todos os direitos reservados.</p>
+          <p>Feito à mão, com um traço de amarelo</p>
+        </div>
       </div>
     </footer>
 

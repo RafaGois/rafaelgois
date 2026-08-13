@@ -989,6 +989,71 @@
     }
   }
 
+  /* ─── Navegação interna: transição em tela cheia ao sair pra outra página ─
+     Mesmo efeito "wipe" do carrossel de cases (sites-institucionais.html,
+     initCasesWipe em reveal.js): um círculo cresce a partir do ponto
+     clicado até cobrir a tela inteira, e só então a navegação acontece —
+     a troca de página fica encoberta, sem o "flash" branco do load. Aqui
+     não há transição de volta (a página está saindo), então o círculo só
+     cresce; ele desaparece sozinho junto com o documento antigo. Cliques
+     que abririam nova aba (meio-clique, ctrl/cmd/shift) ficam de fora —
+     o navegador cuida deles sozinho, sem o wipe.
+     Selector por href (não por classe): pega tanto os cards de .work-row
+     quanto os links de rodapé que apontam pras mesmas páginas — qualquer
+     CTA que leve a outra página do site entra automaticamente, sem
+     precisar lembrar de marcar cada um. */
+  (function initInternalLinkWipe() {
+    var wipeEl = $("#page-wipe");
+    var links = $$('a[href$=".html"]');
+    if (!wipeEl || !links.length) return;
+
+    links.forEach(function (link) {
+      link.addEventListener("click", function (e) {
+        if (e.defaultPrevented || e.button !== 0) return;
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        var href = link.getAttribute("href");
+        if (!href) return;
+
+        if (!hasGSAP || reduced) return;
+
+        e.preventDefault();
+
+        var cx = e.clientX;
+        var cy = e.clientY;
+        var base = wipeEl.offsetWidth || 40;
+        var farX = Math.max(cx, window.innerWidth - cx);
+        var farY = Math.max(cy, window.innerHeight - cy);
+        var radius = Math.hypot(farX, farY) * 1.06;
+        var scale = (radius * 2) / base;
+
+        gsap.set(wipeEl, { left: cx, top: cy, scale: 0, opacity: 1 });
+        gsap.to(wipeEl, {
+          scale: scale,
+          duration: 0.32,
+          ease: "power2.in",
+          onComplete: function () { window.location.href = href; },
+        });
+      });
+    });
+
+    /* Ao sair, a página fica congelada com o círculo cobrindo a tela
+       inteira — é assim que o wipe encobre a troca de documento (o
+       onComplete acima navega no exato instante em que o círculo termina
+       de crescer). Se o usuário volta pelo botão "voltar" do navegador, o
+       Chrome/Firefox costumam restaurar essa página via bfcache — o
+       snapshot congelado no estado em que ficou, círculo âmbar cobrindo
+       tudo incluso — em vez de recarregar do zero. Sem reload, nenhum
+       script roda de novo pra desfazer aquele estado, e o círculo fica
+       preso. "pageshow" com persisted:true é o sinal de que a página
+       voltou do bfcache (não de um load novo); ali dá pra devolver o
+       wipe ao repouso antes do usuário ver o frame congelado. */
+    window.addEventListener("pageshow", function (e) {
+      if (!e.persisted) return;
+      if (hasGSAP) gsap.set(wipeEl, { scale: 0, opacity: 1 });
+      else wipeEl.style.transform = "scale(0)";
+    });
+  })();
+
   /* ─── Navbar: estado no topo vs. rolada ───────────────────────────────── */
   var navbar = $("#navbar");
   if (navbar) {
