@@ -861,6 +861,14 @@
       </section>
     </main>
 
+    <!-- Transição em tela cheia ao sair para uma página de trabalhos (ver
+         initWorkRowWipe em site.js): fica fora do <main> de propósito — um
+         ancestral com transform ([data-reveal] dentro do <main>) criaria um
+         novo "containing block" e quebraria o position:fixed contra a
+         viewport real. Mesmo elemento/efeito do carrossel de cases em
+         sites-institucionais.html (ver .case-wipe em ds.css). -->
+    <div class="case-wipe" id="page-wipe" aria-hidden="true"></div>
+
     <!-- ═══════════════ FOOTER ═══════════════ -->
     <footer class="site-footer">
       <div class="wrap wrap--wide site-footer__inner">

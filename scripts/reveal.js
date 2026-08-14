@@ -23,6 +23,10 @@
   if (hasST) gsap.registerPlugin(ScrollTrigger);
   if (reduced || !hasST) document.documentElement.classList.add("no-anim");
 
+  /* ─── Ano do rodapé (mesmo padrão de site.js) ───────────────────────────── */
+  var yearEl = document.getElementById("current-year");
+  if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+
   var EASE = "power3.out";
 
   var reveals = Array.prototype.slice.call(document.querySelectorAll("[data-reveal]"));
@@ -200,6 +204,224 @@
     });
   }
 
+  /* ─── Carrossel de cases: setas + contador, scroll-snap nativo ──────────
+     .cases__viewport já rola sozinho (overflow-x + scroll-snap), então as
+     setas só chamam scrollIntoView no card certo — funciona igual com
+     clique, trackpad ou swipe, e o contador acompanha qualquer um dos três.
+     reduced-motion troca o "smooth" por salto direto. Clique nas setas
+     também dispara o wipe em tela cheia (ver função abaixo) — swipe/
+     trackpad não, porque ali o gesto já é a transição. */
+  (function initCasesCarousel() {
+    var viewport = document.querySelector(".cases__viewport");
+    var track = document.getElementById("cases-track");
+    var cases = track ? Array.prototype.slice.call(track.children) : [];
+    var prevBtn = document.querySelector(".cases__arrow--prev");
+    var nextBtn = document.querySelector(".cases__arrow--next");
+    var currentEl = document.getElementById("cases-current");
+    var totalEl = document.getElementById("cases-total");
+    if (!viewport || !track || cases.length < 2) {
+      if (prevBtn) prevBtn.style.display = "none";
+      if (nextBtn) nextBtn.style.display = "none";
+      return;
+    }
+
+    var idx = 0;
+    /* Enquanto uma seta está conduzindo o scroll, o listener de "scroll"
+       abaixo fica surdo: scrollIntoView leva bem mais que os 120ms do
+       debounce pra assentar (~700-1100ms, medido), e um evento de scroll
+       lido no meio do caminho recalculava o índice errado, fazendo o
+       contador "voltar" sozinho um instante depois do clique. Quem clicou
+       já sabe pra onde foi — não precisa redescobrir isso pela posição de
+       scroll no meio da animação. */
+    var isProgrammatic = false;
+    var programmaticTimer;
+
+    function pad(n) { return n < 10 ? "0" + n : String(n); }
+
+    function render() {
+      if (currentEl) currentEl.textContent = pad(idx + 1);
+      if (prevBtn) prevBtn.disabled = idx === 0;
+      if (nextBtn) nextBtn.disabled = idx === cases.length - 1;
+    }
+
+    /* `instant`: usado pela transição em tela cheia — a troca acontece
+       encoberta pelo círculo, então o scroll precisa saltar de verdade
+       (sem "smooth") pra já estar pronta quando o círculo se apagar.
+       Duas pegadinhas do CSSOM aqui: scrollIntoView({behavior:"auto"}) não
+       basta porque .cases__viewport tem scroll-behavior:smooth no CSS, e
+       "auto" só significa "obedeça o CSS" — continuaria suave. E setar
+       .scrollLeft direto TAMBÉM obedece esse scroll-behavior (não é
+       instantâneo por padrão como se poderia esperar) — por isso o
+       scroll-behavior é derrubado pra "auto" no elemento só durante o
+       salto, e devolvido ao smooth logo em seguida (pra swipe/trackpad
+       continuarem suaves). */
+    function goTo(i, instant) {
+      idx = Math.max(0, Math.min(cases.length - 1, i));
+      isProgrammatic = true;
+      clearTimeout(programmaticTimer);
+      if (instant || reduced) {
+        var w = cases[0].getBoundingClientRect().width || viewport.clientWidth;
+        var prevBehavior = viewport.style.scrollBehavior;
+        viewport.style.scrollBehavior = "auto";
+        viewport.scrollLeft = idx * w;
+        viewport.style.scrollBehavior = prevBehavior;
+      } else {
+        cases[idx].scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
+      }
+      render();
+      // Rede de segurança generosa: cobre a animação inteira mesmo se a aba
+      // perder foco no meio (RAF throttlado alonga o scroll suave).
+      programmaticTimer = setTimeout(function () { isProgrammatic = false; }, instant || reduced ? 200 : 1300);
+    }
+
+    if (totalEl) totalEl.textContent = pad(cases.length);
+
+    /* ─── Wipe em tela cheia (efeito "confirmação de compra") ─────────────
+       Um círculo cresce a partir do botão clicado (transform-origin no
+       ponto do clique) até cobrir a tela — o raio necessário é calculado
+       na hora, sempre alcançando o canto mais distante da viewport, então
+       funciona igual clicando na seta esquerda ou direita, em qualquer
+       tamanho de tela. A troca de case acontece no instante em que o
+       círculo termina de crescer (tela 100% coberta); ele então só se
+       apaga (opacity), revelando que a troca já aconteceu — rápido e
+       direto, sem o usuário "ver" o carrossel deslizando por baixo. */
+    var wipeEl = document.getElementById("case-wipe");
+    var isWiping = false;
+
+    function playWipe(cx, cy, onCovered) {
+      if (!wipeEl || !hasGSAP || reduced) {
+        onCovered();
+        return;
+      }
+      // offsetWidth (não getBoundingClientRect): o círculo já nasce em
+      // scale(0) via CSS, e getBoundingClientRect refletiria esse zero.
+      var base = wipeEl.offsetWidth || 40;
+      var farX = Math.max(cx, window.innerWidth - cx);
+      var farY = Math.max(cy, window.innerHeight - cy);
+      var radius = Math.hypot(farX, farY) * 1.06;
+      var scale = (radius * 2) / base;
+
+      isWiping = true;
+      gsap.set(wipeEl, { left: cx, top: cy, scale: 0, opacity: 1 });
+      gsap
+        .timeline({ onComplete: function () { isWiping = false; } })
+        .to(wipeEl, { scale: scale, duration: 0.32, ease: "power2.in" })
+        .add(onCovered)
+        .to(wipeEl, { opacity: 0, duration: 0.26, ease: "power2.out" }, "+=0.05")
+        .set(wipeEl, { scale: 0, opacity: 1 });
+    }
+
+    function handleArrow(targetIdx, btn) {
+      if (isWiping || targetIdx < 0 || targetIdx > cases.length - 1) return;
+      var r = btn.getBoundingClientRect();
+      playWipe(r.left + r.width / 2, r.top + r.height / 2, function () {
+        goTo(targetIdx, true);
+      });
+    }
+
+    if (prevBtn) prevBtn.addEventListener("click", function () { handleArrow(idx - 1, prevBtn); });
+    if (nextBtn) nextBtn.addEventListener("click", function () { handleArrow(idx + 1, nextBtn); });
+
+    // Swipe/trackpad também move o contador — sem isso, ele só refletiria
+    // navegação por botão, ficando "errado" assim que o usuário arrasta.
+    var scrollT;
+    viewport.addEventListener("scroll", function () {
+      if (isProgrammatic) return;
+      clearTimeout(scrollT);
+      scrollT = setTimeout(function () {
+        var w = cases[0].getBoundingClientRect().width || 1;
+        idx = Math.max(0, Math.min(cases.length - 1, Math.round(viewport.scrollLeft / w)));
+        render();
+      }, 120);
+    });
+
+    render();
+  })();
+
+  /* ─── Parallax de cursor nos cases reais (Madescur, Casa França...) ─────
+     Janela (moldura) e mancha âmbar atrás dela se deslocam em velocidades
+     diferentes conforme o cursor — mesma ideia de profundidade por camada
+     do cursor customizado (site.js: um quickTo por elemento, cada um com
+     sua própria duração). A moldura (mais "perto") se move mais; a mancha
+     (mais "longe", atrás) se move menos — é essa diferença de velocidade
+     que lê como parallax. A área de escuta é o card inteiro (.case), não
+     só a imagem, pra reagir mesmo com o cursor sobre o texto ao lado; ao
+     sair do card, as duas camadas voltam suavemente pro centro. Só
+     ponteiro fino (mouse) e sem prefers-reduced-motion. Roda uma vez por
+     .case__visual--shot — pode haver mais de um case real no carrossel. */
+  (function initCaseParallax() {
+    if (!hasGSAP || reduced) return;
+    if (!(window.matchMedia && window.matchMedia("(pointer: fine)").matches)) return;
+
+    var FRAME_RANGE = 12; // px — moldura, camada "perto"
+    var GLOW_RANGE = 5; // px — mancha, camada "longe" (se move menos)
+
+    var visuals = Array.prototype.slice.call(document.querySelectorAll(".case__visual--shot"));
+    visuals.forEach(function (visual) {
+      var card = visual.closest(".case");
+      var frame = visual.querySelector(".case__frame--shot");
+      var glow = visual.querySelector(".case__visual-glow");
+      if (!card || !frame) return;
+
+      var frameX = gsap.quickTo(frame, "x", { duration: 0.7, ease: "power3.out" });
+      var frameY = gsap.quickTo(frame, "y", { duration: 0.7, ease: "power3.out" });
+      var glowX = glow ? gsap.quickTo(glow, "x", { duration: 1, ease: "power3.out" }) : null;
+      var glowY = glow ? gsap.quickTo(glow, "y", { duration: 1, ease: "power3.out" }) : null;
+
+      card.addEventListener(
+        "pointermove",
+        function (e) {
+          if (e.pointerType && e.pointerType !== "mouse") return;
+          var r = card.getBoundingClientRect();
+          var relX = (e.clientX - r.left) / r.width - 0.5;
+          var relY = (e.clientY - r.top) / r.height - 0.5;
+          frameX(relX * FRAME_RANGE * 2);
+          frameY(relY * FRAME_RANGE * 2);
+          if (glowX) {
+            glowX(relX * GLOW_RANGE * 2);
+            glowY(relY * GLOW_RANGE * 2);
+          }
+        },
+        { passive: true },
+      );
+
+      card.addEventListener("pointerleave", function () {
+        frameX(0);
+        frameY(0);
+        if (glowX) {
+          glowX(0);
+          glowY(0);
+        }
+      });
+    });
+  })();
+
+  /* ─── "Stack típica" — revelação escrubada com o scroll ────────────────
+     Timeline própria (não o [data-reveal] genérico, nem "once"): presa a
+     UM scrub só, ligado à posição real do scroll — rolar pra baixo faz as
+     seis células (e a régua entre as duas linhas) surgirem em sequência
+     elegante, uma célula "acendendo" depois da outra; rolar de volta pra
+     cima desfaz na mesma ordem. Mesmo princípio de scrub usado em
+     .reason-block logo acima, só que aplicado à grade em vez de uma pilha
+     vertical. */
+  (function initStackGrid() {
+    var grid = document.getElementById("stack-grid");
+    var divider = document.getElementById("stack-grid-divider");
+    var cells = grid ? Array.prototype.slice.call(grid.querySelectorAll("[data-stack-cell]")) : [];
+    if (!grid || !cells.length || !hasST || reduced) return;
+
+    var CELL_START = 0.1, CELL_DUR = 0.7, CELL_STAGGER = 0.15;
+    var totalDur = CELL_START + (cells.length - 1) * CELL_STAGGER + CELL_DUR;
+
+    var stackTl = gsap.timeline({
+      scrollTrigger: { trigger: grid, start: "top 92%", end: "top 38%", scrub: 0.6 },
+    });
+    // Régua cresce a régua inteira do scroll (não só o começo) — o traço
+    // vai se completando junto com as células, não "salta" pronto cedo.
+    if (divider) stackTl.fromTo(divider, { scaleX: 0 }, { scaleX: 1, ease: "none", duration: totalDur }, 0);
+    stackTl.to(cells, { opacity: 1, y: 0, ease: "none", duration: CELL_DUR, stagger: CELL_STAGGER }, CELL_START);
+  })();
+
   /* ─── Grifo âmbar: o marca-texto lendo junto (mesmo padrão de site.js) ── */
   if ("IntersectionObserver" in window) {
     var markObserver = new IntersectionObserver(
@@ -243,7 +465,7 @@
       { threshold: 0.4 },
     );
     document
-      .querySelectorAll(".cases__closing .sig-stroke, .manifesto__cite-stroke")
+      .querySelectorAll(".closing-cta .sig-stroke, .manifesto__cite-stroke")
       .forEach(function (s) { strokeObserver.observe(s); });
   }
 })();
