@@ -1618,12 +1618,17 @@ p { max-width: var(--measure); }
    coluna mesmo o conteúdo (traço + texto curto) ocupando bem menos — sem
    necessidade, já que não há nada pra alinhar contra essa largura extra. */
 .case__meta { display: inline-flex; align-items: center; gap: var(--sp-3); margin-bottom: var(--sp-4); }
-.case__rule { height: 2px; width: 2rem; background: var(--color-amber); transition: width var(--dur-base) var(--ease-gesture); }
+.case__rule { height: 2px; width: 2rem; background: var(--case-accent, var(--color-amber)); transition: width var(--dur-base) var(--ease-gesture), background var(--dur-base) var(--ease-gesture); }
 .case:hover .case__rule { width: 4rem; }
 .case__num { font-family: var(--font-mono); font-size: var(--text-caption); letter-spacing: 0.18em; color: var(--color-ink-mute); }
 .case__name { margin-top: var(--sp-6); font-family: var(--font-body); font-weight: 700; font-size: var(--text-h5); }
 /* Bullets do case (ver imagem de referência) — pontinho âmbar em vez do
-   marcador padrão do navegador, mesma cor de acento do resto da dobra. */
+   marcador padrão do navegador, mesma cor de acento do resto da dobra.
+   Nos cases reais, --case-accent (definida junto de .case--green/red/neon,
+   abaixo) puxa a cor de volta pra marca do projeto — mesmo raciocínio da
+   mancha atrás da janela (.case__visual-glow--*), só que aqui em traços
+   finos (o traço antes de "Case · …" e o pontinho da lista) em vez de uma
+   mancha cheia. Sem a classe (fallback), continua no âmbar padrão. */
 .case__points { margin-top: var(--sp-6); display: grid; gap: var(--sp-2); }
 .case__points li {
   position: relative;
@@ -1640,7 +1645,7 @@ p { max-width: var(--measure); }
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--color-amber);
+  background: var(--case-accent, var(--color-amber));
 }
 .case__stack { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-top: var(--sp-6); }
 .case__actions { margin-top: var(--sp-4); }
@@ -1670,6 +1675,22 @@ p { max-width: var(--measure); }
   z-index: -1;
   pointer-events: none;
 }
+/* Cada case real puxa a mancha pra própria cor de marca (em vez do âmbar
+   padrão) — bem sutil, só um sinal de identidade atrás da janela, não um
+   selo. Madescur (madeireira): verde natural. Casa França (morangos):
+   vermelho terroso. Sistemas Elevate: verde puxado pro neon do produto —
+   por isso a opacidade um pouco menor, pra não destoar do resto (neon em
+   22% de opacidade lê mais forte que os outros tons nessa mesma faixa). */
+.case__visual-glow--green { background: linear-gradient(135deg, #BFE8A8 0%, #5FA55C 55%, #35723C 100%); }
+.case__visual-glow--red { background: linear-gradient(135deg, #F7B8A0 0%, #D9614A 55%, #A83A2C 100%); }
+.case__visual-glow--neon { background: linear-gradient(135deg, #D6F26B 0%, #8FCB2E 55%, #4E8F1E 100%); opacity: 0.17; }
+/* --case-accent: mesma cor-meio de cada gradiente acima, exposta pro card
+   inteiro (não só a mancha) — é o que .case__rule e .case__points li::before
+   leem, então o traço fino antes de "Case · …" e o pontinho da lista
+   também puxam pra marca do projeto, coerente com a mancha atrás da janela. */
+.case--green { --case-accent: #5FA55C; }
+.case--red { --case-accent: #D9614A; }
+.case--neon { --case-accent: #6FA524; }
 .case__frame {
   position: relative;
   z-index: 1;

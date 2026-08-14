@@ -311,8 +311,19 @@
         .set(wipeEl, { scale: 0, opacity: 1 });
     }
 
+    // Cor do círculo segue o case de destino (--case-accent, definida junto
+    // de .case--green/red/neon no ds.css — mesma cor da mancha atrás da
+    // janela e do traço/pontinhos do case). Sem tema definido, volta pro
+    // âmbar padrão do CSS (var(--color-amber)).
+    function setWipeColor(targetIdx) {
+      if (!wipeEl) return;
+      var accent = getComputedStyle(cases[targetIdx]).getPropertyValue("--case-accent").trim();
+      wipeEl.style.background = accent || "";
+    }
+
     function handleArrow(targetIdx, btn) {
       if (isWiping || targetIdx < 0 || targetIdx > cases.length - 1) return;
+      setWipeColor(targetIdx);
       var r = btn.getBoundingClientRect();
       playWipe(r.left + r.width / 2, r.top + r.height / 2, function () {
         goTo(targetIdx, true);
