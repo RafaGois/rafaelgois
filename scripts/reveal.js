@@ -19,9 +19,15 @@
   );
   var hasGSAP = typeof window.gsap !== "undefined";
   var hasST = hasGSAP && typeof window.ScrollTrigger !== "undefined";
+  /* Mesmo corte de site.js (e do @media do ds.css): abaixo disso, nada de
+     dobra pinada — o conteúdo empilha e cada peça entra na vertical. */
+  var isNarrow = !!(window.matchMedia && window.matchMedia("(max-width: 899px)").matches);
 
   if (hasST) gsap.registerPlugin(ScrollTrigger);
   if (reduced || !hasST) document.documentElement.classList.add("no-anim");
+
+  function slice(nodes) { return Array.prototype.slice.call(nodes); }
+  function clamp(n, min, max) { return Math.min(max, Math.max(min, n)); }
 
   /* ─── Ano do rodapé (mesmo padrão de site.js) ───────────────────────────── */
   var yearEl = document.getElementById("current-year");
@@ -29,7 +35,7 @@
 
   var EASE = "power3.out";
 
-  var reveals = Array.prototype.slice.call(document.querySelectorAll("[data-reveal]"));
+  var reveals = slice(document.querySelectorAll("[data-reveal]"));
   if (hasST && !reduced) {
     reveals.forEach(function (el) {
       gsap.to(el, {
@@ -204,175 +210,266 @@
     });
   }
 
-  /* ─── Carrossel de cases: setas + contador, scroll-snap nativo ──────────
-     .cases__viewport já rola sozinho (overflow-x + scroll-snap), então as
-     setas só chamam scrollIntoView no card certo — funciona igual com
-     clique, trackpad ou swipe, e o contador acompanha qualquer um dos três.
-     reduced-motion troca o "smooth" por salto direto. Clique nas setas
-     também dispara o wipe em tela cheia (ver função abaixo) — swipe/
-     trackpad não, porque ali o gesto já é a transição. */
-  (function initCasesCarousel() {
-    var viewport = document.querySelector(".cases__viewport");
-    var track = document.getElementById("cases-track");
-    var cases = track ? Array.prototype.slice.call(track.children) : [];
-    var prevBtn = document.querySelector(".cases__arrow--prev");
-    var nextBtn = document.querySelector(".cases__arrow--next");
-    var currentEl = document.getElementById("cases-current");
-    var totalEl = document.getElementById("cases-total");
-    if (!viewport || !track || cases.length < 2) {
-      if (prevBtn) prevBtn.style.display = "none";
-      if (nextBtn) nextBtn.style.display = "none";
+  /* ─── "Trabalhos reais" — três cases em scroll horizontal ──────────────
+     Mesma receita da dobra "Sobre mim" do index.html (site.js:
+     initAboutScroll): no desktop a dobra fica pinada e o track desliza na
+     horizontal com scrub; imagem e texto de cada case ganham um parallax
+     contínuo (nunca opacity/y — isso pertenceria a uma entrada) conforme o
+     painel cruza o centro do pin.
+
+     O que essa dobra tem a mais é o fio ao fundo. Ele não é decoração
+     parada: o traço cheio se desenha conforme o scroll avança (stroke-
+     dashoffset preso ao progresso), uma cabeça luminosa acompanha a ponta
+     desse traço, e três paradas — uma por case — acendem quando o traço
+     chega nelas. Cabeça e paradas são elementos HTML posicionados sobre o
+     próprio path via getPointAtLength (ver pointAt, abaixo). Por isso, esse
+     fio não tem a deriva lenta que a linha do "Sobre mim" tem: qualquer
+     transform no grupo tiraria a cabeça de cima da linha.
+
+     Mobile / prefers-reduced-motion / sem ScrollTrigger: pilha vertical, o
+     fio vira uma trilha vertical na lateral que se desenha na leitura de
+     cima pra baixo, e cada case entra uma vez só. */
+  function initCasesScroll() {
+    var section = document.querySelector(".cases-scroll");
+    var pin = document.getElementById("cases-scroll-pin");
+    var track = document.getElementById("cases-scroll-track");
+    if (!section || !pin || !track) return;
+
+    var panels = slice(track.querySelectorAll("[data-case-panel]"));
+    if (!panels.length) return;
+
+    var accents = panels.map(function (p) {
+      return getComputedStyle(p).getPropertyValue("--case-accent").trim();
+    });
+
+    /* O fio inteiro (e a cabeça, e as paradas) vestem a cor do case ativo —
+       um sinal de identidade que atravessa a dobra sem virar selo. */
+    var lastAccent = "";
+    function setAccent(i) {
+      var accent = accents[i];
+      if (!accent || accent === lastAccent) return;
+      lastAccent = accent;
+      pin.style.setProperty("--cases-accent", accent);
+    }
+
+    /* ── Repouso: pilha vertical ─────────────────────────────────────────── */
+    if (!hasST || isNarrow || reduced) {
+      if (!hasST || reduced) return;
+
+      panels.forEach(function (panel, i) {
+        var media = panel.querySelector(".case-panel__media");
+        var text = panel.querySelector(".case-panel__text");
+        [media, text].forEach(function (el, k) {
+          if (!el) return;
+          gsap.fromTo(el, { y: 28, opacity: 0 }, {
+            y: 0, opacity: 1, duration: 0.8, delay: k * 0.08, ease: EASE,
+            scrollTrigger: { trigger: panel, start: "top 84%", once: true },
+          });
+        });
+        ScrollTrigger.create({
+          trigger: panel,
+          start: "top 65%",
+          end: "bottom 45%",
+          onEnter: function () { setAccent(i); },
+          onEnterBack: function () { setAccent(i); },
+        });
+      });
+
+      var curveMobile = pin.querySelector(".cases-curve-path--mobile");
+      if (curveMobile) {
+        var mobileLen = curveMobile.getTotalLength();
+        curveMobile.style.strokeDasharray = mobileLen;
+        curveMobile.style.strokeDashoffset = mobileLen;
+        gsap.to(curveMobile, {
+          strokeDashoffset: 0,
+          ease: "none",
+          scrollTrigger: { trigger: track, start: "top 82%", end: "bottom 25%", scrub: 0.6 },
+        });
+      }
+      setAccent(0);
       return;
     }
 
-    var idx = 0;
-    /* Enquanto uma seta está conduzindo o scroll, o listener de "scroll"
-       abaixo fica surdo: scrollIntoView leva bem mais que os 120ms do
-       debounce pra assentar (~700-1100ms, medido), e um evento de scroll
-       lido no meio do caminho recalculava o índice errado, fazendo o
-       contador "voltar" sozinho um instante depois do clique. Quem clicou
-       já sabe pra onde foi — não precisa redescobrir isso pela posição de
-       scroll no meio da animação. */
-    var isProgrammatic = false;
-    var programmaticTimer;
+    /* ── Desktop: dobra pinada, cases na horizontal ──────────────────────── */
+    section.classList.add("is-horizontal");
+    setAccent(0);
 
-    function pad(n) { return n < 10 ? "0" + n : String(n); }
-
-    function render() {
-      if (currentEl) currentEl.textContent = pad(idx + 1);
-      if (prevBtn) prevBtn.disabled = idx === 0;
-      if (nextBtn) nextBtn.disabled = idx === cases.length - 1;
+    var VB_W = 1600, VB_H = 900; // viewBox do .cases-curve-svg
+    var curveSvg = pin.querySelector(".cases-curve-svg");
+    var curveMain = pin.querySelector(".cases-curve-path--main");
+    var head = pin.querySelector(".cases-curve-head");
+    var stops = slice(pin.querySelectorAll(".cases-curve-stop"));
+    /* Onde cada case "para" no fio. Não são frações do scroll, e sim do
+       comprimento do traço: é a rota que tem começo, meio e fim — o primeiro
+       marco logo depois da largada, o último um pouco antes da chegada. */
+    var STOP_AT = [0.15, 0.5, 0.85];
+    var curveLen = 0;
+    if (curveMain) {
+      curveLen = curveMain.getTotalLength();
+      curveMain.style.strokeDasharray = curveLen;
+      curveMain.style.strokeDashoffset = curveLen;
     }
 
-    /* `instant`: usado pela transição em tela cheia — a troca acontece
-       encoberta pelo círculo, então o scroll precisa saltar de verdade
-       (sem "smooth") pra já estar pronta quando o círculo se apagar.
-       Duas pegadinhas do CSSOM aqui: scrollIntoView({behavior:"auto"}) não
-       basta porque .cases__viewport tem scroll-behavior:smooth no CSS, e
-       "auto" só significa "obedeça o CSS" — continuaria suave. E setar
-       .scrollLeft direto TAMBÉM obedece esse scroll-behavior (não é
-       instantâneo por padrão como se poderia esperar) — por isso o
-       scroll-behavior é derrubado pra "auto" no elemento só durante o
-       salto, e devolvido ao smooth logo em seguida (pra swipe/trackpad
-       continuarem suaves). */
-    function goTo(i, instant) {
-      idx = Math.max(0, Math.min(cases.length - 1, i));
-      isProgrammatic = true;
-      clearTimeout(programmaticTimer);
-      if (instant || reduced) {
-        var w = cases[0].getBoundingClientRect().width || viewport.clientWidth;
-        var prevBehavior = viewport.style.scrollBehavior;
-        viewport.style.scrollBehavior = "auto";
-        viewport.scrollLeft = idx * w;
-        viewport.style.scrollBehavior = prevBehavior;
-      } else {
-        cases[idx].scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
+    /* Ponto do path em pixels, relativo ao pin. O SVG não cobre o pin
+       inteiro (é uma faixa presa no rodapé) e ainda é esticado
+       — preserveAspectRatio="none" —, então a conversão é uma regra de três
+       por eixo contra a caixa real do SVG, mais o deslocamento dele dentro
+       do pin. Os dois rects carregam o mesmo transform do pin, então a
+       diferença entre eles já sai em coordenadas locais. */
+    function pointAt(fraction) {
+      var pt = curveMain.getPointAtLength(clamp(fraction, 0, 1) * curveLen);
+      var sr = curveSvg.getBoundingClientRect();
+      var pr = pin.getBoundingClientRect();
+      return {
+        x: sr.left - pr.left + (pt.x / VB_W) * sr.width,
+        y: sr.top - pr.top + (pt.y / VB_H) * sr.height,
+      };
+    }
+    function place(el, fraction) {
+      var p = pointAt(fraction);
+      el.style.transform = "translate(" + p.x + "px, " + p.y + "px)";
+    }
+    function placeStops() {
+      if (!curveMain || !curveSvg || !curveLen) return;
+      stops.forEach(function (stop, i) { place(stop, STOP_AT[i] || 0); });
+    }
+
+    function scrollAmount() {
+      var base = Math.max(0, track.scrollWidth - pin.clientWidth);
+      // Folga no fim: sem ela o último case para com a borda do track
+      // encostada na tela, longe do centro.
+      return base + pin.clientWidth * 0.14;
+    }
+
+    var mediaEls = panels.map(function (p) { return p.querySelector(".case-panel__media"); });
+    var textEls = panels.map(function (p) { return p.querySelector(".case-panel__text"); });
+    // Inclinação de base por case — a assimetria evita o efeito "espelho
+    // engessado" de painéis idênticos alternando de lado.
+    var baseRotate = [-1.8, 1.4, -1];
+    panels.forEach(function (panel, i) {
+      if (mediaEls[i]) gsap.set(mediaEls[i], { rotateZ: baseRotate[i] || 0 });
+    });
+
+    var lastActive = -1;
+
+    /* Qual case está mais perto do centro do pin — não tem mais HUD de
+       texto pra alimentar (removido: duplicava o sinal do fio colorido),
+       mas o fio ainda precisa saber de quem puxar a cor. */
+    function updateActiveCase() {
+      var rect = pin.getBoundingClientRect();
+      var centerX = rect.left + rect.width / 2;
+      var best = 0, bestDist = Infinity;
+      panels.forEach(function (panel, i) {
+        var pr = panel.getBoundingClientRect();
+        var dist = Math.abs(pr.left + pr.width / 2 - centerX);
+        if (dist < bestDist) { bestDist = dist; best = i; }
+      });
+      if (best !== lastActive) {
+        lastActive = best;
+        setAccent(best);
       }
-      render();
-      // Rede de segurança generosa: cobre a animação inteira mesmo se a aba
-      // perder foco no meio (RAF throttlado alonga o scroll suave).
-      programmaticTimer = setTimeout(function () { isProgrammatic = false; }, instant || reduced ? 200 : 1300);
     }
 
-    if (totalEl) totalEl.textContent = pad(cases.length);
-
-    /* ─── Wipe em tela cheia (efeito "confirmação de compra") ─────────────
-       Um círculo cresce a partir do botão clicado (transform-origin no
-       ponto do clique) até cobrir a tela — o raio necessário é calculado
-       na hora, sempre alcançando o canto mais distante da viewport, então
-       funciona igual clicando na seta esquerda ou direita, em qualquer
-       tamanho de tela. A troca de case acontece no instante em que o
-       círculo termina de crescer (tela 100% coberta); ele então só se
-       apaga (opacity), revelando que a troca já aconteceu — rápido e
-       direto, sem o usuário "ver" o carrossel deslizando por baixo. */
-    var wipeEl = document.getElementById("case-wipe");
-    var isWiping = false;
-
-    function playWipe(cx, cy, onCovered) {
-      if (!wipeEl || !hasGSAP || reduced) {
-        onCovered();
-        return;
-      }
-      // offsetWidth (não getBoundingClientRect): o círculo já nasce em
-      // scale(0) via CSS, e getBoundingClientRect refletiria esse zero.
-      var base = wipeEl.offsetWidth || 40;
-      var farX = Math.max(cx, window.innerWidth - cx);
-      var farY = Math.max(cy, window.innerHeight - cy);
-      var radius = Math.hypot(farX, farY) * 1.06;
-      var scale = (radius * 2) / base;
-
-      isWiping = true;
-      gsap.set(wipeEl, { left: cx, top: cy, scale: 0, opacity: 1 });
-      gsap
-        .timeline({ onComplete: function () { isWiping = false; } })
-        .to(wipeEl, { scale: scale, duration: 0.32, ease: "power2.in" })
-        .add(onCovered)
-        .to(wipeEl, { opacity: 0, duration: 0.26, ease: "power2.out" }, "+=0.05")
-        .set(wipeEl, { scale: 0, opacity: 1 });
-    }
-
-    // Cor do círculo segue o case de destino (--case-accent, definida junto
-    // de .case--green/red/neon no ds.css — mesma cor da mancha atrás da
-    // janela e do traço/pontinhos do case). Sem tema definido, volta pro
-    // âmbar padrão do CSS (var(--color-amber)).
-    function setWipeColor(targetIdx) {
-      if (!wipeEl) return;
-      var accent = getComputedStyle(cases[targetIdx]).getPropertyValue("--case-accent").trim();
-      wipeEl.style.background = accent || "";
-    }
-
-    function handleArrow(targetIdx, btn) {
-      if (isWiping || targetIdx < 0 || targetIdx > cases.length - 1) return;
-      setWipeColor(targetIdx);
-      var r = btn.getBoundingClientRect();
-      playWipe(r.left + r.width / 2, r.top + r.height / 2, function () {
-        goTo(targetIdx, true);
+    // Parallax contínuo: imagem e texto atravessam o centro em velocidades e
+    // rotações diferentes. Só xPercent/yPercent/rotateZ — nada de opacity ou
+    // scale, que pertencem a gestos de entrada.
+    function applyParallax() {
+      var rect = pin.getBoundingClientRect();
+      var centerX = rect.left + rect.width / 2;
+      var span = Math.max(1, rect.width * 0.7);
+      panels.forEach(function (panel, i) {
+        var pr = panel.getBoundingClientRect();
+        var p = gsap.utils.clamp(-1, 1, (pr.left + pr.width / 2 - centerX) / span);
+        if (mediaEls[i]) {
+          gsap.set(mediaEls[i], { xPercent: p * -9, rotateZ: (baseRotate[i] || 0) + p * 5 });
+        }
+        if (textEls[i]) gsap.set(textEls[i], { xPercent: p * 5, yPercent: p * -3 });
       });
     }
 
-    if (prevBtn) prevBtn.addEventListener("click", function () { handleArrow(idx - 1, prevBtn); });
-    if (nextBtn) nextBtn.addEventListener("click", function () { handleArrow(idx + 1, nextBtn); });
+    function onScrub(progress) {
+      progress = typeof progress === "number" ? progress : 0;
+      applyParallax();
+      updateActiveCase();
+      if (!curveMain || !curveSvg || !curveLen) return;
+      // Leve adiantamento: o traço termina um pouco antes do fim do scroll,
+      // pra já estar completo quando o último case chega ao centro.
+      var grown = clamp(progress * 1.1, 0, 1);
+      curveMain.style.strokeDashoffset = curveLen * (1 - grown);
+      if (head) {
+        place(head, grown);
+        head.style.opacity = grown > 0.01 && grown < 0.995 ? "1" : "0";
+      }
+      stops.forEach(function (stop, i) {
+        stop.classList.toggle("is-reached", grown >= (STOP_AT[i] || 0));
+      });
+    }
 
-    // Swipe/trackpad também move o contador — sem isso, ele só refletiria
-    // navegação por botão, ficando "errado" assim que o usuário arrasta.
-    var scrollT;
-    viewport.addEventListener("scroll", function () {
-      if (isProgrammatic) return;
-      clearTimeout(scrollT);
-      scrollT = setTimeout(function () {
-        var w = cases[0].getBoundingClientRect().width || 1;
-        idx = Math.max(0, Math.min(cases.length - 1, Math.round(viewport.scrollLeft / w)));
-        render();
-      }, 120);
+    /* O progresso que interessa é o do tween, não o do ScrollTrigger. Com
+       scrub, o callback do trigger só dispara quando a rolagem muda, enquanto
+       o track continua deslizando por mais uns 0,6s até assentar — quem
+       lesse o progresso do trigger acabaria de mãos dadas com uma posição
+       que já não é a da tela (parar de rolar no meio da troca deixava o HUD
+       anunciando o case anterior). O onUpdate do tween roda a cada frame do
+       scrub, e o progresso dele é exatamente o que está renderizado: o fio,
+       a cabeça, as paradas e o HUD passam a acompanhar o que se vê. */
+    /* Tween e trigger criados em duas etapas (não o atalho `scrollTrigger:`
+       dentro do gsap.to): o ScrollTrigger faz um refresh síncrono já na
+       criação, e nesse instante a variável do tween ainda não recebeu o
+       valor — os callbacks quebrariam logo no primeiro frame. Criando o
+       tween primeiro, pausado, e ligando o trigger a ele depois, `slide`
+       existe antes de qualquer callback rodar. */
+    var slide = gsap.to(track, {
+      x: function () { return -scrollAmount(); },
+      ease: "none",
+      paused: true,
+      onUpdate: function () { onScrub(slide.progress()); },
     });
 
-    render();
-  })();
+    ScrollTrigger.create({
+      trigger: pin,
+      start: "top top",
+      end: function () { return "+=" + scrollAmount(); },
+      scrub: 0.6,
+      pin: true,
+      invalidateOnRefresh: true,
+      animation: slide,
+      /* Esse pin reserva espaço de scroll extra, então tudo que vem depois
+         dele na página (a grade de "Ferramentas que uso", o fechamento) só
+         calcula start/end certo se ele for recalculado primeiro. Os
+         [data-reveal] genéricos lá do topo do arquivo foram registrados
+         antes deste trigger — refreshPriority garante a ordem certa sem
+         depender da ordem de criação. */
+      refreshPriority: 1,
+      onRefresh: function () { placeStops(); onScrub(slide.progress()); },
+    });
 
-  /* ─── Parallax de cursor nos cases reais (Madescur, Casa França...) ─────
-     Janela (moldura) e mancha âmbar atrás dela se deslocam em velocidades
-     diferentes conforme o cursor — mesma ideia de profundidade por camada
-     do cursor customizado (site.js: um quickTo por elemento, cada um com
-     sua própria duração). A moldura (mais "perto") se move mais; a mancha
-     (mais "longe", atrás) se move menos — é essa diferença de velocidade
-     que lê como parallax. A área de escuta é o card inteiro (.case), não
-     só a imagem, pra reagir mesmo com o cursor sobre o texto ao lado; ao
-     sair do card, as duas camadas voltam suavemente pro centro. Só
-     ponteiro fino (mouse) e sem prefers-reduced-motion. Roda uma vez por
-     .case__visual--shot — pode haver mais de um case real no carrossel. */
-  (function initCaseParallax() {
+    placeStops();
+    onScrub(0);
+  }
+  initCasesScroll();
+
+  /* ─── Parallax de cursor nos cases reais ────────────────────────────────
+     Janela (moldura) e mancha de cor atrás dela se deslocam em velocidades
+     diferentes conforme o cursor — mesma ideia de profundidade por camada do
+     cursor customizado (site.js: um quickTo por elemento, com sua própria
+     duração). A moldura (mais "perto") se move mais; a mancha (mais "longe")
+     se move menos — é essa diferença que lê como parallax. A área de escuta é
+     o case inteiro, pra reagir também com o cursor sobre o texto ao lado.
+     Escreve em .case-panel__frame / .case-panel__glow, nunca em
+     .case-panel__media — esse é do parallax de scroll acima, e duas mãos na
+     mesma transform brigariam. Só ponteiro fino e sem reduced-motion. */
+  (function initCasesParallax() {
     if (!hasGSAP || reduced) return;
     if (!(window.matchMedia && window.matchMedia("(pointer: fine)").matches)) return;
 
     var FRAME_RANGE = 12; // px — moldura, camada "perto"
-    var GLOW_RANGE = 5; // px — mancha, camada "longe" (se move menos)
+    var GLOW_RANGE = 5; // px — mancha, camada "longe"
 
-    var visuals = Array.prototype.slice.call(document.querySelectorAll(".case__visual--shot"));
-    visuals.forEach(function (visual) {
-      var card = visual.closest(".case");
-      var frame = visual.querySelector(".case__frame--shot");
-      var glow = visual.querySelector(".case__visual-glow");
-      if (!card || !frame) return;
+    slice(document.querySelectorAll(".case-panel")).forEach(function (card) {
+      var frame = card.querySelector(".case-panel__frame");
+      var glow = card.querySelector(".case-panel__glow");
+      if (!frame) return;
 
       var frameX = gsap.quickTo(frame, "x", { duration: 0.7, ease: "power3.out" });
       var frameY = gsap.quickTo(frame, "y", { duration: 0.7, ease: "power3.out" });
@@ -478,5 +575,17 @@
     document
       .querySelectorAll(".closing-cta .sig-stroke, .manifesto__cite-stroke")
       .forEach(function (s) { strokeObserver.observe(s); });
+  }
+
+  /* ─── Recalcular quando fontes/imagens mudam a altura ───────────────────
+     A dobra dos cases é pinada: se a página cresce depois que os triggers já
+     foram medidos (fonte de display trocando o tamanho dos títulos, captura
+     de tela chegando), o start/end do pin fica deslocado. Mesmo cuidado que
+     site.js toma no index. */
+  if (hasST) {
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(function () { ScrollTrigger.refresh(); });
+    }
+    window.addEventListener("load", function () { ScrollTrigger.refresh(); });
   }
 })();

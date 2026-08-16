@@ -86,7 +86,7 @@
     </script>
 
     <link rel="icon" href="https://res.cloudinary.com/dn454izoh/image/upload/f_auto,q_auto,w_64/v1786126348/letra-r_eiagpo.webp" type="image/webp" />
-    <link rel="stylesheet" href="styles/ds.css?v=4" />
+    <link rel="stylesheet" href="styles/ds.css?v=5" />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -351,153 +351,168 @@
         </div>
       </section>
 
-      <!-- ═══════════════ CASE REAL ═══════════════
-           Carrossel horizontal (scroll-snap nativo + botões prev/next):
-           um case por tela, com "passar para ver os demais". Três projetos
-           reais (Madescur, Casa França, Sistemas Elevate), cada um com
-           screenshot + link "Ver projeto". Ver initCasesCarousel em
-           reveal.js. -->
-      <section class="section section--alt">
+      <!-- ═══════════════ TRABALHOS REAIS — três cases em scroll horizontal ═══
+           Mesma gramática da dobra "Sobre mim" do index.html (about-scroll):
+           no desktop a dobra fica pinada e os três cases deslizam na
+           horizontal, cada um com imagem + texto — nada de card grande.
+           O diferencial daqui é o fio ao fundo: ele se desenha conforme o
+           scroll avança (a rota entre os três projetos), com uma cabeça
+           luminosa na ponta do traço e três paradas — uma por case — que
+           acendem quando o projeto chega ao centro. Fio, cabeça e parada
+           ativa puxam a cor do case ativo (--cases-accent). No mobile os
+           cases empilham e o fio vira uma trilha vertical na lateral.
+           Ver initCasesScroll em reveal.js. -->
+      <section class="section section--alt cases-scroll" id="cases">
         <div class="wrap wrap--wide">
           <header class="sec-head" data-reveal>
             <div class="sec-head__rule" data-rule></div>
             <p class="text-overline">Trabalhos reais</p>
             <h2 class="sec-head__title">Três empresas, três sites</h2>
             <p class="sec-head__lede">
-              Alguns projetos ficam só entre a gente. Estes três a gente pode mostrar.
+              Alguns projetos ficam só entre a gente. Estes três a gente pode
+              mostrar — e a linha atrás deles passa por um de cada vez.
             </p>
           </header>
+        </div>
 
-          <div class="cases" data-reveal>
-            <div class="cases__viewport">
-              <div class="cases__track" id="cases-track">
-                <article class="case case--green">
-                  <div class="case__content">
-                    <div class="case__meta">
-                      <span class="case__rule" aria-hidden="true"></span>
-                      <span class="case__num">Madeireira</span>
-                    </div>
-                    <h3 class="case__problem">
-                      A empresa já era referência na indústria. O site ainda não mostrava isso.
-                    </h3>
-                    <p class="case__name">Madescur</p>
-                    <ul class="case__points">
-                      <li>Quem chega no site entende o tamanho da operação, sem precisar de uma visita.</li>
-                      <li>Linha de produtos e capacidade da fábrica, apresentados com clareza.</li>
-                      <li>A primeira tela já transmite a seriedade de uma indústria, não de um site genérico.</li>
-                    </ul>
-                    <p class="case__actions">
-                      <a class="link-arrow" href="https://madescur.elevatepromedia.com/" target="_blank" rel="noopener noreferrer">
-                        <span>Ver projeto</span><span aria-hidden="true">→</span>
-                      </a>
-                    </p>
-                    <ul class="case__stack">
-                      <li class="badge badge--mono">HTML5</li>
-                      <li class="badge badge--mono">CSS3</li>
-                      <li class="badge badge--mono">JavaScript</li>
-                    </ul>
-                  </div>
-                  <div class="case__visual case__visual--shot">
-                    <span class="case__visual-glow case__visual-glow--green" aria-hidden="true"></span>
-                    <div class="case__frame case__frame--shot">
-                      <span class="case__frame-bar" aria-hidden="true"></span>
-                      <img
-                        src="https://res.cloudinary.com/dn454izoh/image/upload/v1786710458/Captura_de_Tela_2026-08-14_a%CC%80s_09.12.02_gptrc7.webp"
-                        alt="Madescur - Site institucional para madeireira desenvolvido por Rafael Gois com HTML5, CSS3 e JavaScript"
-                        title="Madescur - Projeto desenvolvido por Rafael Gois"
-                        width="1200" height="675" loading="lazy" decoding="async"
-                      />
-                    </div>
-                  </div>
-                </article>
+        <div class="cases-scroll__pin" id="cases-scroll-pin">
+          <!-- A rota entre os três projetos. O traço-fantasma mostra o caminho
+               inteiro desde o começo; o traço cheio, por cima, só existe até
+               onde o scroll já chegou. -->
+          <svg class="cases-curve-svg" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true">
+            <path class="cases-curve-path cases-curve-path--ghost" d="M -20 640 C 130 760, 260 430, 400 390 C 505 360, 580 470, 615 590 C 655 726, 760 786, 880 660 C 972 564, 1000 360, 1088 330 C 1180 300, 1300 540, 1392 450 C 1468 376, 1540 410, 1620 340" />
+            <path class="cases-curve-path cases-curve-path--main" d="M -20 640 C 130 760, 260 430, 400 390 C 505 360, 580 470, 615 590 C 655 726, 760 786, 880 660 C 972 564, 1000 360, 1088 330 C 1180 300, 1300 540, 1392 450 C 1468 376, 1540 410, 1620 340" />
+          </svg>
 
-                <article class="case case--red">
-                  <div class="case__content">
-                    <div class="case__meta">
-                      <span class="case__rule" aria-hidden="true"></span>
-                      <span class="case__num">Turismo rural</span>
-                    </div>
-                    <h3 class="case__problem">
-                      O passeio tinha plantação, produtos e visita. Faltava um lugar na internet que reunisse tudo isso.
-                    </h3>
-                    <p class="case__name">Casa França</p>
-                    <ul class="case__points">
-                      <li>Plantação, produtos e contato no mesmo lugar, sem a pessoa ter que caçar informação.</li>
-                      <li>O visual acompanha o lugar: rústico, caloroso, de campo.</li>
-                      <li>Dias, horário e como chegar, fáceis de achar antes de sair de casa.</li>
-                    </ul>
-                    <p class="case__actions">
-                      <a class="link-arrow" href="https://morangos.elevatepromedia.com/" target="_blank" rel="noopener noreferrer">
-                        <span>Ver projeto</span><span aria-hidden="true">→</span>
-                      </a>
-                    </p>
-                    <ul class="case__stack">
-                      <li class="badge badge--mono">HTML5</li>
-                      <li class="badge badge--mono">CSS3</li>
-                      <li class="badge badge--mono">JavaScript</li>
-                    </ul>
-                  </div>
-                  <div class="case__visual case__visual--shot">
-                    <span class="case__visual-glow case__visual-glow--red" aria-hidden="true"></span>
-                    <div class="case__frame case__frame--shot">
-                      <span class="case__frame-bar" aria-hidden="true"></span>
-                      <img
-                        src="https://res.cloudinary.com/dn454izoh/image/upload/v1786710459/Captura_de_Tela_2026-08-14_a%CC%80s_09.24.14_c5dijq.webp"
-                        alt="Casa França - Site institucional para turismo rural desenvolvido por Rafael Gois com HTML5, CSS3 e JavaScript"
-                        title="Casa França - Projeto desenvolvido por Rafael Gois"
-                        width="1200" height="675" loading="lazy" decoding="async"
-                      />
-                    </div>
-                  </div>
-                </article>
+          <!-- Versão mobile do fio: mesma ideia, vertical, correndo na lateral
+               da pilha de cases (sem pin, sem cabeça — só o traço crescendo). -->
+          <svg class="cases-curve-svg--mobile" viewBox="0 0 200 900" preserveAspectRatio="none" aria-hidden="true">
+            <path class="cases-curve-path cases-curve-path--ghost-mobile" d="M 100 0 C 168 60, 176 148, 100 206 C 32 258, 26 344, 100 402 C 172 458, 180 546, 100 604 C 30 656, 26 740, 100 796 C 152 836, 160 872, 108 900" />
+            <path class="cases-curve-path cases-curve-path--mobile" d="M 100 0 C 168 60, 176 148, 100 206 C 32 258, 26 344, 100 402 C 172 458, 180 546, 100 604 C 30 656, 26 740, 100 796 C 152 836, 160 872, 108 900" />
+          </svg>
 
-                <article class="case case--neon">
-                  <div class="case__content">
-                    <div class="case__meta">
-                      <span class="case__rule" aria-hidden="true"></span>
-                      <span class="case__num">Software industrial</span>
-                    </div>
-                    <h3 class="case__problem">
-                      O software já rodava em fábrica. O site ainda não mostrava isso para quem pesquisava a empresa.
-                    </h3>
-                    <p class="case__name">Sistemas Elevate</p>
-                    <ul class="case__points">
-                      <li>Visual de produto de tecnologia, não de site institucional genérico.</li>
-                      <li>O que o sistema faz, para quem, e como falar com a equipe.</li>
-                      <li>Casos reais de fábrica, para a conversa começar com prova, não com promessa.</li>
-                    </ul>
-                    <p class="case__actions">
-                      <a class="link-arrow" href="https://www.sistemaselevate.com/" target="_blank" rel="noopener noreferrer">
-                        <span>Ver projeto</span><span aria-hidden="true">→</span>
-                      </a>
-                    </p>
-                    <ul class="case__stack">
-                      <li class="badge badge--mono">HTML5</li>
-                      <li class="badge badge--mono">CSS3</li>
-                      <li class="badge badge--mono">JavaScript</li>
-                    </ul>
-                  </div>
-                  <div class="case__visual case__visual--shot">
-                    <span class="case__visual-glow case__visual-glow--neon" aria-hidden="true"></span>
-                    <div class="case__frame case__frame--shot">
-                      <span class="case__frame-bar" aria-hidden="true"></span>
-                      <img
-                        src="https://res.cloudinary.com/dn454izoh/image/upload/v1786710452/Captura_de_Tela_2026-08-14_a%CC%80s_09.26.20_naufgk.webp"
-                        alt="Sistemas Elevate - Site institucional tecnológico para automação industrial desenvolvido por Rafael Gois com HTML5, CSS3 e JavaScript"
-                        title="Sistemas Elevate - Projeto desenvolvido por Rafael Gois"
-                        width="1200" height="675" loading="lazy" decoding="async"
-                      />
-                    </div>
-                  </div>
-                </article>
+          <!-- Paradas do fio (uma por case) e a cabeça luminosa na ponta do
+               traço: posicionadas por JS sobre o próprio path (getPointAtLength),
+               por isso nascem vazias de posição aqui. -->
+          <span class="cases-curve-stop" data-stop="0" aria-hidden="true">I</span>
+          <span class="cases-curve-stop" data-stop="1" aria-hidden="true">II</span>
+          <span class="cases-curve-stop" data-stop="2" aria-hidden="true">III</span>
+          <span class="cases-curve-head" aria-hidden="true"></span>
+
+          <div class="cases-scroll__track" id="cases-scroll-track">
+            <!-- I — Madescur -->
+            <article class="case-panel case-panel--i case-panel--green" data-case-panel>
+              <figure class="case-panel__media">
+                <span class="case-panel__glow case-panel__glow--green" aria-hidden="true"></span>
+                <div class="case-panel__frame">
+                  <span class="case-panel__bar" aria-hidden="true">
+                    <span class="case-panel__url">madescur.elevatepromedia.com</span>
+                  </span>
+                  <img
+                    src="https://res.cloudinary.com/dn454izoh/image/upload/v1786710458/Captura_de_Tela_2026-08-14_a%CC%80s_09.12.02_gptrc7.webp"
+                    alt="Madescur - Site institucional para madeireira desenvolvido por Rafael Gois com HTML5, CSS3 e JavaScript"
+                    title="Madescur - Projeto desenvolvido por Rafael Gois"
+                    width="1698" height="884" loading="lazy" decoding="async"
+                  />
+                </div>
+              </figure>
+              <div class="case-panel__text">
+                <span class="case-panel__roman" aria-hidden="true">I</span>
+                <p class="case-panel__kicker">Case I · Indústria madeireira</p>
+                <h3 class="case-panel__name">Madescur</h3>
+                <p class="case-panel__desc">
+                  A empresa já era referência na região. O site ainda parecia
+                  menor do que a operação.
+                </p>
+                <ul class="case-panel__points">
+                  <li>Quem abre o site entende o tamanho da fábrica sem precisar visitar.</li>
+                  <li>Linha de produtos e capacidade de produção, apresentadas com clareza.</li>
+                  <li>A primeira tela já transmite indústria, não um modelo genérico.</li>
+                </ul>
+                <p class="case-panel__foot">
+                  <a class="link-arrow" href="https://madescur.elevatepromedia.com/" target="_blank" rel="noopener noreferrer">
+                    <span>Ver projeto</span><span aria-hidden="true">→</span>
+                  </a>
+                  <span class="case-panel__tech">HTML5 · CSS3 · JavaScript</span>
+                </p>
               </div>
-            </div>
+            </article>
 
-            <div class="cases__nav">
-              <button class="cases__arrow cases__arrow--prev" type="button" aria-label="Case anterior">←</button>
-              <span class="cases__count"><span id="cases-current">01</span> / <span id="cases-total">03</span></span>
-              <button class="cases__arrow cases__arrow--next" type="button" aria-label="Próximo case">→</button>
-            </div>
+            <!-- II — Casa França -->
+            <article class="case-panel case-panel--ii case-panel--reverse case-panel--red" data-case-panel>
+              <div class="case-panel__text">
+                <span class="case-panel__roman" aria-hidden="true">II</span>
+                <p class="case-panel__kicker">Case II · Turismo rural</p>
+                <h3 class="case-panel__name">Casa França</h3>
+                <p class="case-panel__desc">
+                  A plantação, os produtos e a visita já existiam. Faltava um
+                  endereço na internet que reunisse os três.
+                </p>
+                <ul class="case-panel__points">
+                  <li>Plantação, produtos e contato no mesmo lugar, sem caçar informação.</li>
+                  <li>O visual acompanha o lugar: rústico, caloroso, de campo.</li>
+                  <li>Dias, horário e como chegar, resolvidos antes de sair de casa.</li>
+                </ul>
+                <p class="case-panel__foot">
+                  <a class="link-arrow" href="https://morangos.elevatepromedia.com/" target="_blank" rel="noopener noreferrer">
+                    <span>Ver projeto</span><span aria-hidden="true">→</span>
+                  </a>
+                  <span class="case-panel__tech">HTML5 · CSS3 · JavaScript</span>
+                </p>
+              </div>
+              <figure class="case-panel__media">
+                <span class="case-panel__glow case-panel__glow--red" aria-hidden="true"></span>
+                <div class="case-panel__frame">
+                  <span class="case-panel__bar" aria-hidden="true">
+                    <span class="case-panel__url">morangos.elevatepromedia.com</span>
+                  </span>
+                  <img
+                    src="https://res.cloudinary.com/dn454izoh/image/upload/v1786710459/Captura_de_Tela_2026-08-14_a%CC%80s_09.24.14_c5dijq.webp"
+                    alt="Casa França - Site institucional para turismo rural desenvolvido por Rafael Gois com HTML5, CSS3 e JavaScript"
+                    title="Casa França - Projeto desenvolvido por Rafael Gois"
+                    width="1698" height="884" loading="lazy" decoding="async"
+                  />
+                </div>
+              </figure>
+            </article>
+
+            <!-- III — Sistemas Elevate -->
+            <article class="case-panel case-panel--iii case-panel--neon" data-case-panel>
+              <figure class="case-panel__media">
+                <span class="case-panel__glow case-panel__glow--neon" aria-hidden="true"></span>
+                <div class="case-panel__frame">
+                  <span class="case-panel__bar" aria-hidden="true">
+                    <span class="case-panel__url">sistemaselevate.com</span>
+                  </span>
+                  <img
+                    src="https://res.cloudinary.com/dn454izoh/image/upload/v1786710452/Captura_de_Tela_2026-08-14_a%CC%80s_09.26.20_naufgk.webp"
+                    alt="Sistemas Elevate - Site institucional tecnológico para automação industrial desenvolvido por Rafael Gois com HTML5, CSS3 e JavaScript"
+                    title="Sistemas Elevate - Projeto desenvolvido por Rafael Gois"
+                    width="1703" height="888" loading="lazy" decoding="async"
+                  />
+                </div>
+              </figure>
+              <div class="case-panel__text">
+                <span class="case-panel__roman" aria-hidden="true">III</span>
+                <p class="case-panel__kicker">Case III · Software industrial</p>
+                <h3 class="case-panel__name">Sistemas Elevate</h3>
+                <p class="case-panel__desc">
+                  O sistema já rodava dentro da fábrica. Quem pesquisava a
+                  empresa não via nada disso.
+                </p>
+                <ul class="case-panel__points">
+                  <li>Cara de produto de tecnologia, não de site institucional genérico.</li>
+                  <li>O que o sistema faz, para quem é, e como falar com a equipe.</li>
+                  <li>Casos reais de chão de fábrica: a conversa começa com prova.</li>
+                </ul>
+                <p class="case-panel__foot">
+                  <a class="link-arrow" href="https://www.sistemaselevate.com/" target="_blank" rel="noopener noreferrer">
+                    <span>Ver projeto</span><span aria-hidden="true">→</span>
+                  </a>
+                  <span class="case-panel__tech">HTML5 · CSS3 · JavaScript</span>
+                </p>
+              </div>
+            </article>
           </div>
         </div>
       </section>
@@ -590,13 +605,6 @@
       </section>
     </main>
 
-    <!-- Transição em tela cheia do carrossel de cases (ver initCasesWipe em
-         reveal.js): fica fora do <main> de propósito — um ancestral com
-         transform (o próprio .cases tem [data-reveal]) criaria um novo
-         "containing block" e quebraria o position:fixed contra a viewport
-         real. -->
-    <div class="case-wipe" id="case-wipe" aria-hidden="true"></div>
-
     <footer class="site-footer">
       <div class="wrap wrap--wide site-footer__inner">
         <p class="text-overline" style="color: rgba(255, 251, 239, 0.5)">Vamos conversar</p>
@@ -644,6 +652,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" defer></script>
-    <script src="scripts/reveal.js?v=5" defer></script>
+    <script src="scripts/reveal.js?v=6" defer></script>
   </body>
 </html>
