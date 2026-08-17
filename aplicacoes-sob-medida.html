@@ -6,7 +6,7 @@
     <title>Aplicações Web sob Medida | Rafael Gois</title>
     <meta
       name="description"
-      content="Aplicações web sob medida com dados complexos e fluxos próprios. Full stack com intenção, do front ao back. Peça uma conversa."
+      content="Aplicações web sob medida em Curitibanos. O processo inteiro num só lugar, sem planilha paralela no meio do caminho."
     />
     <link rel="canonical" href="https://rafaelgois.com/aplicacoes-sob-medida.html" />
     <meta name="author" content="Rafael Gois" />
@@ -18,7 +18,7 @@
     <meta property="og:title" content="Aplicações Web sob Medida | Rafael Gois" />
     <meta
       property="og:description"
-      content="Aplicações web sob medida com dados complexos e fluxos próprios. Full stack com intenção."
+      content="Aplicações web sob medida em Curitibanos. O processo inteiro num só lugar, sem planilha paralela no meio do caminho."
     />
     <meta
       property="og:image"
@@ -31,7 +31,7 @@
     <meta name="twitter:title" content="Aplicações Web sob Medida | Rafael Gois" />
     <meta
       name="twitter:description"
-      content="Aplicações web sob medida com dados complexos e fluxos próprios."
+      content="Aplicações web sob medida em Curitibanos. O processo inteiro num só lugar, sem planilha paralela no meio do caminho."
     />
     <meta
       name="twitter:image"
@@ -56,7 +56,7 @@
               "name": "Curitibanos, Santa Catarina, Brasil"
             },
             "url": "https://rafaelgois.com/aplicacoes-sob-medida.html",
-            "description": "Plataformas e produtos web sob medida para fluxos e dados do negócio."
+            "description": "Aplicações web sob medida em Curitibanos. O processo inteiro num só lugar, sem planilha paralela no meio do caminho."
           },
           {
             "@type": "BreadcrumbList",
@@ -79,8 +79,16 @@
       }
     </script>
 
+    <!-- Marca que há JS: só então o CSS esconde o que será revelado por animação.
+         Sem JS, todo o conteúdo aparece normalmente. -->
+    <script>
+      document.documentElement.classList.add("js");
+    </script>
+
     <link rel="icon" href="https://res.cloudinary.com/dn454izoh/image/upload/f_auto,q_auto,w_64/v1786126348/letra-r_eiagpo.webp" type="image/webp" />
-    <link rel="stylesheet" href="styles/ds.css?v=3" />
+    <link rel="stylesheet" href="styles/ds.css?v=8" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link rel="preconnect" href="https://res.cloudinary.com" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -88,90 +96,601 @@
       rel="stylesheet"
     />
   </head>
-  <body>
+  <body class="grain">
+    <!-- ═══ Sprite de ícones — mesmo grid/traço do index.html (24px, 1.75, pontas redondas) ═══ -->
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <defs>
+        <symbol id="i-mapa" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4.4 3.4 6.7v12.9L9 17.3l6 2.3 5.6-2.3V4.4L15 6.7 9 4.4Z"/><path d="M9 4.4v12.9M15 6.7v12.9"/></symbol>
+        <symbol id="i-dados" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="6.4" rx="7.4" ry="2.9"/><path d="M4.6 6.4v11.2c0 1.6 3.3 2.9 7.4 2.9s7.4-1.3 7.4-2.9V6.4"/><path d="M4.6 12c0 1.6 3.3 2.9 7.4 2.9s7.4-1.3 7.4-2.9"/></symbol>
+        <symbol id="i-tela" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="15" rx="2"/><path d="M3 9.2h18M9.2 9.2v10.3"/></symbol>
+        <symbol id="i-chave" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.2" cy="14.4" r="3.7"/><path d="m10.9 11.7 8-8"/><path d="m16.3 6.3 2.1 2.1M14.2 8.4l2.1 2.1"/></symbol>
+        <symbol id="i-integracao" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9.6 14.4 14.4 9.6"/><path d="m8.4 11-2 2a3.6 3.6 0 0 0 5.1 5.1l2-2"/><path d="m15.6 13 2-2a3.6 3.6 0 0 0-5.1-5.1l-2 2"/></symbol>
+        <symbol id="i-fluxo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="6.4" cy="6" r="2.4"/><circle cx="6.4" cy="18" r="2.4"/><circle cx="17.6" cy="12" r="2.4"/><path d="M8.7 6.9c2.9.8 4.3 2.2 6.3 4.2M8.7 17.1c2.9-.8 4.3-2.2 6.3-4.2"/></symbol>
+        <symbol id="i-crescimento" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V14M10 20V9M16 20V13M20.5 20V6"/><path d="m16 7 4.5-1.5L22 10"/></symbol>
+      </defs>
+    </svg>
+
+    <!-- Textura de fundo da dobra do hero: fixa e no fundo da pilha (z 0),
+         abaixo das seções opacas (--z-section) — por isso não vaza para o
+         resto da página. Mesma imagem e mesma receita do hero do index.html:
+         acende quando a dobra entra e "respira" para os lados conforme o
+         capítulo alternado (esquerda/direita) entra em cena. Diferença: aqui
+         não há teclado 3D na frente dela, então ela é a protagonista da dobra
+         e aparece com mais presença (ver buildHeroCinematic em reveal.js). -->
+    <div class="hero__bg-image" aria-hidden="true"></div>
+
     <nav class="navbar" aria-label="Navegação">
       <a class="navbar__logo" href="/">Rafael <em>Gois</em></a>
       <a class="btn btn--secondary btn--sm" href="/#projects">Voltar aos trabalhos</a>
     </nav>
 
     <main>
-      <section class="section">
-        <div class="wrap">
-          <header class="sec-head">
-            <div class="sec-head__rule"></div>
-            <p class="text-overline">Trabalhos / III</p>
-            <h1 class="sec-head__title">Aplicações Web sob Medida</h1>
+      <!-- ═══════════════ HERO NARRATIVO — a capa e os porquês ═══════════════
+           Mesma dobra das outras páginas de trabalho: seção alta
+           (.hero__track) + palco sticky (.hero__stage), um único progresso
+           suavizado por lerp movendo câmera, névoa, luz, capítulos e HUD. Sem
+           pin do ScrollTrigger: sticky puro. Motor em reveal.js; o que é desta
+           página é só o texto — e o rótulo de cada capítulo no HUD, que vem do
+           data-hud logo abaixo.
+
+           A narrativa aqui é a da planilha paralela: o sistema para antes do
+           fim do processo, alguém improvisa, o improviso vira rotina e a
+           empresa passa a ter dois números para a mesma pergunta. -->
+      <header class="hero hero--work" id="hero">
+        <div class="hero__track">
+          <div class="hero__stage">
+            <div class="hero__rig" aria-hidden="true">
+              <div class="hero__fog hero__fog--back"></div>
+              <div class="hero__light"></div>
+              <div class="hero__rays"></div>
+              <div class="hero__fog hero__fog--front"></div>
+            </div>
+            <div class="hero__vignette" aria-hidden="true"></div>
+            <div class="hero__flash" aria-hidden="true"></div>
+
+            <div class="hero__scenes">
+              <!-- Capa: a apresentação do serviço, primeiro capítulo do palco
+                   (entra no load, sai no scroll). -->
+              <section class="hero-chapter hero-chapter--rest" data-chapter="capa" data-hud="A capa" aria-label="Aplicações sob medida">
+                <div>
+                  <span class="hero-rest__roman" aria-hidden="true">III</span>
+                  <span class="hero-rest__rule" aria-hidden="true"></span>
+                  <p class="hero-rest__over">Trabalhos / III</p>
+                  <h1 class="hero-rest__name">
+                    Aplicações sob
+                    <em>Medida<svg class="sig-stroke" viewBox="0 0 300 40" aria-hidden="true"><path d="M6 28 C 60 12, 120 34, 170 22 S 260 14, 294 24"/></svg></em>
+                  </h1>
+                  <p class="hero-rest__tag">
+                    O sistema genérico para no meio do seu processo. Em uma
+                    aplicação sob medida o time faz o trabalho
+                    <span class="mark-amber" data-mark>do começo ao fim</span>,
+                    sem exportar para uma planilha no caminho.
+                  </p>
+                  <div class="hero-rest__actions">
+                    <a class="btn btn--primary" href="/#contact">
+                      Quero uma aplicação para o meu processo <span class="btn__arrow" aria-hidden="true">→</span>
+                    </a>
+                    <a class="btn btn--secondary" href="#deliver">Ver o que entra no projeto</a>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Capítulo I — a abertura da história: centralizado e grande,
+                   como o cartão de título de um filme. -->
+              <section class="hero-chapter" data-chapter="planilha" data-hud="A planilha" aria-label="Capítulo I">
+                <div>
+                  <p class="hero-chapter__over">Capítulo I · a planilha</p>
+                  <p class="hero-chapter__line" data-split>
+                    Existe uma planilha paralela porque o sistema não faz o que o processo faz.
+                  </p>
+                </div>
+              </section>
+
+              <!-- Capítulos II e III — os porquês, ancorados no canto do seu
+                   lado. O texto entra pelo lado, o fundo se desloca para o
+                   lado oposto: é o gesto que dá continuidade à cena. -->
+              <section class="hero-chapter hero-chapter--minor" data-chapter="improviso" data-hud="O improviso" data-side="left" aria-label="Capítulo II">
+                <div>
+                  <p class="hero-chapter__over">Capítulo II · o improviso</p>
+                  <p class="hero-chapter__line" data-split>
+                    O improviso vira rotina, e a rotina vira o sistema de verdade.
+                  </p>
+                  <p class="hero-chapter__note">
+                    <span class="hero-chapter__note-icon" aria-hidden="true"><svg class="ic" aria-hidden="true"><use href="#i-fluxo" /></svg></span>
+                    <span class="hero-chapter__note-text">
+                      <strong>A regra é a sua</strong>
+                      O software se molda ao fluxo que já funciona, em vez de pedir que a equipe se molde a ele. É o que faz a planilha paralela perder a função.
+                    </span>
+                  </p>
+                </div>
+              </section>
+
+              <section class="hero-chapter hero-chapter--minor" data-chapter="dois-numeros" data-hud="Os dois números" data-side="right" aria-label="Capítulo III">
+                <div>
+                  <p class="hero-chapter__over">Capítulo III · os dois números</p>
+                  <p class="hero-chapter__line" data-split>
+                    Aí existem duas respostas para a mesma pergunta.
+                  </p>
+                  <p class="hero-chapter__note">
+                    <span class="hero-chapter__note-icon" aria-hidden="true"><svg class="ic" aria-hidden="true"><use href="#i-dados" /></svg></span>
+                    <span class="hero-chapter__note-text">
+                      <strong>Uma versão só</strong>
+                      Cadastro, regra e histórico num lugar só. O relatório e a operação lendo a mesma fonte.
+                    </span>
+                  </p>
+                </div>
+              </section>
+
+              <!-- Capítulo IV — fecha a sequência de volta ao centro, no mesmo
+                   porte do Capítulo I: a história termina onde começou. -->
+              <section class="hero-chapter" data-chapter="continuidade" data-hud="O que fica" aria-label="Capítulo IV">
+                <div>
+                  <p class="hero-chapter__over">Capítulo IV · o que fica</p>
+                  <p class="hero-chapter__line" data-split>
+                    Depois no ar, o processo inteiro acontece dentro da aplicação.
+                  </p>
+                  <p class="hero-chapter__note">
+                    <span class="hero-chapter__note-icon" aria-hidden="true"><svg class="ic" aria-hidden="true"><use href="#i-crescimento" /></svg></span>
+                    <span class="hero-chapter__note-text">
+                      <strong>Evolui sem virar caos</strong>
+                      A próxima função entra sem derrubar o que já estava de pé.
+                    </span>
+                  </p>
+                </div>
+              </section>
+            </div>
+
+            <p class="hero__cue" aria-hidden="true">
+              <span>role</span>
+              <span class="hero__cue-line"></span>
+            </p>
+
+            <div class="hero__hud" aria-hidden="true">
+              <span class="hero__hud-chapter" id="hero-hud-chapter">01</span>
+              <span class="hero__hud-label" id="hero-hud-label">A capa</span>
+              <span class="hero__hud-bar"><i id="hero-hud-bar"></i></span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- ═══════════════ O QUE É ENTREGUE — dossiê editorial ═══════════════ -->
+      <section class="section deliver" id="deliver">
+        <div class="wrap wrap--wide">
+          <header class="sec-head" data-reveal>
+            <div class="sec-head__rule" data-rule></div>
+            <p class="text-overline">O que entra no projeto</p>
+            <h2 class="sec-head__title">O sistema genérico não basta</h2>
             <p class="sec-head__lede">
-              Plataformas e produtos feitos sob medida. Dados complexos e
-              fluxos próprios, no formato que o negócio realmente precisa.
+              Quem usa planilha ao lado do sistema precisa do fluxo desenhado,
+              do dado num lugar só e de telas que aguentam o dia inteiro. O
+              projeto cobre isso, para o trabalho acabar dentro da aplicação.
             </p>
           </header>
 
-          <div class="act" style="max-width: 42rem">
-            <h2 class="act__title">O que entrego aqui</h2>
-            <p class="act__text">
-              Do front ao back, aplicações que acompanham a regra do seu
-              processo. Painéis, cadastros, integrações e fluxos que um template
-              genérico não resolve.
-            </p>
+          <div class="deliver-index">
+            <!-- 01 — Desenho do processo -->
+            <article class="deliver-mod deliver-mod--01">
+              <span class="deliver-mod__watermark" aria-hidden="true">I</span>
+              <span class="deliver-mod__num">01</span>
+              <div class="deliver-mod__content">
+                <div class="deliver-mod__head">
+                  <span class="deliver-mod__icon" aria-hidden="true"><svg class="ic" aria-hidden="true"><use href="#i-mapa" /></svg></span>
+                  <h3><span class="deliver-mod__mask"><span class="deliver-mod__mask-line">O processo no papel primeiro</span></span></h3>
+                </div>
+                <div class="deliver-mod__body">
+                  <p>
+                    Antes de qualquer tela, a gente desenha o fluxo como ele
+                    acontece hoje, com as exceções e os jeitinhos. É ali que
+                    aparece o que o sistema atual deixou de fora.
+                  </p>
+                </div>
+              </div>
+              <div class="deliver-mod__chip">
+                <svg class="ic" aria-hidden="true"><use href="#i-fluxo" /></svg>
+                <code>fluxo → dado → tela</code>
+              </div>
+            </article>
 
-            <h2 class="act__title" style="margin-top: var(--sp-12)">Case · produto no ritmo do negócio</h2>
-            <p class="act__text">
-              <strong>Problema.</strong> O fluxo era específico demais para
-              caber num SaaS genérico. Planilhas e ferramentas soltas geravam
-              retrabalho e erro.
-            </p>
-            <p class="act__text" style="margin-top: var(--sp-4)">
-              <strong>Solução.</strong> Aplicação full stack sob medida, com
-              modelagem de dados clara, regras de negócio no back e interface
-              simples no front. Tipagem e estrutura pensadas para evoluir sem
-              virar caos.
-            </p>
-            <p class="act__text" style="margin-top: var(--sp-4)">
-              <strong>Resultado.</strong> Um sistema no formato do processo
-              real, com menos atrito no dia a dia e base sólida para novas
-              features.
-            </p>
+            <!-- 02 — Modelagem de dados -->
+            <article class="deliver-mod deliver-mod--02">
+              <div class="deliver-mod__rule" data-rule></div>
+              <span class="deliver-mod__watermark" aria-hidden="true">II</span>
+              <span class="deliver-mod__num">02</span>
+              <div class="deliver-mod__content">
+                <div class="deliver-mod__head">
+                  <span class="deliver-mod__icon" aria-hidden="true"><svg class="ic" aria-hidden="true"><use href="#i-dados" /></svg></span>
+                  <h3><span class="deliver-mod__mask"><span class="deliver-mod__mask-line">A estrutura por baixo</span></span></h3>
+                </div>
+                <div class="deliver-mod__body">
+                  <p>
+                    O modelo é onde o processo vira estrutura. Feito com calma,
+                    aguenta os próximos anos de mudança. Feito com pressa, toda
+                    função nova cobra o preço.
+                  </p>
+                </div>
+              </div>
+            </article>
 
-            <h2 class="act__title" style="margin-top: var(--sp-12)">Stack típica</h2>
-            <p class="act__text">
-              TypeScript, Next.js, React, Node.js, Nest.js, Express e Prisma.
-              SQL Server, PostgreSQL ou MySQL conforme o projeto.
-            </p>
+            <!-- 03 — As telas do dia a dia -->
+            <article class="deliver-mod deliver-mod--03">
+              <div class="deliver-mod__rule" data-rule></div>
+              <span class="deliver-mod__watermark" aria-hidden="true">III</span>
+              <span class="deliver-mod__num">03</span>
+              <div class="deliver-mod__content">
+                <div class="deliver-mod__head">
+                  <span class="deliver-mod__icon" aria-hidden="true"><svg class="ic" aria-hidden="true"><use href="#i-tela" /></svg></span>
+                  <h3><span class="deliver-mod__mask"><span class="deliver-mod__mask-line">As telas do dia a dia</span></span></h3>
+                </div>
+                <div class="deliver-mod__body">
+                  <p>
+                    Quem usa a aplicação usa oito horas por dia, não cinco
+                    minutos por mês. Cada clique a menos numa tarefa repetida
+                    vira tempo de verdade no fim da semana.
+                  </p>
+                  <p class="deliver-mod__proof">
+                    Menos passos por tarefa
+                  </p>
+                </div>
+              </div>
+            </article>
 
-            <figure class="about__portrait" style="max-width: 22rem; margin-top: var(--sp-10)">
-              <img
-                src="https://res.cloudinary.com/dn454izoh/image/upload/f_auto,q_auto,w_800/v1786125870/IMG_7987_y7oist.webp"
-                alt="Setup de trabalho com laptop, monitor e teclado"
-                width="800"
-                height="1067"
-                loading="lazy"
-                decoding="async"
-              />
-              <figcaption>Ambiente de desenvolvimento</figcaption>
-            </figure>
+            <!-- 04 — Perfis e permissões -->
+            <article class="deliver-mod deliver-mod--04">
+              <div class="deliver-mod__rule" data-rule></div>
+              <span class="deliver-mod__watermark" aria-hidden="true">IV</span>
+              <span class="deliver-mod__num">04</span>
+              <div class="deliver-mod__content">
+                <div class="deliver-mod__head">
+                  <span class="deliver-mod__icon" aria-hidden="true"><svg class="ic" aria-hidden="true"><use href="#i-chave" /></svg></span>
+                  <h3><span class="deliver-mod__mask"><span class="deliver-mod__mask-line">Cada um com o seu acesso</span></span></h3>
+                </div>
+                <div class="deliver-mod__body">
+                  <p>
+                    Quem lança, quem aprova e quem só acompanha veem telas
+                    diferentes. Menos campo na frente de quem não precisa é
+                    menos erro e menos treinamento.
+                  </p>
+                </div>
+                <div class="deliver-mod__proof deliver-mod__proof--qr">
+                  <svg class="ic" aria-hidden="true"><use href="#i-chave" /></svg>
+                  <span>Perfil define a tela</span>
+                </div>
+              </div>
+            </article>
 
-            <p style="margin-top: var(--sp-10)">
-              <a class="btn btn--primary" href="/#contact">
-                Conversar sobre o projeto <span class="btn__arrow" aria-hidden="true">→</span>
-              </a>
-            </p>
+            <!-- 05 — Integração com o resto -->
+            <article class="deliver-mod deliver-mod--05">
+              <div class="deliver-mod__rule" data-rule></div>
+              <span class="deliver-mod__watermark" aria-hidden="true">V</span>
+              <span class="deliver-mod__num">05</span>
+              <div class="deliver-mod__content">
+                <div class="deliver-mod__head">
+                  <span class="deliver-mod__icon" aria-hidden="true"><svg class="ic" aria-hidden="true"><use href="#i-integracao" /></svg></span>
+                  <h3><span class="deliver-mod__mask"><span class="deliver-mod__mask-line">Encaixa no que a empresa já tem</span></span></h3>
+                </div>
+                <div class="deliver-mod__body">
+                  <p>
+                    Sob medida não quer dizer ilhado. A aplicação entra puxando
+                    e devolvendo dado para o ERP, a planilha que ainda precisa
+                    existir e o que mais já estiver rodando na empresa.
+                  </p>
+                </div>
+              </div>
+            </article>
           </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ POR QUE ISSO IMPORTA — a dobra 100% âmbar ═══════════════ -->
+      <section class="manifesto" aria-label="Por que isso importa">
+        <div class="wrap manifesto__inner">
+          <span class="manifesto__mark" aria-hidden="true">“</span>
+          <p class="text-overline manifesto__over" data-reveal>Por que isso importa</p>
+          <blockquote class="manifesto__quote" data-quote>
+            Um sistema que não cabe no processo não é neutro. Ele cria um segundo sistema em planilha.
+          </blockquote>
+          <p class="manifesto__proof" data-reveal>
+            Ninguém escolhe trabalhar em dois lugares. A equipe faz isso porque
+            a ferramenta parou antes do fim do processo. Eu desenho até esse
+            fim: quando o software chega lá, a planilha paralela some, e o
+            número que a gestão vê é o mesmo que a operação usa.
+          </p>
+          <p class="manifesto__cta" data-reveal>
+            <a class="btn btn--secondary" href="/#contact">
+              Quero uma aplicação que faça isso <span class="btn__arrow" aria-hidden="true">→</span>
+            </a>
+          </p>
+        </div>
+      </section>
+
+      <!-- ═══════════════ TRABALHOS REAIS — três painéis em scroll horizontal ═══
+           Mesma dobra das outras páginas de trabalho (ver initCasesScroll em
+           reveal.js): no desktop fica pinada, os painéis deslizam na
+           horizontal e o fio ao fundo se desenha conforme o scroll, com uma
+           parada por painel.
+           A diferença aqui é o recorte. Produto sob medida roda portas adentro
+           e não tem endereço público para mostrar, então em vez de três
+           clientes lado a lado esta dobra conta UM projeto real em três atos —
+           diagnóstico, modelagem, entrega. Mesma mecânica, mesmo fio, três
+           paradas; o que muda é o eixo da narrativa. Fotos em
+           .case-panel__frame--photo (sem barra de navegador) e selo de
+           confidencialidade no lugar do "Ver projeto". -->
+      <section class="section section--alt cases-scroll" id="cases">
+        <div class="wrap wrap--wide">
+          <header class="sec-head" data-reveal>
+            <div class="sec-head__rule" data-rule></div>
+            <p class="text-overline">Trabalhos reais</p>
+            <h2 class="sec-head__title">Um produto sob medida, em três atos</h2>
+            <p class="sec-head__lede">
+              Os produtos ficam portas adentro e o cliente não é nomeado. Este
+              projeto real mostra o caminho: do diagnóstico à entrega, o tipo
+              de aplicação que o seu processo pode ter.
+            </p>
+          </header>
+        </div>
+
+        <div class="cases-scroll__pin" id="cases-scroll-pin">
+          <!-- A rota entre os três atos. O traço-fantasma mostra o caminho
+               inteiro desde o começo; o traço cheio, por cima, só existe até
+               onde o scroll já chegou. -->
+          <svg class="cases-curve-svg" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true">
+            <path class="cases-curve-path cases-curve-path--ghost" d="M -20 640 C 130 760, 260 430, 400 390 C 505 360, 580 470, 615 590 C 655 726, 760 786, 880 660 C 972 564, 1000 360, 1088 330 C 1180 300, 1300 540, 1392 450 C 1468 376, 1540 410, 1620 340" />
+            <path class="cases-curve-path cases-curve-path--main" d="M -20 640 C 130 760, 260 430, 400 390 C 505 360, 580 470, 615 590 C 655 726, 760 786, 880 660 C 972 564, 1000 360, 1088 330 C 1180 300, 1300 540, 1392 450 C 1468 376, 1540 410, 1620 340" />
+          </svg>
+
+          <!-- Versão mobile do fio: mesma ideia, vertical, correndo na lateral
+               da pilha (sem pin, sem cabeça — só o traço crescendo). -->
+          <svg class="cases-curve-svg--mobile" viewBox="0 0 200 900" preserveAspectRatio="none" aria-hidden="true">
+            <path class="cases-curve-path cases-curve-path--ghost-mobile" d="M 100 0 C 168 60, 176 148, 100 206 C 32 258, 26 344, 100 402 C 172 458, 180 546, 100 604 C 30 656, 26 740, 100 796 C 152 836, 160 872, 108 900" />
+            <path class="cases-curve-path cases-curve-path--mobile" d="M 100 0 C 168 60, 176 148, 100 206 C 32 258, 26 344, 100 402 C 172 458, 180 546, 100 604 C 30 656, 26 740, 100 796 C 152 836, 160 872, 108 900" />
+          </svg>
+
+          <!-- Paradas do fio (uma por ato) e a cabeça luminosa na ponta do
+               traço: posicionadas por JS sobre o próprio path (getPointAtLength),
+               por isso nascem vazias de posição aqui. -->
+          <span class="cases-curve-stop" data-stop="0" aria-hidden="true">I</span>
+          <span class="cases-curve-stop" data-stop="1" aria-hidden="true">II</span>
+          <span class="cases-curve-stop" data-stop="2" aria-hidden="true">III</span>
+          <span class="cases-curve-head" aria-hidden="true"></span>
+
+          <div class="cases-scroll__track" id="cases-scroll-track">
+            <!-- I — O diagnóstico -->
+            <article class="case-panel case-panel--i case-panel--indigo" data-case-panel>
+              <figure class="case-panel__media">
+                <span class="case-panel__glow case-panel__glow--indigo" aria-hidden="true"></span>
+                <div class="case-panel__frame case-panel__frame--photo">
+                  <img
+                    src="https://res.cloudinary.com/dn454izoh/image/upload/f_auto,q_auto,w_1200/v1786125870/IMG_20230629_095831_oazxpw.webp"
+                    alt="Rascunho de wireframe da interface feito à mão durante o desenho do fluxo"
+                    title="Desenho do fluxo antes das telas"
+                    width="1200" height="900" loading="lazy" decoding="async"
+                  />
+                </div>
+              </figure>
+              <div class="case-panel__text">
+                <span class="case-panel__roman" aria-hidden="true">I</span>
+                <p class="case-panel__kicker">Ato I · O diagnóstico</p>
+                <h3 class="case-panel__name">A planilha que virou sistema</h3>
+                <p class="case-panel__desc">
+                  O fluxo era específico demais para caber num SaaS genérico.
+                  Planilhas e ferramentas soltas geravam retrabalho e erro.
+                </p>
+                <ul class="case-panel__points">
+                  <li>O processo desenhado como acontece, com exceção e jeitinho incluídos.</li>
+                  <li>Onde a ferramenta atual parava, e o que a equipe fazia depois disso.</li>
+                  <li>O rascunho da tela antes da primeira linha de código.</li>
+                </ul>
+                <p class="case-panel__foot">
+                  <span class="case-panel__seal">Cliente não nomeado · confidencial</span>
+                  <span class="case-panel__tech">Desenho de fluxo · Wireframe</span>
+                </p>
+              </div>
+            </article>
+
+            <!-- II — A modelagem -->
+            <article class="case-panel case-panel--ii case-panel--reverse case-panel--teal" data-case-panel>
+              <div class="case-panel__text">
+                <span class="case-panel__roman" aria-hidden="true">II</span>
+                <p class="case-panel__kicker">Ato II · A modelagem</p>
+                <h3 class="case-panel__name">O processo virou estrutura</h3>
+                <p class="case-panel__desc">
+                  Antes das telas, o modelo de dados. É a parte que ninguém vê e
+                  a que decide se a aplicação aguenta a próxima mudança.
+                </p>
+                <ul class="case-panel__points">
+                  <li>Regras de negócio no back, não espalhadas pelas telas.</li>
+                  <li>Erro que aparece no editor, não em produção.</li>
+                  <li>Estrutura pensada para crescer sem virar caos seis meses depois.</li>
+                </ul>
+                <p class="case-panel__foot">
+                  <span class="case-panel__seal">Cliente não nomeado · confidencial</span>
+                  <span class="case-panel__tech">TypeScript · Nest.js · Prisma</span>
+                </p>
+              </div>
+              <figure class="case-panel__media">
+                <span class="case-panel__glow case-panel__glow--teal" aria-hidden="true"></span>
+                <div class="case-panel__frame case-panel__frame--photo">
+                  <img
+                    src="https://res.cloudinary.com/dn454izoh/image/upload/f_auto,q_auto,w_1200/v1786125870/IMG_7735_f19j7m.webp"
+                    alt="Mesa de trabalho com teclado, mouse e livros de engenharia de software"
+                    title="A mesa onde o modelo é escrito"
+                    width="1200" height="1600" loading="lazy" decoding="async"
+                  />
+                </div>
+              </figure>
+            </article>
+
+            <!-- III — A entrega -->
+            <article class="case-panel case-panel--iii case-panel--plum" data-case-panel>
+              <figure class="case-panel__media">
+                <span class="case-panel__glow case-panel__glow--plum" aria-hidden="true"></span>
+                <div class="case-panel__frame case-panel__frame--photo">
+                  <img
+                    src="https://res.cloudinary.com/dn454izoh/image/upload/f_auto,q_auto,w_1200/v1786125870/IMG_7987_y7oist.webp"
+                    alt="Setup de trabalho com laptop, monitor e teclado durante o desenvolvimento da aplicação"
+                    title="Ambiente de desenvolvimento"
+                    width="1200" height="1600" loading="lazy" decoding="async"
+                  />
+                </div>
+              </figure>
+              <div class="case-panel__text">
+                <span class="case-panel__roman" aria-hidden="true">III</span>
+                <p class="case-panel__kicker">Ato III · A entrega</p>
+                <h3 class="case-panel__name">No ritmo do negócio</h3>
+                <p class="case-panel__desc">
+                  Um sistema no formato do processo real, com menos atrito no
+                  dia a dia e base sólida para as próximas funções.
+                </p>
+                <ul class="case-panel__points">
+                  <li>O trabalho inteiro acontece dentro da aplicação. A planilha paralela some.</li>
+                  <li>Interface simples no front para uma regra complicada no back.</li>
+                  <li>Função nova entra sem precisar refazer o que já estava de pé.</li>
+                </ul>
+                <p class="case-panel__foot">
+                  <span class="case-panel__seal">Cliente não nomeado · confidencial</span>
+                  <span class="case-panel__tech">Next.js · React · PostgreSQL</span>
+                </p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ STACK + FECHAMENTO ═══════════════
+           Grade editorial com numeral-fantasma em serifa gigante atrás de
+           cada tecnologia (mesmo motivo do "O que é entregue" —
+           .deliver-mod__watermark — só que em grade 3×2 em vez de índice
+           vertical). Entrada é um stagger dedicado (initStackGrid em
+           reveal.js), não o [data-reveal] genérico. -->
+      <section class="section stack-section">
+        <div class="stack-section__glow" aria-hidden="true"></div>
+        <div class="stack-section__glow stack-section__glow--alt" aria-hidden="true"></div>
+        <span class="stack-section__glyph" aria-hidden="true">&lt;/&gt;</span>
+        <div class="wrap wrap--wide">
+          <header class="sec-head" data-reveal>
+            <div class="sec-head__rule" data-rule></div>
+            <p class="text-overline">Como a aplicação é feita</p>
+            <h2 class="sec-head__title">Previsível agora e daqui a seis meses</h2>
+            <p class="sec-head__lede">
+              Sob medida quer dizer que o modelo e as regras são do seu
+              processo. Para isso o código precisa ser previsível: fácil de
+              mudar depois, sem derrubar o que já funciona. A escolha segue o
+              problema, não a moda.
+            </p>
+          </header>
+
+          <div class="stack-grid" id="stack-grid">
+            <div class="stack-grid__divider" id="stack-grid-divider" aria-hidden="true"></div>
+            <ul class="stack-grid__list">
+              <li class="stack-cell stack-cell--01" data-stack-cell>
+                <span class="stack-cell__watermark" aria-hidden="true">I</span>
+                <span class="stack-cell__name">TypeScript</span>
+                <span class="stack-cell__desc">Erro que aparece no editor, não na operação</span>
+              </li>
+              <li class="stack-cell stack-cell--02" data-stack-cell>
+                <span class="stack-cell__watermark" aria-hidden="true">II</span>
+                <span class="stack-cell__name">React</span>
+                <span class="stack-cell__desc">Telas que mudam com o uso</span>
+              </li>
+              <li class="stack-cell stack-cell--03" data-stack-cell>
+                <span class="stack-cell__watermark" aria-hidden="true">III</span>
+                <span class="stack-cell__name">Next.js</span>
+                <span class="stack-cell__desc">A aplicação inteira em pé</span>
+              </li>
+              <li class="stack-cell stack-cell--04" data-stack-cell>
+                <span class="stack-cell__watermark" aria-hidden="true">IV</span>
+                <span class="stack-cell__name">Nest.js</span>
+                <span class="stack-cell__desc">As regras do processo, organizadas</span>
+              </li>
+              <li class="stack-cell stack-cell--05" data-stack-cell>
+                <span class="stack-cell__watermark" aria-hidden="true">V</span>
+                <span class="stack-cell__name">Prisma</span>
+                <span class="stack-cell__desc">O modelo de dados versionado</span>
+              </li>
+              <li class="stack-cell stack-cell--06" data-stack-cell>
+                <span class="stack-cell__watermark" aria-hidden="true">VI</span>
+                <span class="stack-cell__name">PostgreSQL</span>
+                <span class="stack-cell__desc">O banco onde o modelo mora</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ FECHAMENTO — CTA final ═══════════════
+           Dobra escura de fechamento, mesma família --grad-ink do rodapé
+           logo abaixo — cria um mergulho contínuo pro escuro em vez de um
+           card claro solto. Não reusa o âmbar cheio do .manifesto (essa
+           página já tem essa dobra em "Por que isso importa") — aqui o
+           âmbar é só o acento pontual (stroke, halo, botão). -->
+      <section class="closing-cta">
+        <span class="closing-cta__halo" aria-hidden="true"></span>
+        <div class="wrap closing-cta__inner">
+          <svg class="sig-stroke closing-cta__stroke" viewBox="0 0 300 40" aria-hidden="true"><path d="M6 28 C 60 12, 120 34, 170 22 S 260 14, 294 24"/></svg>
+          <p class="text-overline closing-cta__over">Próximo passo</p>
+          <h3 class="closing-cta__title">Vamos falar do seu processo</h3>
+          <p class="closing-cta__lede">Me conta onde a planilha entra hoje. Quase sempre é ali que o projeto começa.</p>
+          <p class="closing-cta__action">
+            <a class="btn btn--primary" href="/#contact">
+              Quero uma aplicação <span class="btn__arrow" aria-hidden="true">→</span>
+            </a>
+            <a class="btn btn--secondary" href="https://www.sistemaselevate.com/" target="_blank" rel="noopener noreferrer">
+              Ver na Elevate <span class="btn__arrow" aria-hidden="true">→</span>
+            </a>
+          </p>
         </div>
       </section>
     </main>
 
     <footer class="site-footer">
-      <div class="wrap site-footer__inner">
+      <div class="wrap wrap--wide site-footer__inner">
+        <p class="text-overline" style="color: rgba(255, 251, 239, 0.5)">Vamos conversar</p>
         <p class="site-footer__name">Rafael Gois<em>.</em></p>
-        <nav aria-label="Outros trabalhos">
-          <ul>
-            <li><a class="link-line" href="/sistemas-de-controle.html">Sistemas de Controle</a></li>
-            <li><a class="link-line" href="/sites-institucionais.html">Sites Institucionais</a></li>
-            <li><a class="link-line" href="/">Início</a></li>
-          </ul>
-        </nav>
+
+        <div class="site-footer__grid">
+          <div>
+            <h4>O que eu faço</h4>
+            <p>
+              Engenharia de software com obsessão por experiência do usuário,
+              do sistema de controle industrial ao site da empresa.
+            </p>
+          </div>
+
+          <nav aria-label="Navegação do rodapé">
+            <h4>Navegação</h4>
+            <ul>
+              <li><a class="link-line" href="/">Início</a></li>
+              <li><a class="link-line" href="/#about">Sobre mim</a></li>
+              <li><a class="link-line" href="/#skills">Habilidades</a></li>
+              <li><a class="link-line" href="/#projects">Trabalhos</a></li>
+              <li><a class="link-line" href="/sistemas-de-controle.html">Sistemas de Controle</a></li>
+              <li><a class="link-line" href="/sites-institucionais.html">Sites Institucionais</a></li>
+              <li><a class="link-line" href="/#contact">Contato</a></li>
+            </ul>
+          </nav>
+
+          <div>
+            <h4>Contato</h4>
+            <ul>
+              <li><a class="link-line" href="mailto:contato@rafaelgois.com">contato@rafaelgois.com</a></li>
+              <li><a class="link-line" href="https://br.linkedin.com/in/rafaelfbgois" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+              <li><a class="link-line" href="https://github.com/RafaGois" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+              <li><a class="link-line" href="https://www.instagram.com/_rgoiss" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="site-footer__bottom">
+          <p>© <span id="current-year">2026</span> Rafael Gois. Todos os direitos reservados.</p>
+          <p>Feito à mão, com um traço de amarelo</p>
+        </div>
       </div>
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js" defer></script>
+    <script src="scripts/reveal.js?v=14" defer></script>
   </body>
 </html>

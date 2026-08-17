@@ -1248,7 +1248,7 @@ p { max-width: var(--measure); }
 }
 
 /* ─── 13. MANIFESTO — a seção 100% âmbar ────────────────────────────────── */
-.manifesto, .work-hero {
+.manifesto {
   isolation: isolate;
   background:
     radial-gradient(ellipse 110% 70% at 50% -15%, rgba(255, 253, 247, 0.5) 0%, transparent 55%),
@@ -1262,7 +1262,7 @@ p { max-width: var(--measure); }
   overflow: hidden;
   padding-block: clamp(var(--sp-24), 16vh, var(--sp-32));
 }
-.manifesto::before, .work-hero::before {
+.manifesto::before {
   content: "";
   position: absolute;
   inset: -35% -15% auto 30%;
@@ -1278,7 +1278,7 @@ p { max-width: var(--measure); }
   z-index: 0;
   animation: manifestoGlow 14s var(--ease-breath) infinite alternate;
 }
-.manifesto::after, .work-hero::after {
+.manifesto::after {
   content: "";
   position: absolute;
   inset: auto -20% -45% -20%;
@@ -1641,6 +1641,20 @@ p { max-width: var(--measure); }
 .case-panel--green { --case-accent: #5FA55C; }
 .case-panel--red { --case-accent: #D9614A; }
 .case-panel--neon { --case-accent: #6FA524; }
+/* Tons da página de sistemas de controle: o aço do painel e a ferrugem do
+   chão de fábrica, na mesma lógica de acento-por-projeto acima. */
+.case-panel__glow--steel { background: linear-gradient(135deg, #B7CFE4 0%, #4B7BA8 55%, #2C5478 100%); }
+.case-panel__glow--rust { background: linear-gradient(135deg, #F0C9A5 0%, #C2703A 55%, #8A4620 100%); }
+.case-panel--steel { --case-accent: #4B7BA8; }
+.case-panel--rust { --case-accent: #C2703A; }
+/* Tons da página de aplicações sob medida — três atos do mesmo projeto, cada
+   um com seu acento, na mesma lógica de cor-por-painel acima. */
+.case-panel__glow--indigo { background: linear-gradient(135deg, #C3C3F2 0%, #5B5BD6 55%, #34348F 100%); }
+.case-panel__glow--teal { background: linear-gradient(135deg, #A8DED8 0%, #2E8B84 55%, #175A55 100%); }
+.case-panel__glow--plum { background: linear-gradient(135deg, #E7B9D2 0%, #9A4F7A 55%, #632F4D 100%); }
+.case-panel--indigo { --case-accent: #5B5BD6; }
+.case-panel--teal { --case-accent: #2E8B84; }
+.case-panel--plum { --case-accent: #9A4F7A; }
 
 /* Janelinha de navegador: barra com os três pontos + endereço real do
    projeto, e a captura abaixo definindo a própria altura (print de site
@@ -1695,6 +1709,38 @@ p { max-width: var(--measure); }
   text-overflow: ellipsis;
 }
 .case-panel__frame img { width: 100%; height: auto; }
+
+/* Variante foto — sistemas de controle. Esses projetos rodam dentro da
+   planta: não têm endereço público para a barra do navegador, e o registro
+   que existe deles é fotografia (o terminal no posto, o painel na parede),
+   não captura de tela. Some a barra, e o recorte passa a ser 16/10 fixo —
+   as fotos vêm em proporções diferentes (algumas em pé) e sem isso um painel
+   ficaria três vezes mais alto que o vizinho. */
+.case-panel__frame--photo img {
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Selo de confidencialidade no lugar do "Ver projeto": sistema interno não
+   tem link para mostrar, e dizer isso é mais honesto que um botão morto. */
+.case-panel__seal {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: 0.08em;
+  color: var(--color-ink-mute);
+}
+.case-panel__seal::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--case-accent, var(--color-amber));
+  flex: none;
+}
 
 /* ── O texto do case ───────────────────────────────────────────────────── */
 .case-panel__text { position: relative; padding-left: var(--sp-8); }
@@ -2011,7 +2057,7 @@ p { max-width: var(--measure); }
 /* ─── STACK TÍPICA — preenchimento de fundo da dobra ──────────────────────
    A dobra é só texto + grade, sem foto — reaproveita o vocabulário que o
    resto do site já usa pra dar corpo a uma seção "vazia": o glow radial
-   âmbar pontual de .closing-cta/.reason-scroll__light (dois, em cantos
+   âmbar pontual de .closing-cta/.hero__light (dois, em cantos
    opostos, pra dar profundidade sem virar um flood só) e um glifo-fantasma
    gigante e quase invisível (mesmo motivo de .deliver-mod__watermark /
    .stack-cell__watermark, só que em escala de seção): um "</>" de código,
@@ -2168,8 +2214,7 @@ p { max-width: var(--measure); }
   padding-block: clamp(var(--sp-24), 16vh, var(--sp-32));
   text-align: center;
 }
-.closing-cta::before {
-  content: "";
+.closing-cta__halo {
   position: absolute;
   right: -10%;
   top: -30%;
@@ -2178,6 +2223,7 @@ p { max-width: var(--measure); }
   background: radial-gradient(circle, rgba(255, 176, 0, 0.18) 0%, transparent 65%);
   pointer-events: none;
   z-index: 0;
+  transform-origin: 35% 35%;
 }
 .closing-cta__inner { position: relative; z-index: 1; max-width: 36rem; }
 .closing-cta__stroke { width: clamp(120px, 20vw, 220px); margin: 0 auto var(--sp-6); }
@@ -2189,6 +2235,7 @@ p { max-width: var(--measure); }
   line-height: 1.1;
   color: var(--color-ink);
 }
+.closing-cta__title .w { display: inline-block; will-change: transform, opacity, filter; }
 .closing-cta__lede {
   margin: var(--sp-4) auto 0;
   max-width: 32ch;
@@ -2196,134 +2243,171 @@ p { max-width: var(--measure); }
   font-size: var(--text-body);
 }
 .closing-cta__action {
-  display: flex; flex-wrap: wrap; justify-content: center; gap: var(--sp-3);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-3);
   margin-top: var(--sp-8);
 }
+.closing-cta__action .btn {
+  width: 100%;
+  box-sizing: border-box;
+}
+@media (max-width: 32rem) {
+  .closing-cta__action { grid-template-columns: 1fr; }
+}
 
-/* ─── 15c. PÁGINAS DE TRABALHO — dobra de categoria ───────────────────────
-   Compartilhado pelas 3 subpáginas (sites-institucionais, sistemas-de-
-   controle, aplicacoes-sob-medida). Numeral de fundo segue a mesma receita
-   de .act__roman / .skill-node__roman — ver docs/dobra-trabalhos.md. */
-/* Hero raso e limpo: navbar (fixa, por cima) + título + subtítulo sobre uma
-   superfície âmbar sólida — sem o gradiente cheio do .manifesto, de
-   propósito, para manter o tom "clean" nas 3 páginas de trabalho. */
-.work-hero {
-  position: relative;
-  overflow: hidden;
+/* ─── 15c. PÁGINAS DE TRABALHO — hero narrativo ───────────────────────────
+   A dobra de abertura de sites-institucionais.html é o MESMO palco
+   cinematográfico do hero do index.html (seção 10): seção alta + palco
+   sticky, um progresso suavizado por lerp movendo câmera, névoa, luz,
+   capítulos e HUD. Por isso ela veste `.hero` inteiro — nada aqui redefine o
+   motor, só registra as diferenças da versão de trabalho:
+
+   · cinco capítulos em vez de quatro → trilho mais longo;
+   · sem teclado 3D na frente da textura → o fundo é a protagonista (aparece
+     mais forte, ver reveal.js) e a vinheta fecha um pouco mais para segurar
+     o contraste do texto;
+   · a capa é capa de página (numeral romano, filete, overline, H1, lede e
+     ações), não a assinatura pessoal do index;
+   · cada porquê entra colado ao seu capítulo como uma nota
+     (.hero-chapter__note), no lugar da antiga lista .reason-block. */
+.hero--work .hero__track { height: 560svh; }
+
+/* Sem o teclado 3D no meio da cena, a textura pode aparecer mais — e a
+   vinheta compensa fechando um pouco mais nas bordas, com um véu extra no
+   topo para o texto nunca disputar com a navbar fixa. */
+.hero--work .hero__vignette {
+  background:
+    linear-gradient(to bottom, rgba(255, 251, 239, 0.72) 0%, transparent 20%),
+    radial-gradient(ellipse at 50% 45%, transparent 26%, rgba(255, 251, 239, 0.88) 96%);
+}
+
+/* ── Capa (capítulo de repouso) ─────────────────────────────────────────── */
+.hero--work .hero-chapter--rest > div { position: relative; }
+
+/* Numeral da categoria — mesmo motivo-fantasma de .act__roman /
+   .skill-node__roman, aqui centralizado atrás do título como a marca d'água
+   de uma capa. Exceção deliberada ao mono dos outros numerais: nesta escala
+   as hastes do mono viram retângulos sólidos atrás do título; o display
+   (mesmo Italiana do H1) mantém o traço fino e o numeral continua fantasma.
+   Fica em z-index negativo dentro do próprio capítulo — que já é contexto de
+   empilhamento por causa do will-change —, então nunca sobe sobre o texto. */
+.hero-rest__roman {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -54%);
+  font-family: var(--font-display);
+  font-size: clamp(11rem, 27vw, 25rem);
+  line-height: 1;
+  letter-spacing: 0.04em;
+  color: var(--color-ink);
+  opacity: 0.07;
+  pointer-events: none;
+  user-select: none;
+  z-index: -1;
+}
+
+/* Filete curto acima do overline: o eco centralizado do .sec-head__rule das
+   outras dobras. Cresce na entrada da capa (reveal.js). */
+.hero-rest__rule {
+  display: block;
+  width: 4.5rem;
+  height: 1px;
+  margin: 0 auto var(--sp-6);
+  background: var(--color-line-strong);
+  transform-origin: center;
+}
+.hero-rest__over {
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--color-amber-ink);
+  margin-bottom: var(--sp-4);
+}
+/* "Sites Institucionais" é bem mais longo que "Rafael Gois": mesmo display,
+   escala menor, para caber em duas linhas sem estourar a caixa. */
+.hero--work .hero-rest__name {
+  font-size: clamp(2.4rem, 1rem + 6vw, 5.6rem);
+  line-height: 1.02;
+}
+.hero--work .hero-rest__tag { max-width: 40rem; }
+
+/* ── Capítulos ──────────────────────────────────────────────────────────── */
+/* Capítulos I e IV: cartões de título centralizados — abrem e fecham a
+   história no mesmo porte, com o mesmo Italiana do resto do site. */
+.hero--work .hero-chapter[data-chapter="busca"] .hero-chapter__line,
+.hero--work .hero-chapter[data-chapter="continuidade"] .hero-chapter__line {
+  font-size: clamp(2rem, 1rem + 3.8vw, 3.9rem);
+  line-height: 1.18;
+  letter-spacing: 0.01em;
+  max-width: 22ch;
+}
+/* Capítulos II e III (nos cantos): a frase é mais longa que as asserções
+   curtas do index, então ganham mais largura de linha que os 15ch padrão. */
+.hero--work .hero-chapter[data-chapter="credibilidade"] .hero-chapter__line { max-width: 24ch; }
+.hero--work .hero-chapter[data-chapter="clareza"] .hero-chapter__line { max-width: 21ch; }
+
+/* Nota do porquê — o que era um .reason-block da lista antiga, agora colado
+   ao capítulo que o justifica. Sem caixa nem cartão: só o ícone em círculo
+   (mesmo desenho de .reason-block__icon) e duas linhas de texto, para não
+   pesar sobre a textura de fundo. Entra depois da frase, no scrub do próprio
+   capítulo (reveal.js). */
+.hero-chapter__note {
   display: flex;
-  align-items: flex-end;
-  min-height: 100svh;
-  padding-top: clamp(6rem, 4rem + 6vw, 8rem);
-  padding-bottom: clamp(var(--sp-16), 10vh, var(--sp-24));
-}
-.work-hero__roman {
-  position: absolute;
-  left: -0.06em;
-  bottom: -0.22em;
-  font-family: var(--font-mono);
-  font-weight: 500;
-  font-size: clamp(9rem, 7vw + 6rem, 17rem);
-  line-height: 1;
-  letter-spacing: 0.02em;
-  color: var(--color-ink);
-  opacity: 0.08;
-  pointer-events: none;
-  user-select: none;
-  z-index: 0;
-}
-.work-hero > .wrap { position: relative; z-index: 1; }
-.work-hero .sec-head { position: relative; margin-bottom: 0; }
-.work-hero .sec-head__rule, .work-hero .sec-head__title, .work-hero .sec-head__lede, .work-hero .text-overline {
-  position: relative;
-  z-index: 1;
-}
-.work-hero .sec-head__rule { background: rgba(42, 33, 24, 0.22); }
-.work-hero .text-overline { color: var(--color-ink); opacity: 0.6; }
-.work-hero .sec-head__lede { color: var(--color-ink); opacity: 0.78; }
-
-/* "Por que um site institucional" — mesma receita da dobra Habilidades
-   (seção 13, index.html): uma imagem de fundo (mesma textura do hero) que
-   se posiciona conforme o bloco de texto que está entrando em cena
-   (initSkillsBg em reveal.js), e cada bloco (skill-node) entra do seu
-   próprio lado num scrub por bloco (initSkillNodeReveals) — nada de pin,
-   nada de cena cinematográfica inteira. Bem mais simples e é a mesma
-   coreografia já validada no resto do site. */
-.reason-scroll { position: relative; overflow: hidden; }
-.reason-scroll__bg-image {
-  position: absolute;
-  inset: -18%;
-  z-index: 0;
-  pointer-events: none;
-  background-image: url("https://res.cloudinary.com/dn454izoh/image/upload/f_auto,q_auto,w_2200/v1785193132/textured_engineering_hero_background_hxi79m.png");
-  background-size: cover;
-  background-position: center;
-  opacity: 0;
+  align-items: flex-start;
+  gap: var(--sp-4);
+  max-width: 44ch;
+  margin: clamp(var(--sp-8), 5.5vh, var(--sp-12)) auto 0;
+  text-align: left;
   will-change: transform, opacity;
 }
-.reason-scroll__fog,
-.reason-scroll__light {
-  position: absolute;
-  inset: -12%;
-  z-index: 1;
-  pointer-events: none;
-  opacity: 0;
-  will-change: transform, opacity;
-}
-.reason-scroll__light { background: radial-gradient(circle at 50% 46%, rgba(255, 176, 0, 0.30), transparent 58%); }
-.reason-scroll__fog--back { background: radial-gradient(ellipse 65% 50% at 30% 60%, rgba(255, 215, 120, 0.30), transparent 70%); }
-.reason-scroll__fog--front { background: radial-gradient(ellipse 58% 45% at 74% 34%, rgba(255, 251, 239, 0.6), transparent 72%); }
-.reason-scroll__vignette {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background: radial-gradient(ellipse at 50% 45%, transparent 40%, var(--color-cream) 100%);
-}
-.reason-scroll > .wrap { position: relative; z-index: 2; }
-
-.reason-list { display: grid; gap: clamp(var(--sp-16), 11vh, var(--sp-24)); margin-top: clamp(var(--sp-12), 7vh, var(--sp-24)); }
-
-.reason-block { display: flex; }
-.reason-block[data-align="right"] { justify-content: flex-end; }
-.reason-block__content { position: relative; width: 100%; max-width: 32rem; }
-
-/* Numeral romano discreto atrás do bloco — mesmo motivo-fantasma de
-   .act__roman / .skill-node__roman. */
-.reason-block__roman {
-  position: absolute;
-  left: -0.05em;
-  top: -0.3em;
-  font-family: var(--font-mono);
-  font-weight: 500;
-  font-size: clamp(4.5rem, 3vw + 3rem, 6.5rem);
-  line-height: 1;
-  letter-spacing: 0.02em;
-  color: var(--color-ink);
-  opacity: 0.04;
-  pointer-events: none;
-  user-select: none;
-  z-index: 0;
-}
-.reason-block[data-align="right"] .reason-block__roman { left: auto; right: -0.05em; }
-
-.reason-block__head { position: relative; z-index: 1; display: flex; align-items: flex-start; gap: var(--sp-4); }
-.reason-block[data-align="right"] .reason-block__head { flex-direction: row-reverse; text-align: right; }
-
-.reason-block__icon {
+.hero-chapter__note-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 3.5rem;
-  height: 3.5rem;
+  width: 3rem;
+  height: 3rem;
   flex-shrink: 0;
   border-radius: var(--radius-full);
   border: 1px solid var(--color-line-strong);
   background: var(--color-cream);
   color: var(--color-amber-ink);
 }
-.reason-block__icon .ic { width: 22px; height: 22px; }
+.hero-chapter__note-icon .ic { width: 20px; height: 20px; }
+.hero-chapter__note-text {
+  font-size: var(--text-body-sm);
+  line-height: 1.55;
+  color: var(--color-ink-soft);
+}
+.hero-chapter__note-text strong {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+  margin-bottom: var(--sp-2);
+}
 
-.reason-block__desc { margin-top: var(--sp-2); max-width: 34ch; color: var(--color-ink-soft); font-size: var(--text-body); line-height: 1.55; }
+/* No palco (desktop), a nota acompanha o lado do capítulo: à esquerda ela
+   fica colada à borda esquerda; à direita, espelha o ícone e o alinhamento —
+   o mesmo gesto de "encostar no canto" do texto. */
+.hero--work:not(.is-flow) .hero-chapter[data-side] .hero-chapter__note { margin-inline: 0; }
+.hero--work:not(.is-flow) .hero-chapter[data-side="right"] .hero-chapter__note {
+  flex-direction: row-reverse;
+  text-align: right;
+  margin-left: auto;
+}
+
+/* ── Repouso: fluxo vertical (mobile / prefers-reduced-motion) ──────────── */
+.hero--work.is-flow .hero-rest__roman {
+  font-size: clamp(9rem, 42vw, 16rem);
+  opacity: 0.04;
+}
+.hero--work.is-flow .hero-chapter__note { max-width: 34rem; }
 
 /* "O que é entregue" — dossiê editorial, não card de SaaS. Cada módulo é um
    verbete de índice: numeral-fantasma em serifa gigante no fundo, número de
@@ -2672,6 +2756,19 @@ body.has-custom-cursor.is-cursor-hover .cursor__ring {
 .js .stack-cell { opacity: 0; transform: translateY(24px); }
 .js.no-anim .stack-cell { opacity: 1; transform: none; }
 
+/* Fechamento ("Próximo passo") — timeline dedicada em reveal.js. */
+.js .closing-cta__halo { opacity: 0; }
+.js .closing-cta__over,
+.js .closing-cta__lede,
+.js .closing-cta__action .btn { opacity: 0; transform: translateY(20px); }
+.js .closing-cta__title { overflow: hidden; opacity: 0; }
+.js.no-anim .closing-cta__halo,
+.js.no-anim .closing-cta__over,
+.js.no-anim .closing-cta__lede,
+.js.no-anim .closing-cta__action .btn,
+.js.no-anim .closing-cta__title { opacity: 1; transform: none; }
+.js.no-anim .closing-cta__title { overflow: visible; }
+
 /* ─── 20. DEPOIMENTOS (oculto — reativar removendo [hidden]) ─────────────── */
 .testimonials__grid {
   display: grid;
@@ -2780,6 +2877,12 @@ body.has-custom-cursor.is-cursor-hover .cursor__ring {
   .mark-amber { background-size: 100% 0.62em; }
   .js [data-reveal] { opacity: 1; transform: none; }
   .js .manifesto__mark { opacity: 0.4; transform: none; }
+  .js .closing-cta__halo,
+  .js .closing-cta__over,
+  .js .closing-cta__lede,
+  .js .closing-cta__action .btn,
+  .js .closing-cta__title { opacity: 1; transform: none; }
+  .js .closing-cta__title { overflow: visible; }
   .hero__cue-line::after { animation: none; }
   .cursor__dot, .cursor__ring { display: none; }
 }
@@ -2809,6 +2912,8 @@ section[id], header[id] { scroll-margin-top: 88px; }
 .hero-rest__name,
 .hero-rest__tag,
 .hero-rest__role,
+.hero-rest__over,
+.hero-chapter__note-text,
 .hero-chapter__over {
   text-shadow: 0 2px 20px rgba(255, 251, 239, 0.95), 0 0 56px rgba(255, 251, 239, 0.8);
 }

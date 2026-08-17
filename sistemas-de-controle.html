@@ -6,7 +6,7 @@
     <title>Sistemas de Controle Industrial | Rafael Gois</title>
     <meta
       name="description"
-      content="Sistemas de controle industrial, ordens de fabricação e automação. Interfaces simples para quem precisa decidir rápido no processo."
+      content="Sistemas de controle industrial em Curitibanos. Apontamento no posto, ordem de fabricação e painel em tempo real, para decidir com a produção rodando."
     />
     <link rel="canonical" href="https://rafaelgois.com/sistemas-de-controle.html" />
     <meta name="author" content="Rafael Gois" />
@@ -18,7 +18,7 @@
     <meta property="og:title" content="Sistemas de Controle Industrial | Rafael Gois" />
     <meta
       property="og:description"
-      content="Sistemas de controle industrial, ordens de fabricação e automação. Interfaces simples para quem precisa decidir rápido."
+      content="Sistemas de controle industrial em Curitibanos. Apontamento no posto, ordem de fabricação e painel em tempo real, para decidir com a produção rodando."
     />
     <meta
       property="og:image"
@@ -31,7 +31,7 @@
     <meta name="twitter:title" content="Sistemas de Controle Industrial | Rafael Gois" />
     <meta
       name="twitter:description"
-      content="Sistemas de controle industrial, ordens de fabricação e automação para ambientes críticos."
+      content="Sistemas de controle industrial em Curitibanos. Apontamento no posto, ordem de fabricação e painel em tempo real, para decidir com a produção rodando."
     />
     <meta
       name="twitter:image"
@@ -56,7 +56,7 @@
               "name": "Curitibanos, Santa Catarina, Brasil"
             },
             "url": "https://rafaelgois.com/sistemas-de-controle.html",
-            "description": "Sistemas de controle industrial, ordens de fabricação e automação para ambientes críticos."
+            "description": "Sistemas de controle industrial em Curitibanos. Apontamento no posto, ordem de fabricação e painel em tempo real, para decidir com a produção rodando."
           },
           {
             "@type": "BreadcrumbList",
@@ -79,8 +79,16 @@
       }
     </script>
 
+    <!-- Marca que há JS: só então o CSS esconde o que será revelado por animação.
+         Sem JS, todo o conteúdo aparece normalmente. -->
+    <script>
+      document.documentElement.classList.add("js");
+    </script>
+
     <link rel="icon" href="https://res.cloudinary.com/dn454izoh/image/upload/f_auto,q_auto,w_64/v1786126348/letra-r_eiagpo.webp" type="image/webp" />
-    <link rel="stylesheet" href="styles/ds.css?v=3" />
+    <link rel="stylesheet" href="styles/ds.css?v=8" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link rel="preconnect" href="https://res.cloudinary.com" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -88,91 +96,603 @@
       rel="stylesheet"
     />
   </head>
-  <body>
+  <body class="grain">
+    <!-- ═══ Sprite de ícones — mesmo grid/traço do index.html (24px, 1.75, pontas redondas) ═══ -->
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <defs>
+        <symbol id="i-terminal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8.5 21h7M12 17v4"/><path d="m7.5 8.8 2.2 1.9-2.2 1.9"/><path d="M12.5 12.6h4"/></symbol>
+        <symbol id="i-ordem" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 3.5h6.6l5.4 5.4v11.6a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1v-16a1 1 0 0 1 1-1Z"/><path d="M13 3.6V9h5.3"/><path d="M8.8 13.5h6.4M8.8 17h4.4"/></symbol>
+        <symbol id="i-painel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3.6 18a8.4 8.4 0 1 1 16.8 0"/><path d="m12 18 3.6-5.4"/><path d="M3.6 18h2M18.4 18h2M12 9.6V7.8"/></symbol>
+        <symbol id="i-alerta" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4.4 21.2 19.6H2.8L12 4.4Z"/><path d="M12 10.4v4.1"/><path d="M12 17.4v.01"/></symbol>
+        <symbol id="i-integracao" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9.6 14.4 14.4 9.6"/><path d="m8.4 11-2 2a3.6 3.6 0 0 0 5.1 5.1l2-2"/><path d="m15.6 13 2-2a3.6 3.6 0 0 0-5.1-5.1l-2 2"/></symbol>
+        <symbol id="i-escudo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.2 19 6v6c0 4.6-3 8.1-7 9-4-.9-7-4.4-7-9V6l7-2.8Z"/><path d="m9 12.2 2 2 4-4.2"/></symbol>
+        <symbol id="i-relogio" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.6"/><path d="M12 6.8v5.5l3.5 2.1"/></symbol>
+        <symbol id="i-crescimento" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V14M10 20V9M16 20V13M20.5 20V6"/><path d="m16 7 4.5-1.5L22 10"/></symbol>
+      </defs>
+    </svg>
+
+    <!-- Textura de fundo da dobra do hero: fixa e no fundo da pilha (z 0),
+         abaixo das seções opacas (--z-section) — por isso não vaza para o
+         resto da página. Mesma imagem e mesma receita do hero do index.html:
+         acende quando a dobra entra e "respira" para os lados conforme o
+         capítulo alternado (esquerda/direita) entra em cena. Diferença: aqui
+         não há teclado 3D na frente dela, então ela é a protagonista da dobra
+         e aparece com mais presença (ver buildHeroCinematic em reveal.js). -->
+    <div class="hero__bg-image" aria-hidden="true"></div>
+
     <nav class="navbar" aria-label="Navegação">
       <a class="navbar__logo" href="/">Rafael <em>Gois</em></a>
       <a class="btn btn--secondary btn--sm" href="/#projects">Voltar aos trabalhos</a>
     </nav>
 
     <main>
-      <section class="section">
-        <div class="wrap">
-          <header class="sec-head">
-            <div class="sec-head__rule"></div>
-            <p class="text-overline">Trabalhos / I</p>
-            <h1 class="sec-head__title">Sistemas de Controle Industrial</h1>
+      <!-- ═══════════════ HERO NARRATIVO — a capa e os porquês ═══════════════
+           Mesma dobra de sites-institucionais.html: seção alta (.hero__track)
+           + palco sticky (.hero__stage), um único progresso suavizado por lerp
+           movendo câmera, névoa, luz, capítulos e HUD. Sem pin do
+           ScrollTrigger: sticky puro. Motor em reveal.js; o que é desta página
+           é só o texto — e o rótulo de cada capítulo no HUD, que vem do
+           data-hud logo abaixo.
+
+           A narrativa aqui é a do turno: alguém assume a operação e precisa
+           saber onde a produção está. Cada porquê (dado confiável, decisão na
+           hora, continuidade) entra como consequência daquele momento. -->
+      <header class="hero hero--work" id="hero">
+        <div class="hero__track">
+          <div class="hero__stage">
+            <div class="hero__rig" aria-hidden="true">
+              <div class="hero__fog hero__fog--back"></div>
+              <div class="hero__light"></div>
+              <div class="hero__rays"></div>
+              <div class="hero__fog hero__fog--front"></div>
+            </div>
+            <div class="hero__vignette" aria-hidden="true"></div>
+            <div class="hero__flash" aria-hidden="true"></div>
+
+            <div class="hero__scenes">
+              <!-- Capa: a apresentação do serviço, primeiro capítulo do palco
+                   (entra no load, sai no scroll). -->
+              <section class="hero-chapter hero-chapter--rest" data-chapter="capa" data-hud="A capa" aria-label="Sistemas de controle">
+                <div>
+                  <span class="hero-rest__roman" aria-hidden="true">I</span>
+                  <span class="hero-rest__rule" aria-hidden="true"></span>
+                  <p class="hero-rest__over">Trabalhos / I</p>
+                  <h1 class="hero-rest__name">
+                    Sistemas de
+                    <em>Controle<svg class="sig-stroke" viewBox="0 0 300 40" aria-hidden="true"><path d="M6 28 C 60 12, 120 34, 170 22 S 260 14, 294 24"/></svg></em>
+                  </h1>
+                  <p class="hero-rest__tag">
+                    A produção não espera o relatório de ontem. Em
+                    <span class="mark-amber" data-mark>poucos segundos</span>
+                    o sistema mostra onde o processo está e o que fazer em seguida.
+                  </p>
+                  <div class="hero-rest__actions">
+                    <a class="btn btn--primary" href="/#contact">
+                      Quero um sistema para a minha operação <span class="btn__arrow" aria-hidden="true">→</span>
+                    </a>
+                    <a class="btn btn--secondary" href="#deliver">Ver o que entra no projeto</a>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Capítulo I — a abertura da história: centralizado e grande,
+                   como o cartão de título de um filme. -->
+              <section class="hero-chapter" data-chapter="turno" data-hud="O turno" aria-label="Capítulo I">
+                <div>
+                  <p class="hero-chapter__over">Capítulo I · o turno</p>
+                  <p class="hero-chapter__line" data-split>
+                    Às seis da manhã alguém assume o turno e precisa saber onde a produção parou.
+                  </p>
+                </div>
+              </section>
+
+              <!-- Capítulos II e III — os porquês, ancorados no canto do seu
+                   lado. O texto entra pelo lado, o fundo se desloca para o
+                   lado oposto: é o gesto que dá continuidade à cena. -->
+              <section class="hero-chapter hero-chapter--minor" data-chapter="dado" data-hud="A planilha" data-side="left" aria-label="Capítulo II">
+                <div>
+                  <p class="hero-chapter__over">Capítulo II · a planilha</p>
+                  <p class="hero-chapter__line" data-split>
+                    Se a resposta mora numa planilha preenchida no fim do dia, ela chega tarde.
+                  </p>
+                  <p class="hero-chapter__note">
+                    <span class="hero-chapter__note-icon" aria-hidden="true"><svg class="ic" aria-hidden="true"><use href="#i-escudo" /></svg></span>
+                    <span class="hero-chapter__note-text">
+                      <strong>Dado confiável</strong>
+                      O apontamento nasce no posto, na hora. Não na memória de quem passou por ali, nem na planilha do outro dia.
+                    </span>
+                  </p>
+                </div>
+              </section>
+
+              <section class="hero-chapter hero-chapter--minor" data-chapter="decisao" data-hud="A decisão" data-side="right" aria-label="Capítulo III">
+                <div>
+                  <p class="hero-chapter__over">Capítulo III · a decisão</p>
+                  <p class="hero-chapter__line" data-split>
+                    Quem está na linha tem segundos, não um treinamento de duas horas.
+                  </p>
+                  <p class="hero-chapter__note">
+                    <span class="hero-chapter__note-icon" aria-hidden="true"><svg class="ic" aria-hidden="true"><use href="#i-relogio" /></svg></span>
+                    <span class="hero-chapter__note-text">
+                      <strong>Decisão na hora</strong>
+                      Ordem, status e desvio já na primeira tela. Sem menu escondido, sem manual ao lado da máquina.
+                    </span>
+                  </p>
+                </div>
+              </section>
+
+              <!-- Capítulo IV — fecha a sequência de volta ao centro, no mesmo
+                   porte do Capítulo I: a história termina onde começou. -->
+              <section class="hero-chapter" data-chapter="continuidade" data-hud="O que fica" aria-label="Capítulo IV">
+                <div>
+                  <p class="hero-chapter__over">Capítulo IV · o que fica</p>
+                  <p class="hero-chapter__line" data-split>
+                    Depois no ar, o sistema acompanha a linha, sem parar a produção.
+                  </p>
+                  <p class="hero-chapter__note">
+                    <span class="hero-chapter__note-icon" aria-hidden="true"><svg class="ic" aria-hidden="true"><use href="#i-crescimento" /></svg></span>
+                    <span class="hero-chapter__note-text">
+                      <strong>Acompanha a operação</strong>
+                      Máquina nova, produto novo, turno novo. Ajusta e segue, sem parar a produção.
+                    </span>
+                  </p>
+                </div>
+              </section>
+            </div>
+
+            <p class="hero__cue" aria-hidden="true">
+              <span>role</span>
+              <span class="hero__cue-line"></span>
+            </p>
+
+            <div class="hero__hud" aria-hidden="true">
+              <span class="hero__hud-chapter" id="hero-hud-chapter">01</span>
+              <span class="hero__hud-label" id="hero-hud-label">A capa</span>
+              <span class="hero__hud-bar"><i id="hero-hud-bar"></i></span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- ═══════════════ O QUE É ENTREGUE — dossiê editorial ═══════════════ -->
+      <section class="section deliver" id="deliver">
+        <div class="wrap wrap--wide">
+          <header class="sec-head" data-reveal>
+            <div class="sec-head__rule" data-rule></div>
+            <p class="text-overline">O que entra no projeto</p>
+            <h2 class="sec-head__title">A tela no escritório não basta</h2>
             <p class="sec-head__lede">
-              Painéis, ordens de fabricação e automação para ambientes críticos.
-              Feitos para quem precisa decidir rápido e não pode depender de
-              software confuso.
+              Quem decide na planta precisa do apontamento no posto, da ordem
+              num lugar só e de um painel que atualiza durante o turno. O
+              projeto cobre isso, para a gestão olhar o mesmo número que a linha.
             </p>
           </header>
 
-          <div class="act" style="max-width: 42rem">
-            <h2 class="act__title">O que entrego aqui</h2>
-            <p class="act__text">
-              Aplicações de controle e processo com dados confiáveis, fluxos
-              claros e interfaces que funcionam no uso real. Do apontamento ao
-              acompanhamento da produção, a prioridade é a pessoa que opera o sistema.
-            </p>
+          <div class="deliver-index">
+            <!-- 01 — Apontamento no posto -->
+            <article class="deliver-mod deliver-mod--01">
+              <span class="deliver-mod__watermark" aria-hidden="true">I</span>
+              <span class="deliver-mod__num">01</span>
+              <div class="deliver-mod__content">
+                <div class="deliver-mod__head">
+                  <span class="deliver-mod__icon" aria-hidden="true"><svg class="ic" aria-hidden="true"><use href="#i-terminal" /></svg></span>
+                  <h3><span class="deliver-mod__mask"><span class="deliver-mod__mask-line">Apontamento no posto</span></span></h3>
+                </div>
+                <div class="deliver-mod__body">
+                  <p>
+                    A tela fica onde o trabalho acontece, não só no escritório.
+                    Poucos campos, botão grande, mão suja. O operador registra
+                    sem sair do posto, e a gestão vê ainda no turno.
+                  </p>
+                </div>
+              </div>
+              <div class="deliver-mod__chip">
+                <svg class="ic" aria-hidden="true"><use href="#i-terminal" /></svg>
+                <code>OP 4471 · em produção</code>
+              </div>
+            </article>
 
-            <h2 class="act__title" style="margin-top: var(--sp-12)">Case · visão do processo</h2>
-            <p class="act__text">
-              <strong>Problema.</strong> A gestão acompanhava a produção com
-              planilhas e conversas. Quando algo atrasava, o problema já tinha
-              se espalhado.
-            </p>
-            <p class="act__text" style="margin-top: var(--sp-4)">
-              <strong>Solução.</strong> Plataforma full stack com status em
-              tempo real, relatórios sob medida e fluxo para identificar e
-              corrigir gargalos. Telas pensadas para quem está no processo, não
-              só para quem está no escritório.
-            </p>
-            <p class="act__text" style="margin-top: var(--sp-4)">
-              <strong>Resultado.</strong> Visão única do processo produtivo,
-              menos ida e volta para achar informação e base mais clara para
-              decisão. Por confidencialidade, o cliente não é nomeado aqui.
-            </p>
+            <!-- 02 — Ordem de fabricação -->
+            <article class="deliver-mod deliver-mod--02">
+              <div class="deliver-mod__rule" data-rule></div>
+              <span class="deliver-mod__watermark" aria-hidden="true">II</span>
+              <span class="deliver-mod__num">02</span>
+              <div class="deliver-mod__content">
+                <div class="deliver-mod__head">
+                  <span class="deliver-mod__icon" aria-hidden="true"><svg class="ic" aria-hidden="true"><use href="#i-ordem" /></svg></span>
+                  <h3><span class="deliver-mod__mask"><span class="deliver-mod__mask-line">Ordem de fabricação</span></span></h3>
+                </div>
+                <div class="deliver-mod__body">
+                  <p>
+                    Da abertura ao fechamento no mesmo lugar: o que produzir,
+                    quanto já saiu, o que falta. A ordem deixa de viver em três
+                    cadernos e passa a ter uma versão só.
+                  </p>
+                </div>
+              </div>
+            </article>
 
-            <h2 class="act__title" style="margin-top: var(--sp-12)">Stack típica</h2>
-            <p class="act__text">
-              TypeScript, Next.js, Node.js, Nest.js, Prisma e SQL Server quando
-              o ambiente pede. A escolha segue o problema, não a moda.
-            </p>
+            <!-- 03 — Painel de produção -->
+            <article class="deliver-mod deliver-mod--03">
+              <div class="deliver-mod__rule" data-rule></div>
+              <span class="deliver-mod__watermark" aria-hidden="true">III</span>
+              <span class="deliver-mod__num">03</span>
+              <div class="deliver-mod__content">
+                <div class="deliver-mod__head">
+                  <span class="deliver-mod__icon" aria-hidden="true"><svg class="ic" aria-hidden="true"><use href="#i-painel" /></svg></span>
+                  <h3><span class="deliver-mod__mask"><span class="deliver-mod__mask-line">Painel de produção</span></span></h3>
+                </div>
+                <div class="deliver-mod__body">
+                  <p>
+                    Uma tela que a gestão abre e entende sem pedir explicação:
+                    o que está rodando, o que está parado e há quanto tempo.
+                    Dá para usar na sala e na parede da fábrica.
+                  </p>
+                  <p class="deliver-mod__proof">
+                    Atualiza durante o turno
+                  </p>
+                </div>
+              </div>
+            </article>
 
-            <figure class="about__portrait" style="max-width: 22rem; margin-top: var(--sp-10)">
-              <img
-                src="https://res.cloudinary.com/dn454izoh/image/upload/f_auto,q_auto,w_800/v1786125870/IMG_20221110_092044_ql437y.webp"
-                alt="Terminal industrial com sistema de controle em uso"
-                width="800"
-                height="1422"
-                loading="lazy"
-                decoding="async"
-              />
-              <figcaption>Sistema em uso em ambiente industrial</figcaption>
-            </figure>
+            <!-- 04 — Alerta de desvio -->
+            <article class="deliver-mod deliver-mod--04">
+              <div class="deliver-mod__rule" data-rule></div>
+              <span class="deliver-mod__watermark" aria-hidden="true">IV</span>
+              <span class="deliver-mod__num">04</span>
+              <div class="deliver-mod__content">
+                <div class="deliver-mod__head">
+                  <span class="deliver-mod__icon" aria-hidden="true"><svg class="ic" aria-hidden="true"><use href="#i-alerta" /></svg></span>
+                  <h3><span class="deliver-mod__mask"><span class="deliver-mod__mask-line">Aviso de desvio</span></span></h3>
+                </div>
+                <div class="deliver-mod__body">
+                  <p>
+                    Parada longa demais, refugo acima do normal, ordem atrasada.
+                    O sistema avisa enquanto ainda dá para agir, em vez de virar
+                    relatório no fim do mês.
+                  </p>
+                </div>
+                <div class="deliver-mod__proof deliver-mod__proof--qr">
+                  <svg class="ic" aria-hidden="true"><use href="#i-alerta" /></svg>
+                  <span>Parada apontada na hora</span>
+                </div>
+              </div>
+            </article>
 
-            <p style="margin-top: var(--sp-10)">
-              <a class="btn btn--primary" href="/#contact">
-                Falar sobre um sistema <span class="btn__arrow" aria-hidden="true">→</span>
-              </a>
-            </p>
+            <!-- 05 — Integração com o que já existe -->
+            <article class="deliver-mod deliver-mod--05">
+              <div class="deliver-mod__rule" data-rule></div>
+              <span class="deliver-mod__watermark" aria-hidden="true">V</span>
+              <span class="deliver-mod__num">05</span>
+              <div class="deliver-mod__content">
+                <div class="deliver-mod__head">
+                  <span class="deliver-mod__icon" aria-hidden="true"><svg class="ic" aria-hidden="true"><use href="#i-integracao" /></svg></span>
+                  <h3><span class="deliver-mod__mask"><span class="deliver-mod__mask-line">Encaixa no que a planta já tem</span></span></h3>
+                </div>
+                <div class="deliver-mod__body">
+                  <p>
+                    A planta já tem ERP, balança, leitor, planilha que ninguém
+                    quer largar. O sistema entra conversando com o que está lá,
+                    sem exigir que tudo recomece do zero.
+                  </p>
+                </div>
+              </div>
+            </article>
           </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ POR QUE ISSO IMPORTA — a dobra 100% âmbar ═══════════════ -->
+      <section class="manifesto" aria-label="Por que isso importa">
+        <div class="wrap manifesto__inner">
+          <span class="manifesto__mark" aria-hidden="true">“</span>
+          <p class="text-overline manifesto__over" data-reveal>Por que isso importa</p>
+          <blockquote class="manifesto__quote" data-quote>
+            Um sistema confuso não é neutro. Ele empurra a equipe de volta para o papel.
+          </blockquote>
+          <p class="manifesto__proof" data-reveal>
+            Ninguém abre o sistema para admirar a tela. Abre para saber se pode
+            seguir. Eu desenho para esse segundo: resposta à vista, no posto e
+            na gestão. Se isso não acontece, a operação volta para a planilha
+            e para o WhatsApp, e o dado que chega já não é o que aconteceu na linha.
+          </p>
+          <p class="manifesto__cta" data-reveal>
+            <a class="btn btn--secondary" href="/#contact">
+              Quero um sistema que faça isso <span class="btn__arrow" aria-hidden="true">→</span>
+            </a>
+          </p>
+        </div>
+      </section>
+
+      <!-- ═══════════════ TRABALHOS REAIS — três cases em scroll horizontal ═══
+           Mesma dobra de sites-institucionais.html (ver initCasesScroll em
+           reveal.js): no desktop fica pinada, os cases deslizam na horizontal
+           e o fio ao fundo se desenha conforme o scroll, com uma parada por
+           projeto. A diferença aqui é o material: sistema de chão de fábrica
+           roda dentro da planta e não tem endereço público, então dois dos
+           três cases aparecem como fotografia (.case-panel__frame--photo, sem
+           barra de navegador) e trazem selo de confidencialidade no lugar do
+           "Ver projeto". -->
+      <section class="section section--alt cases-scroll" id="cases">
+        <div class="wrap wrap--wide">
+          <header class="sec-head" data-reveal>
+            <div class="sec-head__rule" data-rule></div>
+            <p class="text-overline">Trabalhos reais</p>
+            <h2 class="sec-head__title">Três operações, três sistemas</h2>
+            <p class="sec-head__lede">
+              A maior parte desses projetos roda portas adentro e fica só entre
+              a gente. Estes três mostram o tipo de sistema que a sua operação
+              pode ter.
+            </p>
+          </header>
+        </div>
+
+        <div class="cases-scroll__pin" id="cases-scroll-pin">
+          <!-- A rota entre os três projetos. O traço-fantasma mostra o caminho
+               inteiro desde o começo; o traço cheio, por cima, só existe até
+               onde o scroll já chegou. -->
+          <svg class="cases-curve-svg" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true">
+            <path class="cases-curve-path cases-curve-path--ghost" d="M -20 640 C 130 760, 260 430, 400 390 C 505 360, 580 470, 615 590 C 655 726, 760 786, 880 660 C 972 564, 1000 360, 1088 330 C 1180 300, 1300 540, 1392 450 C 1468 376, 1540 410, 1620 340" />
+            <path class="cases-curve-path cases-curve-path--main" d="M -20 640 C 130 760, 260 430, 400 390 C 505 360, 580 470, 615 590 C 655 726, 760 786, 880 660 C 972 564, 1000 360, 1088 330 C 1180 300, 1300 540, 1392 450 C 1468 376, 1540 410, 1620 340" />
+          </svg>
+
+          <!-- Versão mobile do fio: mesma ideia, vertical, correndo na lateral
+               da pilha de cases (sem pin, sem cabeça — só o traço crescendo). -->
+          <svg class="cases-curve-svg--mobile" viewBox="0 0 200 900" preserveAspectRatio="none" aria-hidden="true">
+            <path class="cases-curve-path cases-curve-path--ghost-mobile" d="M 100 0 C 168 60, 176 148, 100 206 C 32 258, 26 344, 100 402 C 172 458, 180 546, 100 604 C 30 656, 26 740, 100 796 C 152 836, 160 872, 108 900" />
+            <path class="cases-curve-path cases-curve-path--mobile" d="M 100 0 C 168 60, 176 148, 100 206 C 32 258, 26 344, 100 402 C 172 458, 180 546, 100 604 C 30 656, 26 740, 100 796 C 152 836, 160 872, 108 900" />
+          </svg>
+
+          <!-- Paradas do fio (uma por case) e a cabeça luminosa na ponta do
+               traço: posicionadas por JS sobre o próprio path (getPointAtLength),
+               por isso nascem vazias de posição aqui. -->
+          <span class="cases-curve-stop" data-stop="0" aria-hidden="true">I</span>
+          <span class="cases-curve-stop" data-stop="1" aria-hidden="true">II</span>
+          <span class="cases-curve-stop" data-stop="2" aria-hidden="true">III</span>
+          <span class="cases-curve-head" aria-hidden="true"></span>
+
+          <div class="cases-scroll__track" id="cases-scroll-track">
+            <!-- I — Visão do processo (cliente não nomeado) -->
+            <article class="case-panel case-panel--i case-panel--steel" data-case-panel>
+              <figure class="case-panel__media">
+                <span class="case-panel__glow case-panel__glow--steel" aria-hidden="true"></span>
+                <div class="case-panel__frame case-panel__frame--photo">
+                  <img
+                    src="https://res.cloudinary.com/dn454izoh/image/upload/f_auto,q_auto,w_1200/v1786125871/IMG_20240220_151803_gxwv81.webp"
+                    alt="Painel com dashboard de produção ao lado do editor de código durante o desenvolvimento do sistema"
+                    title="Painel de produção em desenvolvimento"
+                    width="1200" height="1600" loading="lazy" decoding="async"
+                  />
+                </div>
+              </figure>
+              <div class="case-panel__text">
+                <span class="case-panel__roman" aria-hidden="true">I</span>
+                <p class="case-panel__kicker">Case I · Visão do processo</p>
+                <h3 class="case-panel__name">Da planilha ao painel</h3>
+                <p class="case-panel__desc">
+                  A gestão acompanhava a produção com planilhas e conversas.
+                  Quando algo atrasava, o problema já tinha se espalhado.
+                </p>
+                <ul class="case-panel__points">
+                  <li>Status da produção em tempo real, no lugar do relatório de ontem.</li>
+                  <li>Relatórios para achar o gargalo, não só para arquivar.</li>
+                  <li>A linha e o escritório olhando o mesmo número.</li>
+                </ul>
+                <p class="case-panel__foot">
+                  <span class="case-panel__seal">Cliente não nomeado · confidencial</span>
+                  <span class="case-panel__tech">TypeScript · Next.js · Nest.js</span>
+                </p>
+              </div>
+            </article>
+
+            <!-- II — Chão de fábrica (cliente não nomeado) -->
+            <article class="case-panel case-panel--ii case-panel--reverse case-panel--rust" data-case-panel>
+              <div class="case-panel__text">
+                <span class="case-panel__roman" aria-hidden="true">II</span>
+                <p class="case-panel__kicker">Case II · Chão de fábrica</p>
+                <h3 class="case-panel__name">O terminal no posto</h3>
+                <p class="case-panel__desc">
+                  O apontamento existia, mas em papel. Chegava ao sistema horas
+                  depois, quando já não mudava nenhuma decisão.
+                </p>
+                <ul class="case-panel__points">
+                  <li>Terminal ao lado da máquina: o registro acontece onde o trabalho acontece.</li>
+                  <li>Tela pensada para luva, poeira e pressa. Poucos toques até concluir.</li>
+                  <li>Parada e refugo apontados na hora, com motivo, não no fim do turno.</li>
+                </ul>
+                <p class="case-panel__foot">
+                  <span class="case-panel__seal">Cliente não nomeado · confidencial</span>
+                  <span class="case-panel__tech">TypeScript · Node.js · SQL Server</span>
+                </p>
+              </div>
+              <figure class="case-panel__media">
+                <span class="case-panel__glow case-panel__glow--rust" aria-hidden="true"></span>
+                <div class="case-panel__frame case-panel__frame--photo">
+                  <img
+                    src="https://res.cloudinary.com/dn454izoh/image/upload/f_auto,q_auto,w_1200/v1786125870/IMG_20221110_092044_ql437y.webp"
+                    alt="Terminal industrial com o sistema de controle em uso no chão de fábrica"
+                    title="Sistema em uso em ambiente industrial"
+                    width="1200" height="2133" loading="lazy" decoding="async"
+                  />
+                </div>
+              </figure>
+            </article>
+
+            <!-- III — Sistemas Elevate (público) -->
+            <article class="case-panel case-panel--iii case-panel--neon" data-case-panel>
+              <figure class="case-panel__media">
+                <span class="case-panel__glow case-panel__glow--neon" aria-hidden="true"></span>
+                <a class="case-panel__frame" href="https://www.sistemaselevate.com/" target="_blank" rel="noopener noreferrer" aria-label="Ver projeto: Sistemas Elevate">
+                  <span class="case-panel__bar" aria-hidden="true">
+                    <span class="case-panel__url">sistemaselevate.com</span>
+                  </span>
+                  <img
+                    src="https://res.cloudinary.com/dn454izoh/image/upload/v1786710452/Captura_de_Tela_2026-08-14_a%CC%80s_09.26.20_naufgk.webp"
+                    alt="Sistemas Elevate - Site do produto de automação industrial desenvolvido por Rafael Gois com HTML5, CSS3 e JavaScript"
+                    title="Sistemas Elevate - Projeto desenvolvido por Rafael Gois"
+                    width="3406" height="1776" loading="lazy" decoding="async"
+                  />
+                </a>
+              </figure>
+              <div class="case-panel__text">
+                <span class="case-panel__roman" aria-hidden="true">III</span>
+                <p class="case-panel__kicker">Case III · Software industrial</p>
+                <h3 class="case-panel__name">Sistemas Elevate</h3>
+                <p class="case-panel__desc">
+                  Software de chão de fábrica que já roda em operação real.
+                  A prova está no produto, não só no discurso.
+                </p>
+                <ul class="case-panel__points">
+                  <li>O que o sistema faz na planta, para o posto e para o escritório.</li>
+                  <li>Casos de fábrica real, para a conversa começar com prova.</li>
+                  <li>Caminho claro até a equipe, para quem precisa desse sistema.</li>
+                </ul>
+                <p class="case-panel__foot">
+                  <a class="link-arrow" href="https://www.sistemaselevate.com/" target="_blank" rel="noopener noreferrer">
+                    <span>Ver projeto</span><span aria-hidden="true">→</span>
+                  </a>
+                  <span class="case-panel__tech">HTML5 · CSS3 · JavaScript</span>
+                </p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ STACK + FECHAMENTO ═══════════════
+           Grade editorial com numeral-fantasma em serifa gigante atrás de
+           cada tecnologia (mesmo motivo do "O que é entregue" —
+           .deliver-mod__watermark — só que em grade 3×2 em vez de índice
+           vertical). Entrada é um stagger dedicado (initStackGrid em
+           reveal.js), não o [data-reveal] genérico. -->
+      <section class="section stack-section">
+        <div class="stack-section__glow" aria-hidden="true"></div>
+        <div class="stack-section__glow stack-section__glow--alt" aria-hidden="true"></div>
+        <span class="stack-section__glyph" aria-hidden="true">&lt;/&gt;</span>
+        <div class="wrap wrap--wide">
+          <header class="sec-head" data-reveal>
+            <div class="sec-head__rule" data-rule></div>
+            <p class="text-overline">Como o sistema é feito</p>
+            <h2 class="sec-head__title">Aguenta o turno e conversa com a planta</h2>
+            <p class="sec-head__lede">
+              Sistema de chão de fábrica não é vitrine. Ele precisa aguentar o
+              turno inteiro, conversar com o que a planta já tem e não perder
+              apontamento quando a rede oscila. A escolha segue o problema, não
+              a moda.
+            </p>
+          </header>
+
+          <div class="stack-grid" id="stack-grid">
+            <div class="stack-grid__divider" id="stack-grid-divider" aria-hidden="true"></div>
+            <ul class="stack-grid__list">
+              <li class="stack-cell stack-cell--01" data-stack-cell>
+                <span class="stack-cell__watermark" aria-hidden="true">I</span>
+                <span class="stack-cell__name">TypeScript</span>
+                <span class="stack-cell__desc">Erro que aparece antes da produção</span>
+              </li>
+              <li class="stack-cell stack-cell--02" data-stack-cell>
+                <span class="stack-cell__watermark" aria-hidden="true">II</span>
+                <span class="stack-cell__name">Next.js</span>
+                <span class="stack-cell__desc">As telas que a operação usa</span>
+              </li>
+              <li class="stack-cell stack-cell--03" data-stack-cell>
+                <span class="stack-cell__watermark" aria-hidden="true">III</span>
+                <span class="stack-cell__name">Node.js</span>
+                <span class="stack-cell__desc">O motor por trás do processo</span>
+              </li>
+              <li class="stack-cell stack-cell--04" data-stack-cell>
+                <span class="stack-cell__watermark" aria-hidden="true">IV</span>
+                <span class="stack-cell__name">Nest.js</span>
+                <span class="stack-cell__desc">As regras da operação, organizadas</span>
+              </li>
+              <li class="stack-cell stack-cell--05" data-stack-cell>
+                <span class="stack-cell__watermark" aria-hidden="true">V</span>
+                <span class="stack-cell__name">Prisma</span>
+                <span class="stack-cell__desc">Acesso aos dados sem surpresa</span>
+              </li>
+              <li class="stack-cell stack-cell--06" data-stack-cell>
+                <span class="stack-cell__watermark" aria-hidden="true">VI</span>
+                <span class="stack-cell__name">SQL Server</span>
+                <span class="stack-cell__desc">O banco que a planta já usa</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ FECHAMENTO — CTA final ═══════════════
+           Dobra escura de fechamento, mesma família --grad-ink do rodapé
+           logo abaixo — cria um mergulho contínuo pro escuro em vez de um
+           card claro solto. Não reusa o âmbar cheio do .manifesto (essa
+           página já tem essa dobra em "Por que isso importa") — aqui o
+           âmbar é só o acento pontual (stroke, halo, botão). -->
+      <section class="closing-cta">
+        <span class="closing-cta__halo" aria-hidden="true"></span>
+        <div class="wrap closing-cta__inner">
+          <svg class="sig-stroke closing-cta__stroke" viewBox="0 0 300 40" aria-hidden="true"><path d="M6 28 C 60 12, 120 34, 170 22 S 260 14, 294 24"/></svg>
+          <p class="text-overline closing-cta__over">Próximo passo</p>
+          <h3 class="closing-cta__title">Vamos falar da sua operação</h3>
+          <p class="closing-cta__lede">Me conta como a produção é acompanhada hoje, inclusive se for no papel. A gente parte daí.</p>
+          <p class="closing-cta__action">
+            <a class="btn btn--primary" href="/#contact">
+              Quero um sistema <span class="btn__arrow" aria-hidden="true">→</span>
+            </a>
+            <a class="btn btn--secondary" href="https://www.sistemaselevate.com/" target="_blank" rel="noopener noreferrer">
+              Ver na Elevate <span class="btn__arrow" aria-hidden="true">→</span>
+            </a>
+          </p>
         </div>
       </section>
     </main>
 
     <footer class="site-footer">
-      <div class="wrap site-footer__inner">
+      <div class="wrap wrap--wide site-footer__inner">
+        <p class="text-overline" style="color: rgba(255, 251, 239, 0.5)">Vamos conversar</p>
         <p class="site-footer__name">Rafael Gois<em>.</em></p>
-        <nav aria-label="Outros trabalhos">
-          <ul>
-            <li><a class="link-line" href="/sites-institucionais.html">Sites Institucionais</a></li>
-            <li><a class="link-line" href="/aplicacoes-sob-medida.html">Aplicações sob Medida</a></li>
-            <li><a class="link-line" href="/">Início</a></li>
-          </ul>
-        </nav>
+
+        <div class="site-footer__grid">
+          <div>
+            <h4>O que eu faço</h4>
+            <p>
+              Engenharia de software com obsessão por experiência do usuário,
+              do sistema de controle industrial ao site da empresa.
+            </p>
+          </div>
+
+          <nav aria-label="Navegação do rodapé">
+            <h4>Navegação</h4>
+            <ul>
+              <li><a class="link-line" href="/">Início</a></li>
+              <li><a class="link-line" href="/#about">Sobre mim</a></li>
+              <li><a class="link-line" href="/#skills">Habilidades</a></li>
+              <li><a class="link-line" href="/#projects">Trabalhos</a></li>
+              <li><a class="link-line" href="/sites-institucionais.html">Sites Institucionais</a></li>
+              <li><a class="link-line" href="/aplicacoes-sob-medida.html">Aplicações sob Medida</a></li>
+              <li><a class="link-line" href="/#contact">Contato</a></li>
+            </ul>
+          </nav>
+
+          <div>
+            <h4>Contato</h4>
+            <ul>
+              <li><a class="link-line" href="mailto:contato@rafaelgois.com">contato@rafaelgois.com</a></li>
+              <li><a class="link-line" href="https://br.linkedin.com/in/rafaelfbgois" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+              <li><a class="link-line" href="https://github.com/RafaGois" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+              <li><a class="link-line" href="https://www.instagram.com/_rgoiss" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="site-footer__bottom">
+          <p>© <span id="current-year">2026</span> Rafael Gois. Todos os direitos reservados.</p>
+          <p>Feito à mão, com um traço de amarelo</p>
+        </div>
       </div>
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js" defer></script>
+    <script src="scripts/reveal.js?v=14" defer></script>
   </body>
 </html>
