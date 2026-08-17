@@ -1586,95 +1586,94 @@ p { max-width: var(--measure); }
 .work-row:hover .work-row__cta { color: var(--color-amber); }
 .work-row:hover .work-row__cta .btn__arrow { transform: translateX(5px); }
 
-/* ─── 15b. PROJETOS — carrossel de cases ──────────────────────────────────
-   Um case por tela: .cases__viewport rola na horizontal com scroll-snap
-   nativo (funciona de fábrica em touch/trackpad), e .cases__nav dá o
-   controle explícito — as duas setas + contador que a dobra pediu. Ver
-   initCasesCarousel em reveal.js (sincroniza contador/estado das setas
-   com o scroll, e faz as setas rolarem um card por vez). */
-.cases { display: grid; gap: clamp(var(--sp-8), 4vw, var(--sp-12)); }
-.cases__viewport {
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+/* ─── 15b. TRABALHOS REAIS — três cases em scroll horizontal ──────────────
+   Mesma gramática da dobra "Sobre mim" (seção 11): no desktop a dobra fica
+   pinada e os cases deslizam na horizontal, cada um com imagem + texto —
+   nada de card grande fechado. O que essa dobra tem a mais é o fio: uma
+   rota que se desenha conforme o scroll avança, com uma cabeça luminosa na
+   ponta do traço e três paradas (uma por case) que acendem quando o projeto
+   chega ao centro. O traço-fantasma por baixo mostra o caminho inteiro
+   desde o começo, então dá pra ver que a linha ainda vai crescer.
+   O fio assume a cor do case ativo — --cases-accent é trocada por JS
+   (initCasesScroll, reveal.js) a partir do --case-accent de cada painel.
+   Repouso (mobile / prefers-reduced-motion / sem JS): pilha vertical, com o
+   fio virando uma trilha vertical na lateral. */
+.cases-scroll {
+  --cases-accent: var(--color-amber);
+  --cases-rail: clamp(2.25rem, 9vw, 3.25rem);
 }
-.cases__viewport::-webkit-scrollbar { display: none; }
-.cases__track { display: flex; }
-.case { flex: 0 0 100%; min-width: 0; display: grid; gap: var(--sp-8); scroll-snap-align: start; }
-@media (min-width: 900px) {
-  .case { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: center; gap: clamp(var(--sp-8), 4vw, var(--sp-16)); }
-}
-.case__problem {
-  font-family: var(--font-display);
-  font-size: clamp(1.6rem, 1rem + 2.6vw, 3rem);
-  line-height: 1.14;
-  color: var(--color-ink);
-  max-width: 24ch;
-  text-wrap: balance;
-}
-.case__meta { display: flex; align-items: center; gap: var(--sp-3); margin-bottom: var(--sp-4); }
-.case__rule { height: 2px; width: 2rem; background: var(--color-amber); transition: width var(--dur-base) var(--ease-gesture); }
-.case:hover .case__rule { width: 4rem; }
-.case__num { font-family: var(--font-mono); font-size: var(--text-caption); letter-spacing: 0.18em; color: var(--color-ink-mute); }
-.case__name { margin-top: var(--sp-6); font-family: var(--font-body); font-weight: 700; font-size: var(--text-h5); }
-/* Bullets do case (ver imagem de referência) — pontinho âmbar em vez do
-   marcador padrão do navegador, mesma cor de acento do resto da dobra. */
-.case__points { margin-top: var(--sp-6); display: grid; gap: var(--sp-2); }
-.case__points li {
+.cases-scroll__pin { position: relative; margin-top: clamp(var(--sp-8), 5vh, var(--sp-16)); }
+.cases-scroll__track {
   position: relative;
-  padding-left: var(--sp-4);
-  color: var(--color-ink-soft);
-  font-size: var(--text-body);
-  line-height: 1.5;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(var(--sp-16), 9vh, var(--sp-24));
+  padding-inline: var(--gutter);
 }
-.case__points li::before {
-  content: "";
+
+/* ── O case: imagem + texto, sem moldura de card ───────────────────────── */
+.case-panel { display: flex; flex-direction: column; gap: var(--sp-6); }
+
+.case-panel__media { position: relative; }
+/* Mancha na cor do projeto espiando atrás da janela — mesmo elemento de
+   .about__portrait::before, mas como nó real (não pseudo) porque o parallax
+   de cursor (initCasesParallax) precisa movê-la em velocidade diferente da
+   moldura pra ler como profundidade. */
+.case-panel__glow {
   position: absolute;
-  left: 0.15rem;
-  top: 0.6em;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--color-amber);
+  inset: 9% -4% -9% 4%;
+  border-radius: var(--radius-md);
+  background: var(--grad-dawn);
+  opacity: 0.22;
+  z-index: 0;
+  pointer-events: none;
 }
-.case__stack { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-top: var(--sp-6); }
-.case__actions { margin-top: var(--sp-4); }
-.case__visual { position: relative; }
-.case__frame {
-  aspect-ratio: 16 / 9;
+.case-panel__glow--green { background: linear-gradient(135deg, #BFE8A8 0%, #5FA55C 55%, #35723C 100%); }
+.case-panel__glow--red { background: linear-gradient(135deg, #F7B8A0 0%, #D9614A 55%, #A83A2C 100%); }
+/* Neon lê mais forte que os outros tons na mesma faixa — por isso mais baixo. */
+.case-panel__glow--neon { background: linear-gradient(135deg, #D6F26B 0%, #8FCB2E 55%, #4E8F1E 100%); opacity: 0.17; }
+
+/* --case-accent: a cor de marca do projeto, exposta pro painel inteiro — é
+   o que o pontinho da lista, o traço do kicker e (via --cases-accent) o fio
+   ao fundo leem. Só em elementos gráficos: em texto esses tons não teriam
+   contraste suficiente sobre o creme, então o kicker segue no âmbar-tinta. */
+.case-panel--green { --case-accent: #5FA55C; }
+.case-panel--red { --case-accent: #D9614A; }
+.case-panel--neon { --case-accent: #6FA524; }
+
+/* Janelinha de navegador: barra com os três pontos + endereço real do
+   projeto, e a captura abaixo definindo a própria altura (print de site
+   raramente cai exatamente em 16/9 — forçar aspect-ratio sobraria faixa
+   vazia ou apertaria o enquadramento). */
+.case-panel__frame {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
   border-radius: var(--radius-md);
   overflow: hidden;
   border: 1px solid var(--color-line);
-  background: var(--color-cream-dark);
-  box-shadow: var(--shadow-1);
-  transition: transform var(--dur-base) var(--ease-gesture), box-shadow var(--dur-base) var(--ease-gesture);
-}
-.case:hover .case__frame { transform: translateY(-4px); box-shadow: var(--shadow-3); }
-/* `contain`: screenshot de site é documento — cortar as laterais decepa o
-   logo e a navegação, justamente o que o case precisa mostrar. */
-.case__frame img { width: 100%; height: 100%; object-fit: contain; object-position: center; }
-
-/* Case mockado (sem projeto real ainda): mesma moldura, sem screenshot —
-   uma barra de "navegador" fake + rótulo, honesto sobre ser placeholder
-   em vez de fingir uma tela que não existe. */
-.case__frame--mock {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--sp-3);
-  background: linear-gradient(160deg, var(--color-cream-dark) 0%, var(--color-paper) 100%);
-}
-.case__frame-bar {
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2rem;
-  border-bottom: 1px solid var(--color-line);
   background: var(--color-paper);
+  box-shadow: var(--shadow-2);
+  /* Sem transition em transform: o parallax de cursor escreve `transform`
+     a cada frame via GSAP — uma transição na mesma propriedade brigaria
+     com ele e deixaria o gesto arrastado. */
+  transition: box-shadow var(--dur-base) var(--ease-gesture);
 }
-.case__frame-bar::before {
+.case-panel:hover .case-panel__frame { box-shadow: var(--shadow-3); }
+.case-panel__bar {
+  position: relative;
+  flex: none;
+  display: flex;
+  align-items: center;
+  height: 2rem;
+  padding-left: 3.2rem;
+  padding-right: var(--sp-3);
+  border-bottom: 1px solid var(--color-line);
+  background: var(--color-cream-dark);
+}
+.case-panel__bar::before {
   content: "";
   position: absolute;
   left: var(--sp-3);
@@ -1683,23 +1682,314 @@ p { max-width: var(--measure); }
   height: 6px;
   border-radius: 50%;
   background: var(--color-line-strong);
-  box-shadow: 12px 0 var(--color-line-strong), 24px 0 var(--color-line-strong);
+  box-shadow: 11px 0 var(--color-line-strong), 22px 0 var(--color-line-strong);
   transform: translateY(-50%);
 }
-.case__frame-label {
+.case-panel__url {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  color: var(--color-ink-mute);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.case-panel__frame img { width: 100%; height: auto; }
+
+/* ── O texto do case ───────────────────────────────────────────────────── */
+.case-panel__text { position: relative; padding-left: var(--sp-8); }
+/* Numeral-fantasma atrás do texto — mesmo motivo de .act__roman (Sobre mim)
+   e .deliver-mod__watermark, na escala do painel. */
+.case-panel__roman {
+  position: absolute;
+  left: -0.08em; top: -0.22em;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: clamp(3.75rem, 5.5vw, 6rem);
+  line-height: 1;
+  color: var(--color-ink);
+  opacity: 0.045;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+.case-panel__kicker,
+.case-panel__name,
+.case-panel__desc,
+.case-panel__points,
+.case-panel__foot { position: relative; z-index: 1; }
+.case-panel__kicker {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-overline);
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-amber-ink);
+}
+.case-panel__kicker::before {
+  content: "";
+  flex: none;
+  height: 2px;
+  width: 1.75rem;
+  background: var(--case-accent, var(--color-amber));
+  transition: width var(--dur-base) var(--ease-gesture);
+}
+.case-panel:hover .case-panel__kicker::before { width: 3.25rem; }
+.case-panel__name {
+  margin-top: var(--sp-2);
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 1.3rem + 1.8vw, 3rem);
+  line-height: 1.06;
+}
+.case-panel__desc {
+  margin-top: var(--sp-3);
+  max-width: 34ch;
+  font-size: var(--text-body-lg);
+  line-height: 1.45;
+  color: var(--color-ink);
+  text-wrap: balance;
+}
+.case-panel__points { margin-top: var(--sp-6); display: grid; gap: var(--sp-2); }
+.case-panel__points li {
+  position: relative;
+  padding-left: var(--sp-4);
+  max-width: 40ch;
+  color: var(--color-ink-soft);
+  font-size: var(--text-body-sm);
+  line-height: 1.55;
+}
+.case-panel__points li::before {
+  content: "";
+  position: absolute;
+  left: 0.15rem;
+  top: 0.62em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--case-accent, var(--color-amber));
+}
+.case-panel__foot {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sp-2) var(--sp-6);
+  margin-top: var(--sp-4);
+}
+.case-panel__tech {
   font-family: var(--font-mono);
   font-size: var(--text-caption);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  letter-spacing: 0.08em;
   color: var(--color-ink-mute);
 }
 
-/* Transição "wipe" ao trocar de case pelas setas — mesmo princípio da
-   animação de confirmação de compra do Mercado Livre: um círculo cresce a
-   partir do botão clicado até cobrir a tela inteira, o case troca por
-   baixo enquanto ela está coberta, e o círculo só se apaga depois — quando
-   ele some, quem olha já está vendo o próximo case. Escala/posição são
-   controladas via GSAP inline (initCasesWipe, reveal.js); aqui só o
+/* ── O fio: traço, cabeça e paradas ────────────────────────────────────── */
+.cases-curve-svg,
+.cases-curve-svg--mobile,
+.cases-curve-head,
+.cases-curve-stop { display: none; }
+.cases-curve-path {
+  fill: none;
+  stroke: var(--cases-accent);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke var(--dur-slow) var(--ease-gesture);
+  /* O viewBox estica os dois eixos em proporções diferentes (preserveAspectRatio:
+     none), então sem isso o stroke-width herdaria essa distorção — mais fino
+     nos trechos horizontais do traço do que nos verticais. non-scaling-stroke
+     aplica a espessura já em px de tela, igual em qualquer trecho da curva. */
+  vector-effect: non-scaling-stroke;
+}
+.cases-curve-path--main { stroke-width: 3px; opacity: 0.5; }
+.cases-curve-path--mobile { stroke-width: 3px; opacity: 0.45; }
+/* O caminho inteiro, quase apagado: mostra pra onde a linha ainda vai. */
+.cases-curve-path--ghost,
+.cases-curve-path--ghost-mobile {
+  stroke: var(--color-ink);
+  opacity: 0.07;
+  transition: none;
+}
+.cases-curve-path--ghost { stroke-width: 1.5px; }
+.cases-curve-path--ghost-mobile { stroke-width: 1.5px; }
+
+/* Cabeça luminosa na ponta do traço — posicionada por JS sobre o próprio
+   path (translate em px, relativo ao pin). O anel de fora respira devagar,
+   mesmo gesto de --ease-breath usado nos outros elementos "vivos". */
+.cases-curve-head {
+  position: absolute;
+  top: 0; left: 0;
+  width: 12px; height: 12px;
+  margin: -6px 0 0 -6px;
+  border-radius: 50%;
+  background: var(--cases-accent);
+  opacity: 0;
+  z-index: 0;
+  pointer-events: none;
+  transition: background var(--dur-slow) var(--ease-gesture), opacity var(--dur-base) var(--ease-gesture);
+}
+.cases-curve-head::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 1px solid var(--cases-accent);
+  opacity: 0.4;
+  animation: casesHeadBreath 2.6s var(--ease-breath) infinite;
+}
+@keyframes casesHeadBreath {
+  0%, 100% { transform: scale(1); opacity: 0.4; }
+  50%      { transform: scale(1.45); opacity: 0.1; }
+}
+
+/* Paradas do fio: uma por case, apagadas até o traço chegar nelas. Ficam
+   atrás dos painéis (z-index 0) — aparecem nos vãos entre um case e outro,
+   como marcos da rota, sem competir com a leitura. */
+.cases-curve-stop {
+  position: absolute;
+  top: 0; left: 0;
+  width: 2.15rem; height: 2.15rem;
+  margin: -1.075rem 0 0 -1.075rem;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--color-line);
+  background: var(--color-cream-dark);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  color: var(--color-ink-mute);
+  opacity: 0.5;
+  z-index: 0;
+  pointer-events: none;
+  transition:
+    opacity var(--dur-base) var(--ease-gesture),
+    border-color var(--dur-base) var(--ease-gesture),
+    color var(--dur-base) var(--ease-gesture),
+    transform var(--dur-base) var(--ease-gesture);
+}
+.cases-curve-stop.is-reached {
+  opacity: 1;
+  border-color: var(--cases-accent);
+  color: var(--color-ink);
+  box-shadow: 0 0 0 4px rgba(255, 176, 0, 0.08);
+}
+
+/* ── Desktop: imagem ao lado do texto (vale também no repouso, sem pin) ── */
+@media (min-width: 900px) {
+  .case-panel {
+    flex-direction: row;
+    align-items: center;
+    gap: clamp(var(--sp-8), 4vw, var(--sp-16));
+  }
+  .case-panel--reverse { flex-direction: row-reverse; }
+  .case-panel__media { flex: 0 0 46%; }
+  .case-panel__text { flex: 1; min-width: 0; }
+
+  /* ── Desktop com scroll horizontal (a dobra pinada) ──────────────────── */
+  .cases-scroll.is-horizontal .cases-scroll__pin {
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    margin-top: clamp(var(--sp-12), 6vh, var(--sp-16));
+  }
+  /* O fio mora numa faixa centralizada verticalmente no pin (não presa ao
+     rodapé): cruza por trás dos cases — z-index abaixo de .cases-scroll__track
+     (1) e de .case-panel__frame (1) — em vez de correr por baixo do
+     conteúdo, então pode ocupar o centro sem cobrir texto nem imagem. */
+  .cases-scroll.is-horizontal .cases-curve-svg {
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    width: 100%;
+    height: clamp(170px, 26vh, 290px);
+    z-index: 0;
+    pointer-events: none;
+  }
+  .cases-scroll.is-horizontal .cases-curve-head { display: block; }
+  .cases-scroll.is-horizontal .cases-curve-stop { display: grid; }
+  .cases-scroll.is-horizontal .cases-scroll__track {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    width: max-content;
+    /* Bem maior que o vão interno do case (imagem↔texto, abaixo): numa tela
+       larga aparecem pedaços de dois cases ao mesmo tempo, e é essa
+       diferença de respiro — junto com a cor de acento — que diz quais tela
+       e texto são do mesmo projeto. */
+    gap: clamp(var(--sp-16), 13vw, 14rem);
+    /* O primeiro case nasce fora da tela, à direita: o primeiro gesto do
+       usuário já é puxar o projeto pra dentro do quadro, igual aos outros. */
+    padding-left: 20vw;
+    padding-right: clamp(var(--sp-8), 8vw, var(--sp-24));
+  }
+  .cases-scroll.is-horizontal .case-panel {
+    flex: 0 0 min(84vw, 1020px);
+    align-items: center;
+    gap: clamp(var(--sp-6), 2.5vw, var(--sp-12));
+  }
+  .cases-scroll.is-horizontal .case-panel__media { flex: 0 0 min(44vw, 520px); width: min(44vw, 520px); }
+  .cases-scroll.is-horizontal .case-panel__text { flex: 1; max-width: 44ch; }
+
+  /* Cada case tem sua própria composição — nada de espelhamento uniforme. */
+  .cases-scroll.is-horizontal .case-panel--i { margin-top: -3vh; }
+  .cases-scroll.is-horizontal .case-panel--ii {
+    flex-basis: min(88vw, 1080px);
+    margin-top: 4vh;
+  }
+  .cases-scroll.is-horizontal .case-panel--ii .case-panel__media {
+    flex-basis: min(47vw, 560px); width: min(47vw, 560px);
+  }
+  .cases-scroll.is-horizontal .case-panel--iii {
+    flex-basis: min(80vw, 980px);
+    margin-top: -1vh;
+  }
+  .cases-scroll.is-horizontal .case-panel--iii .case-panel__media {
+    flex-basis: min(41vw, 490px); width: min(41vw, 490px);
+  }
+}
+
+/* ── Mobile: pilha vertical com o fio correndo na lateral ──────────────── */
+@media (max-width: 899px) {
+  .cases-curve-svg--mobile {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: var(--gutter);
+    width: var(--cases-rail);
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .cases-scroll__track {
+    padding-left: calc(var(--gutter) + var(--cases-rail) + var(--sp-2));
+    gap: clamp(var(--sp-12), 8vh, var(--sp-16));
+  }
+  .case-panel__text { padding-left: var(--sp-6); }
+  .case-panel__desc { font-size: var(--text-body); }
+  .case-panel__url { font-size: 0.64rem; }
+  /* No case II o HTML inverte texto/imagem (para o row-reverse do desktop).
+     Sem o reverse, a coluna do mobile exporia essa ordem crua e um case
+     começaria pelo texto enquanto os outros começam pela tela. Traz a
+     imagem de volta pro topo visualmente, sem mexer na ordem de leitura
+     (DOM) para leitor de tela. */
+  .case-panel--reverse .case-panel__media { order: -1; }
+
+  /* Mesma variação orgânica do desktop (lá é baseRotate, via JS, porque
+     convive com o parallax de scroll) — aqui, sem parallax, um giro fixo e
+     bem pequeno por CSS já basta pra tirar o alinhamento perfeitinho. */
+  .case-panel--i .case-panel__media { transform: rotate(-1.1deg); }
+  .case-panel--ii .case-panel__media { transform: rotate(0.9deg); }
+  .case-panel--iii .case-panel__media { transform: rotate(-0.7deg); }
+}
+
+/* Transição "wipe" em tela cheia — um círculo cresce a partir de um ponto
+   até cobrir a tela, a troca acontece por baixo enquanto ela está coberta, e
+   o círculo só se apaga depois. Usado hoje na navegação entre páginas
+   (#page-wipe, index.html); escala/posição vêm por GSAP inline, aqui só o
    estado de repouso. */
 .case-wipe {
   position: fixed;
@@ -1718,37 +2008,10 @@ p { max-width: var(--measure); }
   will-change: transform, opacity;
 }
 
-.cases__nav {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--sp-6);
-  margin-top: clamp(var(--sp-4), 3vw, var(--sp-6));
-}
-.cases__arrow {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  flex-shrink: 0;
-  border-radius: var(--radius-full);
-  border: 1px solid var(--color-line-strong);
-  background: var(--color-cream);
-  color: var(--color-ink);
-  font-size: 1.1rem;
-  line-height: 1;
-  transition: background var(--dur-fast) var(--ease-gesture), border-color var(--dur-fast) var(--ease-gesture), transform var(--dur-fast) var(--ease-gesture);
-}
-.cases__arrow:hover:not(:disabled) { background: var(--color-amber); border-color: var(--color-amber); transform: translateY(-2px); }
-.cases__arrow:disabled { opacity: 0.3; pointer-events: none; }
-.cases__count { font-family: var(--font-mono); font-size: var(--text-caption); letter-spacing: 0.18em; color: var(--color-ink-mute); }
-.cases__count #cases-current { color: var(--color-amber-ink); font-weight: 600; }
-
 /* ─── STACK TÍPICA — preenchimento de fundo da dobra ──────────────────────
    A dobra é só texto + grade, sem foto — reaproveita o vocabulário que o
    resto do site já usa pra dar corpo a uma seção "vazia": o glow radial
-   âmbar pontual de .closing-cta/.hero__light (dois, em cantos
+   âmbar pontual de .closing-cta/.reason-scroll__light (dois, em cantos
    opostos, pra dar profundidade sem virar um flood só) e um glifo-fantasma
    gigante e quase invisível (mesmo motivo de .deliver-mod__watermark /
    .stack-cell__watermark, só que em escala de seção): um "</>" de código,
@@ -1932,6 +2195,233 @@ p { max-width: var(--measure); }
   color: var(--color-ink-soft);
   font-size: var(--text-body);
 }
+.closing-cta__action {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: var(--sp-3);
+  margin-top: var(--sp-8);
+}
+
+/* ─── 15c. PÁGINAS DE TRABALHO — dobra de categoria ───────────────────────
+   Compartilhado pelas 3 subpáginas (sites-institucionais, sistemas-de-
+   controle, aplicacoes-sob-medida). Numeral de fundo segue a mesma receita
+   de .act__roman / .skill-node__roman — ver docs/dobra-trabalhos.md. */
+/* Hero raso e limpo: navbar (fixa, por cima) + título + subtítulo sobre uma
+   superfície âmbar sólida — sem o gradiente cheio do .manifesto, de
+   propósito, para manter o tom "clean" nas 3 páginas de trabalho. */
+.work-hero {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-6);
+  margin-top: clamp(var(--sp-4), 3vw, var(--sp-6));
+}
+.cases__arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  flex-shrink: 0;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-line-strong);
+  background: var(--color-cream);
+  color: var(--color-ink);
+  font-size: 1.1rem;
+  line-height: 1;
+  transition: background var(--dur-fast) var(--ease-gesture), border-color var(--dur-fast) var(--ease-gesture), transform var(--dur-fast) var(--ease-gesture);
+}
+.cases__arrow:hover:not(:disabled) { background: var(--color-amber); border-color: var(--color-amber); transform: translateY(-2px); }
+.cases__arrow:disabled { opacity: 0.3; pointer-events: none; }
+.cases__count { font-family: var(--font-mono); font-size: var(--text-caption); letter-spacing: 0.18em; color: var(--color-ink-mute); }
+.cases__count #cases-current { color: var(--color-amber-ink); font-weight: 600; }
+
+/* ─── STACK TÍPICA — preenchimento de fundo da dobra ──────────────────────
+   A dobra é só texto + grade, sem foto — reaproveita o vocabulário que o
+   resto do site já usa pra dar corpo a uma seção "vazia": o glow radial
+   âmbar pontual de .closing-cta/.hero__light (dois, em cantos
+   opostos, pra dar profundidade sem virar um flood só) e um glifo-fantasma
+   gigante e quase invisível (mesmo motivo de .deliver-mod__watermark /
+   .stack-cell__watermark, só que em escala de seção): um "</>" de código,
+   coerente com o assunto da dobra ("como eu construo"). Tudo abaixo do
+   conteúdo (z-index 0) e não-interativo. */
+.stack-section { position: relative; overflow: hidden; }
+.stack-section > .wrap { position: relative; z-index: 1; }
+
+.stack-section__glow {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  top: -12%;
+  left: -8%;
+  width: min(46vw, 34rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 176, 0, 0.16) 0%, transparent 68%);
+}
+.stack-section__glow--alt {
+  top: auto;
+  left: auto;
+  bottom: -18%;
+  right: -10%;
+  width: min(50vw, 38rem);
+  background: radial-gradient(circle, rgba(255, 215, 120, 0.22) 0%, transparent 70%);
+}
+
+.stack-section__glyph {
+  position: absolute;
+  z-index: 0;
+  top: -6%;
+  right: -6%;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: clamp(9rem, 5rem + 14vw, 18rem);
+  line-height: 1;
+  color: var(--color-ink);
+  opacity: 0.028;
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+}
+
+@media (max-width: 899px) {
+  .stack-section__glyph { top: -3%; font-size: clamp(6rem, 4rem + 16vw, 11rem); }
+}
+
+/* ─── STACK TÍPICA — grade editorial com numeral-fantasma ────────────────
+   Referência: seis tecnologias em grade 3 colunas × 2 linhas, cada uma com
+   seu algarismo romano em serifa grande e quase transparente atrás do
+   nome (mesmo motivo de .deliver-mod__watermark, seção 16), separadas por
+   uma única régua horizontal entre as duas linhas. Ordem do DOM é I→VI e
+   a grade usa grid-auto-flow:column pra empilhar os pares (I/II, III/IV,
+   V/VI) em cada coluna — sem precisar reordenar nada por breakpoint. */
+.stack-grid { position: relative; margin-top: clamp(var(--sp-16), 9vh, var(--sp-24)); }
+
+.stack-grid__divider {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: var(--color-line-strong);
+  transform-origin: left;
+}
+
+.stack-grid__list {
+  position: relative;
+  z-index: 1;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(2, auto);
+  grid-auto-flow: column;
+  column-gap: clamp(var(--sp-6), 4vw, var(--sp-12));
+  row-gap: clamp(var(--sp-12), 7vw, var(--sp-24));
+}
+
+.stack-cell { position: relative; }
+
+/* Numeral fica atrás do nome (não empilhado acima dele) — mesmo truque de
+   .deliver-mod__watermark: glifo grande e quase transparente, levemente
+   deslocado pra trás/acima do texto, que fica por cima (z-index) o
+   cobrindo na maior parte. Discreto por design: opacidade baixa e sem
+   disputar leitura com o nome/legenda. */
+.stack-cell__watermark {
+  position: absolute;
+  top: -0.3em;
+  left: -0.04em;
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 1.5rem + 4.5vw, 4.75rem);
+  line-height: 0.8;
+  color: var(--color-ink);
+  opacity: 0.09;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+
+.stack-cell__name {
+  position: relative;
+  z-index: 1;
+  display: block;
+  font-family: var(--font-display);
+  font-size: var(--text-h4);
+  color: var(--color-ink);
+}
+
+.stack-cell__desc {
+  position: relative;
+  z-index: 1;
+  display: block;
+  margin-top: var(--sp-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: 0.02em;
+  color: var(--color-ink-mute);
+}
+
+.reason-list { display: grid; gap: clamp(var(--sp-16), 11vh, var(--sp-24)); margin-top: clamp(var(--sp-12), 7vh, var(--sp-24)); }
+
+@media (max-width: 899px) {
+  .stack-grid__divider { display: none; }
+  .stack-grid__list {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    grid-auto-flow: row;
+    row-gap: 0;
+  }
+  .stack-cell {
+    padding-top: var(--sp-4);
+    padding-bottom: clamp(var(--sp-8), 5vw, var(--sp-12));
+    border-bottom: 1px solid var(--color-line);
+  }
+  .stack-cell--06 { border-bottom: none; }
+  .stack-cell__watermark { font-size: clamp(2.5rem, 1.5rem + 8vw, 3.75rem); }
+}
+
+/* Fechamento — clara, não o mergulho escuro que tinha antes (fica
+   melhor pra essa página: o creme mais denso separa a dobra do fundo sem
+   pesar visualmente, mesmo truque do .section--alt). O âmbar segue como
+   acento pontual (stroke, halo, botão) — o flood cheio fica reservado pro
+   .manifesto, que essa página já usa em "Por que isso importa". */
+.closing-cta {
+  position: relative;
+  z-index: var(--z-section);
+  overflow: hidden;
+  background: var(--color-cream-dark);
+  color: var(--color-ink);
+  padding-block: clamp(var(--sp-24), 16vh, var(--sp-32));
+  text-align: center;
+}
+.closing-cta::before {
+  content: "";
+  position: absolute;
+  right: -10%;
+  top: -30%;
+  width: min(60vw, 40rem);
+  aspect-ratio: 1;
+  background: radial-gradient(circle, rgba(255, 176, 0, 0.18) 0%, transparent 65%);
+  pointer-events: none;
+  z-index: 0;
+}
+.closing-cta__inner { position: relative; z-index: 1; max-width: 36rem; }
+.closing-cta__stroke { width: clamp(120px, 20vw, 220px); margin: 0 auto var(--sp-6); }
+.closing-cta__over { color: var(--color-ink-mute); }
+.closing-cta__title {
+  margin-top: var(--sp-4);
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 1.3rem + 4vw, 3.75rem);
+  line-height: 1.1;
+  color: var(--color-ink);
+}
+.closing-cta__lede {
+  margin: var(--sp-4) auto 0;
+  max-width: 32ch;
+  color: var(--color-ink-soft);
+  font-size: var(--text-body);
+}
 .closing-cta__action { margin-top: var(--sp-8); }
 
 /* ─── 15c. SITES INSTITUCIONAIS — hero + "por que um site", fundidos ─────
@@ -1976,7 +2466,7 @@ p { max-width: var(--measure); }
    página editorial em vez do alinhamento repetitivo de uma grade de cards.
    Entrada é feita por timeline dedicada em reveal.js (não pelo [data-reveal]
    genérico); os estados iniciais abaixo ficam junto da seção 19. */
-.deliver-index { margin-top: clamp(var(--sp-8), 5vw, var(--sp-12)); border-top: 1px solid var(--color-line); }
+.deliver-index { margin-top: clamp(var(--sp-8), 5vw, var(--sp-12)); }
 
 .deliver-mod {
   position: relative;

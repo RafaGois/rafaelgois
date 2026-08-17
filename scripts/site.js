@@ -990,9 +990,8 @@
   }
 
   /* ─── Navegação interna: transição em tela cheia ao sair pra outra página ─
-     Mesmo efeito "wipe" do carrossel de cases (sites-institucionais.html,
-     initCasesWipe em reveal.js): um círculo cresce a partir do ponto
-     clicado até cobrir a tela inteira, e só então a navegação acontece —
+     Efeito "wipe" (.case-wipe no ds.css): um círculo cresce a partir do
+     ponto clicado até cobrir a tela inteira, e só então a navegação acontece —
      a troca de página fica encoberta, sem o "flash" branco do load. Aqui
      não há transição de volta (a página está saindo), então o círculo só
      cresce; ele desaparece sozinho junto com o documento antigo. Cliques
