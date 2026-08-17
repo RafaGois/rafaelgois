@@ -1977,6 +1977,13 @@ p { max-width: var(--measure); }
      imagem de volta pro topo visualmente, sem mexer na ordem de leitura
      (DOM) para leitor de tela. */
   .case-panel--reverse .case-panel__media { order: -1; }
+
+  /* Mesma variação orgânica do desktop (lá é baseRotate, via JS, porque
+     convive com o parallax de scroll) — aqui, sem parallax, um giro fixo e
+     bem pequeno por CSS já basta pra tirar o alinhamento perfeitinho. */
+  .case-panel--i .case-panel__media { transform: rotate(-1.1deg); }
+  .case-panel--ii .case-panel__media { transform: rotate(0.9deg); }
+  .case-panel--iii .case-panel__media { transform: rotate(-0.7deg); }
 }
 
 /* Transição "wipe" em tela cheia — um círculo cresce a partir de um ponto

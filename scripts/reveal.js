@@ -8,7 +8,9 @@
  * Usado nas páginas de trabalho (sites-institucionais, sistemas-de-controle,
  * aplicacoes-sob-medida), que não têm hero/three.js — só [data-reveal] e
  * [data-rule]. Depende de: gsap 3.13 + ScrollTrigger (carregados antes, com
- * defer).
+ * defer). SplitText é opcional (registra só se a página carregar o script —
+ * hoje só sites-institucionais): sem ela, [data-quote] cai no fallback de
+ * fade simples em vez do gesto palavra a palavra.
  */
 (function () {
   "use strict";
@@ -19,12 +21,24 @@
   );
   var hasGSAP = typeof window.gsap !== "undefined";
   var hasST = hasGSAP && typeof window.ScrollTrigger !== "undefined";
+  var hasSplit = hasGSAP && typeof window.SplitText !== "undefined";
   /* Mesmo corte de site.js (e do @media do ds.css): abaixo disso, nada de
      dobra pinada — o conteúdo empilha e cada peça entra na vertical. */
   var isNarrow = !!(window.matchMedia && window.matchMedia("(max-width: 899px)").matches);
 
   if (hasST) gsap.registerPlugin(ScrollTrigger);
+  if (hasSplit) gsap.registerPlugin(SplitText);
   if (reduced || !hasST) document.documentElement.classList.add("no-anim");
+
+  function splitWords(el) {
+    if (!el) return [];
+    if (!hasSplit) return [el];
+    try {
+      return new SplitText(el, { type: "words", wordsClass: "w" }).words;
+    } catch (err) {
+      return [el];
+    }
+  }
 
   function slice(nodes) { return Array.prototype.slice.call(nodes); }
   function clamp(n, min, max) { return Math.min(max, Math.max(min, n)); }
@@ -547,7 +561,9 @@
     document.querySelectorAll("[data-mark]").forEach(function (m) { m.classList.add("is-marked"); });
   }
 
-  /* ─── Floreio do bloco âmbar (aspas decorativa) ────────────────────────── */
+  /* ─── Manifesto: aspas decorativa entra antes da citação, girando e
+     encaixando no lugar — a assinatura visual da seção 100% âmbar (mesmo
+     padrão de site.js). ────────────────────────────────────────────────── */
   var manifestoMark = document.querySelector(".manifesto__mark");
   if (manifestoMark && hasST && !reduced) {
     gsap.to(manifestoMark, {
@@ -558,6 +574,37 @@
       ease: "expo.out",
       scrollTrigger: { trigger: manifestoMark, start: "top 88%", once: true },
     });
+  }
+
+  /* ─── Manifesto: a citação entra palavra por palavra, com um leve
+     desfoque que resolve em foco — mais cinematográfico que um fade puro
+     (mesmo padrão de site.js). Sem SplitText, cai num fade simples. ────── */
+  var manifestoQuote = document.querySelector("[data-quote]");
+  if (manifestoQuote && hasST) {
+    if (hasSplit && !reduced) {
+      var quoteWords = splitWords(manifestoQuote);
+      gsap.fromTo(
+        quoteWords,
+        { yPercent: 110, opacity: 0, filter: "blur(10px)" },
+        {
+          yPercent: 0,
+          opacity: 1,
+          filter: "blur(0px)",
+          stagger: 0.07,
+          duration: 1.1,
+          ease: EASE,
+          scrollTrigger: { trigger: manifestoQuote, start: "top 78%", once: true },
+        },
+      );
+    } else if (!reduced) {
+      gsap.from(manifestoQuote, {
+        opacity: 0,
+        y: 24,
+        duration: 0.9,
+        ease: EASE,
+        scrollTrigger: { trigger: manifestoQuote, start: "top 78%", once: true },
+      });
+    }
   }
 
   /* ─── Pinceladas-assinatura fora do hero (mesmo padrão de site.js) ─────── */
