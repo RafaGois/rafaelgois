@@ -1248,7 +1248,7 @@ p { max-width: var(--measure); }
 }
 
 /* ─── 13. MANIFESTO — a seção 100% âmbar ────────────────────────────────── */
-.manifesto, .work-hero {
+.manifesto {
   isolation: isolate;
   background:
     radial-gradient(ellipse 110% 70% at 50% -15%, rgba(255, 253, 247, 0.5) 0%, transparent 55%),
@@ -1262,7 +1262,7 @@ p { max-width: var(--measure); }
   overflow: hidden;
   padding-block: clamp(var(--sp-24), 16vh, var(--sp-32));
 }
-.manifesto::before, .work-hero::before {
+.manifesto::before {
   content: "";
   position: absolute;
   inset: -35% -15% auto 30%;
@@ -1278,7 +1278,7 @@ p { max-width: var(--measure); }
   z-index: 0;
   animation: manifestoGlow 14s var(--ease-breath) infinite alternate;
 }
-.manifesto::after, .work-hero::after {
+.manifesto::after {
   content: "";
   position: absolute;
   inset: auto -20% -45% -20%;
@@ -2211,119 +2211,252 @@ p { max-width: var(--measure); }
   position: relative;
   overflow: hidden;
   display: flex;
-  align-items: flex-end;
-  min-height: 100svh;
-  padding-top: clamp(6rem, 4rem + 6vw, 8rem);
-  padding-bottom: clamp(var(--sp-16), 10vh, var(--sp-24));
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-6);
+  margin-top: clamp(var(--sp-4), 3vw, var(--sp-6));
 }
-.work-hero__roman {
-  position: absolute;
-  left: -0.06em;
-  bottom: -0.22em;
-  font-family: var(--font-mono);
-  font-weight: 500;
-  font-size: clamp(9rem, 7vw + 6rem, 17rem);
-  line-height: 1;
-  letter-spacing: 0.02em;
-  color: var(--color-ink);
-  opacity: 0.08;
-  pointer-events: none;
-  user-select: none;
-  z-index: 0;
-}
-.work-hero > .wrap { position: relative; z-index: 1; }
-.work-hero .sec-head { position: relative; margin-bottom: 0; }
-.work-hero .sec-head__rule, .work-hero .sec-head__title, .work-hero .sec-head__lede, .work-hero .text-overline {
-  position: relative;
-  z-index: 1;
-}
-.work-hero .sec-head__rule { background: rgba(42, 33, 24, 0.22); }
-.work-hero .text-overline { color: var(--color-ink); opacity: 0.6; }
-.work-hero .sec-head__lede { color: var(--color-ink); opacity: 0.78; }
-
-/* "Por que um site institucional" — mesma receita da dobra Habilidades
-   (seção 13, index.html): uma imagem de fundo (mesma textura do hero) que
-   se posiciona conforme o bloco de texto que está entrando em cena
-   (initSkillsBg em reveal.js), e cada bloco (skill-node) entra do seu
-   próprio lado num scrub por bloco (initSkillNodeReveals) — nada de pin,
-   nada de cena cinematográfica inteira. Bem mais simples e é a mesma
-   coreografia já validada no resto do site. */
-.reason-scroll { position: relative; overflow: hidden; }
-.reason-scroll__bg-image {
-  position: absolute;
-  inset: -18%;
-  z-index: 0;
-  pointer-events: none;
-  background-image: url("https://res.cloudinary.com/dn454izoh/image/upload/f_auto,q_auto,w_2200/v1785193132/textured_engineering_hero_background_hxi79m.png");
-  background-size: cover;
-  background-position: center;
-  opacity: 0;
-  will-change: transform, opacity;
-}
-.reason-scroll__fog,
-.reason-scroll__light {
-  position: absolute;
-  inset: -12%;
-  z-index: 1;
-  pointer-events: none;
-  opacity: 0;
-  will-change: transform, opacity;
-}
-.reason-scroll__light { background: radial-gradient(circle at 50% 46%, rgba(255, 176, 0, 0.30), transparent 58%); }
-.reason-scroll__fog--back { background: radial-gradient(ellipse 65% 50% at 30% 60%, rgba(255, 215, 120, 0.30), transparent 70%); }
-.reason-scroll__fog--front { background: radial-gradient(ellipse 58% 45% at 74% 34%, rgba(255, 251, 239, 0.6), transparent 72%); }
-.reason-scroll__vignette {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background: radial-gradient(ellipse at 50% 45%, transparent 40%, var(--color-cream) 100%);
-}
-.reason-scroll > .wrap { position: relative; z-index: 2; }
-
-.reason-list { display: grid; gap: clamp(var(--sp-16), 11vh, var(--sp-24)); margin-top: clamp(var(--sp-12), 7vh, var(--sp-24)); }
-
-.reason-block { display: flex; }
-.reason-block[data-align="right"] { justify-content: flex-end; }
-.reason-block__content { position: relative; width: 100%; max-width: 32rem; }
-
-/* Numeral romano discreto atrás do bloco — mesmo motivo-fantasma de
-   .act__roman / .skill-node__roman. */
-.reason-block__roman {
-  position: absolute;
-  left: -0.05em;
-  top: -0.3em;
-  font-family: var(--font-mono);
-  font-weight: 500;
-  font-size: clamp(4.5rem, 3vw + 3rem, 6.5rem);
-  line-height: 1;
-  letter-spacing: 0.02em;
-  color: var(--color-ink);
-  opacity: 0.04;
-  pointer-events: none;
-  user-select: none;
-  z-index: 0;
-}
-.reason-block[data-align="right"] .reason-block__roman { left: auto; right: -0.05em; }
-
-.reason-block__head { position: relative; z-index: 1; display: flex; align-items: flex-start; gap: var(--sp-4); }
-.reason-block[data-align="right"] .reason-block__head { flex-direction: row-reverse; text-align: right; }
-
-.reason-block__icon {
+.cases__arrow {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 3.5rem;
-  height: 3.5rem;
+  width: 2.75rem;
+  height: 2.75rem;
   flex-shrink: 0;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-line-strong);
+  background: var(--color-cream);
+  color: var(--color-ink);
+  font-size: 1.1rem;
+  line-height: 1;
+  transition: background var(--dur-fast) var(--ease-gesture), border-color var(--dur-fast) var(--ease-gesture), transform var(--dur-fast) var(--ease-gesture);
+}
+.cases__arrow:hover:not(:disabled) { background: var(--color-amber); border-color: var(--color-amber); transform: translateY(-2px); }
+.cases__arrow:disabled { opacity: 0.3; pointer-events: none; }
+.cases__count { font-family: var(--font-mono); font-size: var(--text-caption); letter-spacing: 0.18em; color: var(--color-ink-mute); }
+.cases__count #cases-current { color: var(--color-amber-ink); font-weight: 600; }
+
+/* ─── STACK TÍPICA — preenchimento de fundo da dobra ──────────────────────
+   A dobra é só texto + grade, sem foto — reaproveita o vocabulário que o
+   resto do site já usa pra dar corpo a uma seção "vazia": o glow radial
+   âmbar pontual de .closing-cta/.hero__light (dois, em cantos
+   opostos, pra dar profundidade sem virar um flood só) e um glifo-fantasma
+   gigante e quase invisível (mesmo motivo de .deliver-mod__watermark /
+   .stack-cell__watermark, só que em escala de seção): um "</>" de código,
+   coerente com o assunto da dobra ("como eu construo"). Tudo abaixo do
+   conteúdo (z-index 0) e não-interativo. */
+.stack-section { position: relative; overflow: hidden; }
+.stack-section > .wrap { position: relative; z-index: 1; }
+
+.stack-section__glow {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  top: -12%;
+  left: -8%;
+  width: min(46vw, 34rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 176, 0, 0.16) 0%, transparent 68%);
+}
+.stack-section__glow--alt {
+  top: auto;
+  left: auto;
+  bottom: -18%;
+  right: -10%;
+  width: min(50vw, 38rem);
+  background: radial-gradient(circle, rgba(255, 215, 120, 0.22) 0%, transparent 70%);
+}
+
+.stack-section__glyph {
+  position: absolute;
+  z-index: 0;
+  top: -6%;
+  right: -6%;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: clamp(9rem, 5rem + 14vw, 18rem);
+  line-height: 1;
+  color: var(--color-ink);
+  opacity: 0.028;
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+}
+
+@media (max-width: 899px) {
+  .stack-section__glyph { top: -3%; font-size: clamp(6rem, 4rem + 16vw, 11rem); }
+}
+
+/* ─── STACK TÍPICA — grade editorial com numeral-fantasma ────────────────
+   Referência: seis tecnologias em grade 3 colunas × 2 linhas, cada uma com
+   seu algarismo romano em serifa grande e quase transparente atrás do
+   nome (mesmo motivo de .deliver-mod__watermark, seção 16), separadas por
+   uma única régua horizontal entre as duas linhas. Ordem do DOM é I→VI e
+   a grade usa grid-auto-flow:column pra empilhar os pares (I/II, III/IV,
+   V/VI) em cada coluna — sem precisar reordenar nada por breakpoint. */
+.stack-grid { position: relative; margin-top: clamp(var(--sp-16), 9vh, var(--sp-24)); }
+
+.stack-grid__divider {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: var(--color-line-strong);
+  transform-origin: left;
+}
+
+.stack-grid__list {
+  position: relative;
+  z-index: 1;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(2, auto);
+  grid-auto-flow: column;
+  column-gap: clamp(var(--sp-6), 4vw, var(--sp-12));
+  row-gap: clamp(var(--sp-12), 7vw, var(--sp-24));
+}
+
+.stack-cell { position: relative; }
+
+/* Numeral fica atrás do nome (não empilhado acima dele) — mesmo truque de
+   .deliver-mod__watermark: glifo grande e quase transparente, levemente
+   deslocado pra trás/acima do texto, que fica por cima (z-index) o
+   cobrindo na maior parte. Discreto por design: opacidade baixa e sem
+   disputar leitura com o nome/legenda. */
+.stack-cell__watermark {
+  position: absolute;
+  top: -0.3em;
+  left: -0.04em;
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 1.5rem + 4.5vw, 4.75rem);
+  line-height: 0.8;
+  color: var(--color-ink);
+  opacity: 0.09;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+
+.stack-cell__name {
+  position: relative;
+  z-index: 1;
+  display: block;
+  font-family: var(--font-display);
+  font-size: var(--text-h4);
+  color: var(--color-ink);
+}
+
+.stack-cell__desc {
+  position: relative;
+  z-index: 1;
+  display: block;
+  margin-top: var(--sp-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  letter-spacing: 0.02em;
+  color: var(--color-ink-mute);
+}
+
+.reason-list { display: grid; gap: clamp(var(--sp-16), 11vh, var(--sp-24)); margin-top: clamp(var(--sp-12), 7vh, var(--sp-24)); }
+
+@media (max-width: 899px) {
+  .stack-grid__divider { display: none; }
+  .stack-grid__list {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    grid-auto-flow: row;
+    row-gap: 0;
+  }
+  .stack-cell {
+    padding-top: var(--sp-4);
+    padding-bottom: clamp(var(--sp-8), 5vw, var(--sp-12));
+    border-bottom: 1px solid var(--color-line);
+  }
+  .stack-cell--06 { border-bottom: none; }
+  .stack-cell__watermark { font-size: clamp(2.5rem, 1.5rem + 8vw, 3.75rem); }
+}
+
+/* Fechamento — clara, não o mergulho escuro que tinha antes (fica
+   melhor pra essa página: o creme mais denso separa a dobra do fundo sem
+   pesar visualmente, mesmo truque do .section--alt). O âmbar segue como
+   acento pontual (stroke, halo, botão) — o flood cheio fica reservado pro
+   .manifesto, que essa página já usa em "Por que isso importa". */
+.closing-cta {
+  position: relative;
+  z-index: var(--z-section);
+  overflow: hidden;
+  background: var(--color-cream-dark);
+  color: var(--color-ink);
+  padding-block: clamp(var(--sp-24), 16vh, var(--sp-32));
+  text-align: center;
+}
+.closing-cta::before {
+  content: "";
+  position: absolute;
+  right: -10%;
+  top: -30%;
+  width: min(60vw, 40rem);
+  aspect-ratio: 1;
+  background: radial-gradient(circle, rgba(255, 176, 0, 0.18) 0%, transparent 65%);
+  pointer-events: none;
+  z-index: 0;
+}
+.closing-cta__inner { position: relative; z-index: 1; max-width: 36rem; }
+.closing-cta__stroke { width: clamp(120px, 20vw, 220px); margin: 0 auto var(--sp-6); }
+.closing-cta__over { color: var(--color-ink-mute); }
+.closing-cta__title {
+  margin-top: var(--sp-4);
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 1.3rem + 4vw, 3.75rem);
+  line-height: 1.1;
+  color: var(--color-ink);
+}
+.closing-cta__lede {
+  margin: var(--sp-4) auto 0;
+  max-width: 32ch;
+  color: var(--color-ink-soft);
+  font-size: var(--text-body);
+}
+.closing-cta__action { margin-top: var(--sp-8); }
+
+/* ─── 15c. SITES INSTITUCIONAIS — hero + "por que um site", fundidos ─────
+   Redesenho: em vez do hero raso + dobra de blocos empilhados que a página
+   tinha antes, é uma ÚNICA dobra cinematográfica — a mesma receita do hero
+   do index (seção 10): .hero__track alto + .hero__stage sticky, capítulos
+   absolutos cruzando uns por cima dos outros, textura de fundo e névoa/luz
+   reagindo ao capítulo em cena, HUD de progresso. Reaproveita as classes
+   .hero/.hero__*/.hero-chapter* tal como estão (genéricas, não amarradas ao
+   #hero do index) — só troca o conteúdo. Sem teclado 3D (esta página não
+   carrega three.js): o motor em reveal.js (initReasonHero) é uma versão
+   mais simples do buildHeroCinematic de site.js — mesma câmera/textura/HUD,
+   sem o rig do teclado. A narrativa: a assinatura do serviço (repouso) dá
+   lugar a três capítulos — a pesquisa, a clareza, o ativo — no lugar dos
+   três atos de bio do index, alternando de lado do mesmo jeito. */
+.hero--reason .hero-rest__name {
+  font-size: clamp(2.5rem, 1.1rem + 6.2vw, 6.25rem);
+}
+
+/* Selo circular acima da legenda de cada capítulo — âncora visual do
+   "porquê" (escudo/olho/crescimento), no lugar do numeral-fantasma que os
+   outros índices da página usam. */
+.hero-chapter__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  margin-bottom: var(--sp-4);
   border-radius: var(--radius-full);
   border: 1px solid var(--color-line-strong);
   background: var(--color-cream);
   color: var(--color-amber-ink);
 }
-.reason-block__icon .ic { width: 22px; height: 22px; }
-
-.reason-block__desc { margin-top: var(--sp-2); max-width: 34ch; color: var(--color-ink-soft); font-size: var(--text-body); line-height: 1.55; }
+.hero-chapter__icon .ic { width: 20px; height: 20px; }
 
 /* "O que é entregue" — dossiê editorial, não card de SaaS. Cada módulo é um
    verbete de índice: numeral-fantasma em serifa gigante no fundo, número de

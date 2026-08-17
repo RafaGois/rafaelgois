@@ -111,6 +111,13 @@
       </defs>
     </svg>
 
+    <!-- Textura de fundo da dobra cinematográfica: fixa, mesma receita do
+         hero do index (ver .hero__bg-image em ds.css, seção 10) — fica
+         invisível até o motor em reveal.js (initReasonHero) acender
+         conforme os capítulos alternam de lado, e some assim que a dobra
+         sai da tela. -->
+    <div class="hero__bg-image" aria-hidden="true"></div>
+
     <nav class="navbar" aria-label="Navegação">
       <a class="navbar__logo" href="/">Rafael <em>Gois</em></a>
       <a class="btn btn--secondary btn--sm" href="/#projects">Voltar aos trabalhos</a>
@@ -168,8 +175,7 @@
                     <p class="reason-block__desc">Um site com cara de empresa tira a desconfiança que um WhatsApp sozinho não tira.</p>
                   </div>
                 </div>
-              </div>
-            </article>
+              </section>
 
             <article class="reason-block" data-align="right">
               <div class="reason-block__content">
@@ -181,8 +187,7 @@
                     <p class="reason-block__desc">Em poucos segundos precisa ficar óbvio o que você faz. Se isso não acontece, a aba fecha.</p>
                   </div>
                 </div>
-              </div>
-            </article>
+              </section>
 
             <article class="reason-block" data-align="left">
               <div class="reason-block__content">
@@ -194,14 +199,35 @@
                     <p class="reason-block__desc">Mudou o horário, o serviço ou o endereço? O site acompanha. Não precisa recomeçar do zero.</p>
                   </div>
                 </div>
-              </div>
-            </article>
+              </section>
+
+              <section class="hero-chapter hero-chapter--minor" data-chapter="3" aria-label="Capítulo III">
+                <div>
+                  <span class="hero-chapter__icon" aria-hidden="true"><svg class="ic" aria-hidden="true"><use href="#i-crescimento" /></svg></span>
+                  <p class="hero-chapter__over">Capítulo III · o ativo</p>
+                  <p class="hero-chapter__line">
+                    Um site bom não é gasto único. É um ativo que cresce junto com o seu negócio.
+                  </p>
+                </div>
+              </section>
+            </div>
+
+            <p class="hero__cue" aria-hidden="true">
+              <span>role</span>
+              <span class="hero__cue-line"></span>
+            </p>
+
+            <div class="hero__hud" aria-hidden="true">
+              <span class="hero__hud-chapter" id="reason-hero-hud-chapter">01/04</span>
+              <span class="hero__hud-label" id="reason-hero-hud-label">A abertura</span>
+              <span class="hero__hud-bar"><i id="reason-hero-hud-bar"></i></span>
+            </div>
           </div>
         </div>
-      </section>
+      </header>
 
       <!-- ═══════════════ O QUE É ENTREGUE — dossiê editorial ═══════════════ -->
-      <section class="section deliver">
+      <section class="section deliver" id="deliver">
         <div class="wrap wrap--wide">
           <header class="sec-head" data-reveal>
             <div class="sec-head__rule" data-rule></div>
@@ -512,7 +538,13 @@
                   <span class="case-panel__tech">HTML5 · CSS3 · JavaScript</span>
                 </p>
               </div>
-            </article>
+            </div>
+
+            <div class="cases__nav">
+              <button class="cases__arrow cases__arrow--prev" type="button" aria-label="Case anterior">←</button>
+              <span class="cases__count"><span id="cases-current">01</span> / <span id="cases-total">03</span></span>
+              <button class="cases__arrow cases__arrow--next" type="button" aria-label="Próximo case">→</button>
+            </div>
           </div>
         </div>
       </section>
@@ -604,6 +636,13 @@
         </div>
       </section>
     </main>
+
+    <!-- Transição em tela cheia do carrossel de cases (ver initCasesWipe em
+         reveal.js): fica fora do <main> de propósito — um ancestral com
+         transform (o próprio .cases tem [data-reveal]) criaria um novo
+         "containing block" e quebraria o position:fixed contra a viewport
+         real. -->
+    <div class="case-wipe" id="case-wipe" aria-hidden="true"></div>
 
     <footer class="site-footer">
       <div class="wrap wrap--wide site-footer__inner">
