@@ -1248,7 +1248,7 @@ p { max-width: var(--measure); }
 }
 
 /* ─── 13. MANIFESTO — a seção 100% âmbar ────────────────────────────────── */
-.manifesto, .work-hero {
+.manifesto {
   isolation: isolate;
   background:
     radial-gradient(ellipse 110% 70% at 50% -15%, rgba(255, 253, 247, 0.5) 0%, transparent 55%),
@@ -1262,7 +1262,7 @@ p { max-width: var(--measure); }
   overflow: hidden;
   padding-block: clamp(var(--sp-24), 16vh, var(--sp-32));
 }
-.manifesto::before, .work-hero::before {
+.manifesto::before {
   content: "";
   position: absolute;
   inset: -35% -15% auto 30%;
@@ -1278,7 +1278,7 @@ p { max-width: var(--measure); }
   z-index: 0;
   animation: manifestoGlow 14s var(--ease-breath) infinite alternate;
 }
-.manifesto::after, .work-hero::after {
+.manifesto::after {
   content: "";
   position: absolute;
   inset: auto -20% -45% -20%;
@@ -1748,7 +1748,7 @@ p { max-width: var(--measure); }
 /* ─── STACK TÍPICA — preenchimento de fundo da dobra ──────────────────────
    A dobra é só texto + grade, sem foto — reaproveita o vocabulário que o
    resto do site já usa pra dar corpo a uma seção "vazia": o glow radial
-   âmbar pontual de .closing-cta/.reason-scroll__light (dois, em cantos
+   âmbar pontual de .closing-cta/.hero__light (dois, em cantos
    opostos, pra dar profundidade sem virar um flood só) e um glifo-fantasma
    gigante e quase invisível (mesmo motivo de .deliver-mod__watermark /
    .stack-cell__watermark, só que em escala de seção): um "</>" de código,
@@ -1934,130 +1934,39 @@ p { max-width: var(--measure); }
 }
 .closing-cta__action { margin-top: var(--sp-8); }
 
-/* ─── 15c. PÁGINAS DE TRABALHO — dobra de categoria ───────────────────────
-   Compartilhado pelas 3 subpáginas (sites-institucionais, sistemas-de-
-   controle, aplicacoes-sob-medida). Numeral de fundo segue a mesma receita
-   de .act__roman / .skill-node__roman — ver docs/dobra-trabalhos.md. */
-/* Hero raso e limpo: navbar (fixa, por cima) + título + subtítulo sobre uma
-   superfície âmbar sólida — sem o gradiente cheio do .manifesto, de
-   propósito, para manter o tom "clean" nas 3 páginas de trabalho. */
-.work-hero {
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  align-items: flex-end;
-  min-height: 100svh;
-  padding-top: clamp(6rem, 4rem + 6vw, 8rem);
-  padding-bottom: clamp(var(--sp-16), 10vh, var(--sp-24));
+/* ─── 15c. SITES INSTITUCIONAIS — hero + "por que um site", fundidos ─────
+   Redesenho: em vez do hero raso + dobra de blocos empilhados que a página
+   tinha antes, é uma ÚNICA dobra cinematográfica — a mesma receita do hero
+   do index (seção 10): .hero__track alto + .hero__stage sticky, capítulos
+   absolutos cruzando uns por cima dos outros, textura de fundo e névoa/luz
+   reagindo ao capítulo em cena, HUD de progresso. Reaproveita as classes
+   .hero/.hero__*/.hero-chapter* tal como estão (genéricas, não amarradas ao
+   #hero do index) — só troca o conteúdo. Sem teclado 3D (esta página não
+   carrega three.js): o motor em reveal.js (initReasonHero) é uma versão
+   mais simples do buildHeroCinematic de site.js — mesma câmera/textura/HUD,
+   sem o rig do teclado. A narrativa: a assinatura do serviço (repouso) dá
+   lugar a três capítulos — a pesquisa, a clareza, o ativo — no lugar dos
+   três atos de bio do index, alternando de lado do mesmo jeito. */
+.hero--reason .hero-rest__name {
+  font-size: clamp(2.5rem, 1.1rem + 6.2vw, 6.25rem);
 }
-.work-hero__roman {
-  position: absolute;
-  left: -0.06em;
-  bottom: -0.22em;
-  font-family: var(--font-mono);
-  font-weight: 500;
-  font-size: clamp(9rem, 7vw + 6rem, 17rem);
-  line-height: 1;
-  letter-spacing: 0.02em;
-  color: var(--color-ink);
-  opacity: 0.08;
-  pointer-events: none;
-  user-select: none;
-  z-index: 0;
-}
-.work-hero > .wrap { position: relative; z-index: 1; }
-.work-hero .sec-head { position: relative; margin-bottom: 0; }
-.work-hero .sec-head__rule, .work-hero .sec-head__title, .work-hero .sec-head__lede, .work-hero .text-overline {
-  position: relative;
-  z-index: 1;
-}
-.work-hero .sec-head__rule { background: rgba(42, 33, 24, 0.22); }
-.work-hero .text-overline { color: var(--color-ink); opacity: 0.6; }
-.work-hero .sec-head__lede { color: var(--color-ink); opacity: 0.78; }
 
-/* "Por que um site institucional" — mesma receita da dobra Habilidades
-   (seção 13, index.html): uma imagem de fundo (mesma textura do hero) que
-   se posiciona conforme o bloco de texto que está entrando em cena
-   (initSkillsBg em reveal.js), e cada bloco (skill-node) entra do seu
-   próprio lado num scrub por bloco (initSkillNodeReveals) — nada de pin,
-   nada de cena cinematográfica inteira. Bem mais simples e é a mesma
-   coreografia já validada no resto do site. */
-.reason-scroll { position: relative; overflow: hidden; }
-.reason-scroll__bg-image {
-  position: absolute;
-  inset: -18%;
-  z-index: 0;
-  pointer-events: none;
-  background-image: url("https://res.cloudinary.com/dn454izoh/image/upload/f_auto,q_auto,w_2200/v1785193132/textured_engineering_hero_background_hxi79m.png");
-  background-size: cover;
-  background-position: center;
-  opacity: 0;
-  will-change: transform, opacity;
-}
-.reason-scroll__fog,
-.reason-scroll__light {
-  position: absolute;
-  inset: -12%;
-  z-index: 1;
-  pointer-events: none;
-  opacity: 0;
-  will-change: transform, opacity;
-}
-.reason-scroll__light { background: radial-gradient(circle at 50% 46%, rgba(255, 176, 0, 0.30), transparent 58%); }
-.reason-scroll__fog--back { background: radial-gradient(ellipse 65% 50% at 30% 60%, rgba(255, 215, 120, 0.30), transparent 70%); }
-.reason-scroll__fog--front { background: radial-gradient(ellipse 58% 45% at 74% 34%, rgba(255, 251, 239, 0.6), transparent 72%); }
-.reason-scroll__vignette {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background: radial-gradient(ellipse at 50% 45%, transparent 40%, var(--color-cream) 100%);
-}
-.reason-scroll > .wrap { position: relative; z-index: 2; }
-
-.reason-list { display: grid; gap: clamp(var(--sp-16), 11vh, var(--sp-24)); margin-top: clamp(var(--sp-12), 7vh, var(--sp-24)); }
-
-.reason-block { display: flex; }
-.reason-block[data-align="right"] { justify-content: flex-end; }
-.reason-block__content { position: relative; width: 100%; max-width: 32rem; }
-
-/* Numeral romano discreto atrás do bloco — mesmo motivo-fantasma de
-   .act__roman / .skill-node__roman. */
-.reason-block__roman {
-  position: absolute;
-  left: -0.05em;
-  top: -0.3em;
-  font-family: var(--font-mono);
-  font-weight: 500;
-  font-size: clamp(4.5rem, 3vw + 3rem, 6.5rem);
-  line-height: 1;
-  letter-spacing: 0.02em;
-  color: var(--color-ink);
-  opacity: 0.04;
-  pointer-events: none;
-  user-select: none;
-  z-index: 0;
-}
-.reason-block[data-align="right"] .reason-block__roman { left: auto; right: -0.05em; }
-
-.reason-block__head { position: relative; z-index: 1; display: flex; align-items: flex-start; gap: var(--sp-4); }
-.reason-block[data-align="right"] .reason-block__head { flex-direction: row-reverse; text-align: right; }
-
-.reason-block__icon {
+/* Selo circular acima da legenda de cada capítulo — âncora visual do
+   "porquê" (escudo/olho/crescimento), no lugar do numeral-fantasma que os
+   outros índices da página usam. */
+.hero-chapter__icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 3.5rem;
-  height: 3.5rem;
-  flex-shrink: 0;
+  width: 3.25rem;
+  height: 3.25rem;
+  margin-bottom: var(--sp-4);
   border-radius: var(--radius-full);
   border: 1px solid var(--color-line-strong);
   background: var(--color-cream);
   color: var(--color-amber-ink);
 }
-.reason-block__icon .ic { width: 22px; height: 22px; }
-
-.reason-block__desc { margin-top: var(--sp-2); max-width: 34ch; color: var(--color-ink-soft); font-size: var(--text-body); line-height: 1.55; }
+.hero-chapter__icon .ic { width: 20px; height: 20px; }
 
 /* "O que é entregue" — dossiê editorial, não card de SaaS. Cada módulo é um
    verbete de índice: numeral-fantasma em serifa gigante no fundo, número de

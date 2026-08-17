@@ -86,7 +86,7 @@
     </script>
 
     <link rel="icon" href="https://res.cloudinary.com/dn454izoh/image/upload/f_auto,q_auto,w_64/v1786126348/letra-r_eiagpo.webp" type="image/webp" />
-    <link rel="stylesheet" href="styles/ds.css?v=4" />
+    <link rel="stylesheet" href="styles/ds.css?v=5" />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -111,97 +111,109 @@
       </defs>
     </svg>
 
+    <!-- Textura de fundo da dobra cinematográfica: fixa, mesma receita do
+         hero do index (ver .hero__bg-image em ds.css, seção 10) — fica
+         invisível até o motor em reveal.js (initReasonHero) acender
+         conforme os capítulos alternam de lado, e some assim que a dobra
+         sai da tela. -->
+    <div class="hero__bg-image" aria-hidden="true"></div>
+
     <nav class="navbar" aria-label="Navegação">
       <a class="navbar__logo" href="/">Rafael <em>Gois</em></a>
       <a class="btn btn--secondary btn--sm" href="/#projects">Voltar aos trabalhos</a>
     </nav>
 
     <main>
-      <!-- ═══════════════ HERO DA PÁGINA — clean, âmbar ═══════════════ -->
-      <header class="work-hero">
-        <div class="wrap">
-          <div class="sec-head" data-reveal>
-            <span class="work-hero__roman" aria-hidden="true">II</span>
-            <div class="sec-head__rule" data-rule></div>
-            <p class="text-overline">Trabalhos / II</p>
-            <h1 class="sec-head__title">Sites Institucionais</h1>
-            <p class="sec-head__lede">
-              Sites de empresa e páginas de serviço. A identidade do negócio
-              aparece logo, com um caminho claro até o contato.
+      <!-- ═══════════════ HERO + POR QUE UM SITE — dobra cinematográfica ═══
+           Mesma técnica do hero do index (seção 10 do ds.css): seção alta
+           (.hero__track) com um palco sticky (.hero__stage), progresso de
+           scroll suavizado por lerp movendo névoa/luz/textura/capítulos/HUD
+           (initReasonHero em reveal.js). Sem teclado 3D — só a câmera e a
+           narrativa. O capítulo de repouso é a assinatura do serviço (o
+           hero que a página já tinha); os três capítulos seguintes, com
+           pegada de storytelling, respondem "por que um site" — a pesquisa,
+           a clareza, o ativo — alternando de lado como no index. -->
+      <header class="hero hero--reason">
+        <div class="hero__track">
+          <div class="hero__stage">
+            <div class="hero__rig" aria-hidden="true">
+              <div class="hero__fog hero__fog--back"></div>
+              <div class="hero__light"></div>
+              <div class="hero__rays"></div>
+              <div class="hero__fog hero__fog--front"></div>
+            </div>
+            <div class="hero__vignette" aria-hidden="true"></div>
+
+            <div class="hero__scenes">
+              <section class="hero-chapter hero-chapter--rest" data-chapter="rest" aria-label="Sites institucionais">
+                <div>
+                  <p class="text-overline">Trabalhos / II</p>
+                  <h1 class="hero-rest__name">
+                    <em>Sites<svg class="sig-stroke" viewBox="0 0 300 40" aria-hidden="true"><path d="M6 28 C 60 12, 120 34, 170 22 S 260 14, 294 24"/></svg></em>
+                    Institucionais
+                  </h1>
+                  <p class="hero-rest__role">Identidade clara, caminho direto até o contato</p>
+                  <p class="hero-rest__tag">
+                    Sites de empresa e páginas de serviço, pensados para o
+                    segundo em que alguém decide se
+                    <span class="mark-amber" data-mark>vale a pena continuar</span>.
+                  </p>
+                  <div class="hero-rest__actions">
+                    <a class="btn btn--primary" href="#deliver">
+                      Ver o que é entregue <span class="btn__arrow" aria-hidden="true">→</span>
+                    </a>
+                    <a class="btn btn--secondary" href="/#contact">Fale comigo</a>
+                  </div>
+                </div>
+              </section>
+
+              <section class="hero-chapter hero-chapter--minor" data-chapter="1" data-side="left" aria-label="Capítulo I">
+                <div>
+                  <span class="hero-chapter__icon" aria-hidden="true"><svg class="ic" aria-hidden="true"><use href="#i-escudo" /></svg></span>
+                  <p class="hero-chapter__over">Capítulo I · a pesquisa</p>
+                  <p class="hero-chapter__line">
+                    Antes de ligar, seu cliente já te pesquisou — e decidiu boa parte da opinião sem te conhecer.
+                  </p>
+                </div>
+              </section>
+
+              <section class="hero-chapter hero-chapter--minor" data-chapter="2" data-side="right" aria-label="Capítulo II">
+                <div>
+                  <span class="hero-chapter__icon" aria-hidden="true"><svg class="ic" aria-hidden="true"><use href="#i-olho" /></svg></span>
+                  <p class="hero-chapter__over">Capítulo II · a clareza</p>
+                  <p class="hero-chapter__line">
+                    Se em poucos segundos a pessoa não entende o que você faz, ela volta pro Google.
+                  </p>
+                </div>
+              </section>
+
+              <section class="hero-chapter hero-chapter--minor" data-chapter="3" aria-label="Capítulo III">
+                <div>
+                  <span class="hero-chapter__icon" aria-hidden="true"><svg class="ic" aria-hidden="true"><use href="#i-crescimento" /></svg></span>
+                  <p class="hero-chapter__over">Capítulo III · o ativo</p>
+                  <p class="hero-chapter__line">
+                    Um site bom não é gasto único. É um ativo que cresce junto com o seu negócio.
+                  </p>
+                </div>
+              </section>
+            </div>
+
+            <p class="hero__cue" aria-hidden="true">
+              <span>role</span>
+              <span class="hero__cue-line"></span>
             </p>
+
+            <div class="hero__hud" aria-hidden="true">
+              <span class="hero__hud-chapter" id="reason-hero-hud-chapter">01/04</span>
+              <span class="hero__hud-label" id="reason-hero-hud-label">A abertura</span>
+              <span class="hero__hud-bar"><i id="reason-hero-hud-bar"></i></span>
+            </div>
           </div>
         </div>
       </header>
 
-      <!-- ═══════════════ POR QUE UM SITE INSTITUCIONAL ═══════════════
-           Mesma receita da dobra Habilidades em index.html: imagem de
-           fundo (.reason-scroll__bg-image, textura do hero) que se
-           posiciona conforme o bloco de texto que está entrando em cena
-           (initSkillsBg), e cada bloco entra do seu próprio lado num
-           scrub por bloco (initSkillNodeReveals) — não um cinema pinado. -->
-      <section class="section reason-scroll" id="reason-scroll">
-        <div class="reason-scroll__bg-image" aria-hidden="true"></div>
-        <div class="reason-scroll__fog reason-scroll__fog--back" aria-hidden="true"></div>
-        <div class="reason-scroll__light" aria-hidden="true"></div>
-        <div class="reason-scroll__fog reason-scroll__fog--front" aria-hidden="true"></div>
-        <div class="reason-scroll__vignette" aria-hidden="true"></div>
-
-        <div class="wrap wrap--wide">
-          <header class="sec-head" data-reveal>
-            <div class="sec-head__rule" data-rule></div>
-            <p class="text-overline">Por que investir num site</p>
-            <h2 class="sec-head__title">Você já foi avaliado antes de atender</h2>
-            <p class="sec-head__lede">
-              A maioria pesquisa antes de entrar em contato. Um site bem
-              feito coloca você na frente na hora certa.
-            </p>
-          </header>
-
-          <div class="reason-list">
-            <article class="reason-block" data-align="left">
-              <div class="reason-block__content">
-                <span class="reason-block__roman" aria-hidden="true">I</span>
-                <div class="reason-block__head">
-                  <span class="reason-block__icon" aria-hidden="true"><svg class="ic" aria-hidden="true"><use href="#i-escudo" /></svg></span>
-                  <div>
-                    <p class="text-overline">Credibilidade</p>
-                    <p class="reason-block__desc">Profissionalismo que reduz a desconfiança e acelera o contato.</p>
-                  </div>
-                </div>
-              </div>
-            </article>
-
-            <article class="reason-block" data-align="right">
-              <div class="reason-block__content">
-                <span class="reason-block__roman" aria-hidden="true">II</span>
-                <div class="reason-block__head">
-                  <span class="reason-block__icon" aria-hidden="true"><svg class="ic" aria-hidden="true"><use href="#i-olho" /></svg></span>
-                  <div>
-                    <p class="text-overline">Clareza</p>
-                    <p class="reason-block__desc">O visitante entende rápido o que você faz e avança com confiança.</p>
-                  </div>
-                </div>
-              </div>
-            </article>
-
-            <article class="reason-block" data-align="left">
-              <div class="reason-block__content">
-                <span class="reason-block__roman" aria-hidden="true">III</span>
-                <div class="reason-block__head">
-                  <span class="reason-block__icon" aria-hidden="true"><svg class="ic" aria-hidden="true"><use href="#i-crescimento" /></svg></span>
-                  <div>
-                    <p class="text-overline">Ativo digital</p>
-                    <p class="reason-block__desc">Cresce junto com o negócio, sem recomeçar do zero a cada mudança.</p>
-                  </div>
-                </div>
-              </div>
-            </article>
-          </div>
-        </div>
-      </section>
-
       <!-- ═══════════════ O QUE É ENTREGUE — dossiê editorial ═══════════════ -->
-      <section class="section deliver">
+      <section class="section deliver" id="deliver">
         <div class="wrap wrap--wide">
           <header class="sec-head" data-reveal>
             <div class="sec-head__rule" data-rule></div>
@@ -616,6 +628,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" defer></script>
-    <script src="scripts/reveal.js?v=2" defer></script>
+    <script src="scripts/reveal.js?v=3" defer></script>
   </body>
 </html>
