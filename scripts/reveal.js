@@ -90,10 +90,13 @@
      Cada .deliver-mod tem sua própria linha do tempo (não o [data-reveal]
      genérico): numeral-fantasma, índice, ícone, título com máscara de
      cortina e corpo entram em cascata, um gesto encadeado em vez de um
-     fade único. Presa ao scroll (scrub, sem once): a entrada acompanha o
-     progresso exato da rolagem e desfaz sozinha se o usuário volta. O
-     numeral de fundo ainda ganha, por cima, um parallax contínuo próprio
-     enquanto o módulo cruza a viewport. */
+     fade único. A cascata NÃO é presa ao scroll: uma vez disparada, ela roda
+     inteira no próprio tempo e não volta atrás. Presa ao scroll (como era
+     antes), ela avançava e recuava a cada tranco da rolagem e podia ficar
+     congelada no meio do gesto — o mesmo desconforto que o acabamento do hero
+     resolve lá em cima, e pelo mesmo motivo: entrada é gesto, não medidor de
+     rolagem. O que continua preso ao scroll é só o que é ambiente — o parallax
+     contínuo do numeral de fundo enquanto o módulo cruza a viewport. */
   var deliverMods = Array.prototype.slice.call(document.querySelectorAll(".deliver-mod"));
   if (deliverMods.length) {
     if (hasST && !reduced) {
@@ -106,7 +109,7 @@
         var proofs = mod.querySelectorAll(".deliver-mod__proof, .deliver-mod__chip");
 
         var tl = gsap.timeline({
-          scrollTrigger: { trigger: mod, start: "top 78%", end: "top 20%", scrub: 0.3 },
+          scrollTrigger: { trigger: mod, start: "top 78%", once: true },
         });
 
         if (watermark) {
@@ -187,14 +190,15 @@
   var REST_ZONES = SCENES.map(function (cfg) {
     return [cfg.inTo === null ? 0 : cfg.inTo, cfg.outFrom === null ? 1 : cfg.outFrom];
   });
-  /* Quanto do caminho entre dois repousos precisa estar vencido para a cena
-     terminar de entrar em vez de voltar. Baixo de propósito: quem parou no
-     meio quase sempre queria ver o capítulo chegar, não desistir dele — mas um
-     empurrãozinho de nada ainda devolve a cena anterior, inteira. */
-  var SETTLE_BIAS = 0.35;
+  /* O acabamento COMPLETA o gesto — nunca o desfaz. Quem decide o destino é o
+     SENTIDO da rolagem, não a distância até o repouso mais próximo: entrou
+     numa troca de capítulo descendo, a troca termina descendo. Era a decisão
+     por distância que produzia o vaivém — um empurrãozinho acendia a cena
+     seguinte e, ao parar, ela voltava inteira para a anterior. */
 
-  /** Para onde a cena deve derivar quando o scroll para. null = já em repouso. */
-  function restGoal(p) {
+  /** Para onde a cena deve derivar quando o scroll para, sempre no sentido do
+      último gesto. null = já em repouso. */
+  function restGoal(p, dir) {
     var prev = null, next = null;
     for (var i = 0; i < REST_ZONES.length; i++) {
       var a = REST_ZONES[i][0], b = REST_ZONES[i][1];
@@ -202,9 +206,10 @@
       if (b < p && (prev === null || b > prev)) prev = b;
       if (a > p && (next === null || a < next)) next = a;
     }
-    if (prev === null) return next;
-    if (next === null) return prev;
-    return (p - prev) / (next - prev) > SETTLE_BIAS ? next : prev;
+    /* Nas pontas há um caminho só: a capa não tem repouso antes dela, o
+       capítulo final não tem repouso depois. */
+    if (dir < 0) return prev !== null ? prev : next;
+    return next !== null ? next : prev;
   }
 
   function clamp01(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
@@ -316,7 +321,19 @@
 
     playHeroIntro(scenes[0].el);
 
-    var target = 0, smooth = 0, lastP = 0, vel = 0;
+    /* Três progressos, não um:
+       · raw    — onde a barra de rolagem realmente está (0..1 da dobra);
+       · virt   — o progresso NARRADO: o que a dobra decidiu contar;
+       · smooth — virt suavizado, o que de fato vai para a tela.
+       O acabamento move o narrado sem tocar na barra de rolagem, então os dois
+       vivem fora de sincronia de propósito. Antes o motor media a tela contra o
+       raw e puxava a diferença de volta no gesto seguinte — rolar um pouco e a
+       cena andar para trás era isso, e é o que lia como bug. Agora quem manda é
+       virt, e o raw entra só como DELTA (ver readScroll). */
+    var raw = 0, virt = 0, smooth = 0, lastP = 0, vel = 0;
+    var dir = 1;           // sentido do gesto em curso: 1 desce, -1 sobe
+    var against = 0;       // quanto já se andou contra esse sentido
+    var DIR_FLIP = 0.012;  // ~50px de rolagem: menos que isso é inércia de trackpad, não virada
     var lastHud = -1;
     var lastTime = 0;
     /* Suavização por tempo, não por frame: um lerp fixo por frame faria a
@@ -332,21 +349,53 @@
     var settling = false;    // trava: uma vez começado, vai até o fim
     var settleTo = 0;
     var SETTLE_DELAY = 0.16; // respiro antes de assumir que o scroll parou
-    var SETTLE_EPS = 0.004;  // smooth já alcançou o target
-    var SETTLE_RATE = 1.5;   // ~3x mais lento que o lerp normal: é um acabamento, não um salto
+    var SETTLE_EPS = 0.004;  // smooth já alcançou o progresso narrado
+    var SETTLE_RATE = 2.6;   // bem mais lento que o lerp normal: é um acabamento, não um salto
 
-    function updateTarget() {
+    function readScroll() {
       var rect = heroTrack.getBoundingClientRect();
       var distance = heroTrack.offsetHeight - window.innerHeight;
       var next = clamp01(-rect.top / Math.max(distance, 1));
-      /* Só um scroll que MOVE a dobra interrompe o acabamento: eventos de
-         rolagem que não mudam o progresso (fim de página, gesto horizontal)
-         não deveriam travar a cena de novo no meio do gesto. */
-      if (next !== target) {
-        idle = 0;
-        settling = false;
+      var delta = next - raw;
+      /* Só um scroll que MOVE a dobra conta: eventos de rolagem que não mudam
+         o progresso (fim de página, gesto horizontal) não deveriam interromper
+         um acabamento em curso. */
+      if (delta === 0) return;
+      var from = raw;
+      raw = next;
+      idle = 0;
+
+      /* Virada de sentido com franquia: o fim de uma rolada de trackpad chega
+         quase sempre com um repique minúsculo para o lado contrário, e sem essa
+         folga o repique mandaria o capítulo inteiro de volta. */
+      if ((delta > 0) === (dir > 0)) against = 0;
+      else {
+        against += Math.abs(delta);
+        if (against > DIR_FLIP) { dir = -dir; against = 0; }
       }
-      target = next;
+
+      /* Interromper um acabamento não cancela o que já foi contado: a narrativa
+         segue de onde a TELA está, não de onde ela estava quando o acabamento
+         começou. Sem isto, retomar a rolagem no meio da derivação daria o
+         mesmo salto para trás de antes. */
+      if (settling) { virt = smooth; settling = false; }
+
+      /* Reconciliação sem puxão. Depois de cada acabamento o narrado está
+         adiantado (ou atrasado) em relação ao raw. Em vez de cobrar essa
+         diferença de uma vez, o que RESTA de rolagem até a ponta passa a valer
+         o que RESTA de narrativa até a mesma ponta: quem se adiantou anda um
+         pouco mais devagar, quem ficou para trás anda um pouco mais rápido, e
+         os dois chegam juntos nas duas pontas. O efeito colateral é o objetivo:
+         o narrado nunca anda contra o dedo. */
+      var scale = delta > 0
+        ? (1 - virt) / Math.max(1 - from, 1e-4)
+        : virt / Math.max(from, 1e-4);
+      virt = clamp01(virt + delta * clamp(scale, 0.25, 3));
+
+      /* As pontas têm de coincidir: topo da dobra é a capa inteira, fim da
+         dobra é o capítulo final inteiro — sem sobra de reconciliação. */
+      if (raw <= 0.0005) virt = 0;
+      else if (raw >= 0.9995) virt = 1;
     }
 
     /** Palavras deslizam lateralmente — do lado do capítulo para dentro, e
@@ -391,25 +440,30 @@
       idle += dt;
 
       /* Fluxo: se a rolagem parou no meio de uma troca de capítulo, a cena não
-         fica trancada pela metade — ela se completa sozinha, devagar, até o
-         repouso mais próximo. A trava (settling) existe porque, assim que o
-         progresso renderizado começa a se afastar do scroll, a condição de
-         entrada deixaria de valer — sem ela o motor entraria e sairia do
-         acabamento a cada frame, e a cena tremeria em vez de assentar. */
-      if (!settling && idle > SETTLE_DELAY && Math.abs(target - smooth) < SETTLE_EPS) {
-        var rest = restGoal(smooth);
+         fica trancada pela metade — ela termina o gesto sozinha, no sentido em
+         que o usuário estava indo. Rolar um pouco e parar mostra o capítulo
+         CHEGANDO; nunca a cena anterior voltando. A trava (settling) existe
+         porque, assim que o narrado começa a andar por conta própria, a
+         condição de entrada deixaria de valer — sem ela o motor entraria e
+         sairia do acabamento a cada frame, e a cena tremeria em vez de
+         assentar. */
+      if (!settling && idle > SETTLE_DELAY && Math.abs(virt - smooth) < SETTLE_EPS) {
+        var rest = restGoal(smooth, dir);
         if (rest !== null) {
           settleTo = rest;
           settling = true;
         }
       }
-      var goal = settling ? settleTo : target;
+      var goal = settling ? settleTo : virt;
       smooth += (goal - smooth) * (1 - Math.exp((settling ? -SETTLE_RATE : -SMOOTH_RATE) * dt));
-      /* Chegou: crava o valor e SEGUE travado. Soltar a trava aqui devolveria
-         o comando ao scroll parado, que puxaria a cena de volta ao meio do
-         gesto — e o acabamento dispararia de novo, num vaivém sem fim. Quem
-         solta a trava é só o próximo scroll de verdade (ver updateTarget). */
-      if (settling && Math.abs(settleTo - smooth) < 0.0006) smooth = settleTo;
+      /* Chegou: crava o valor E promove o destino a progresso narrado. É daí
+         que a próxima rolagem parte (ver readScroll) — o acabamento não é uma
+         licença temporária que o scroll vai cobrar de volta, é a nova posição
+         da narrativa. */
+      if (settling && Math.abs(settleTo - smooth) < 0.0006) {
+        smooth = settleTo;
+        virt = settleTo;
+      }
 
       vel += ((smooth - lastP) - vel) * (1 - Math.exp(-VEL_RATE * dt));
       lastP = smooth;
@@ -541,9 +595,9 @@
       requestAnimationFrame(frame);
     }
 
-    window.addEventListener("scroll", updateTarget, { passive: true });
-    window.addEventListener("resize", updateTarget);
-    updateTarget();
+    window.addEventListener("scroll", readScroll, { passive: true });
+    window.addEventListener("resize", readScroll);
+    readScroll();
     requestAnimationFrame(frame);
   }
 
