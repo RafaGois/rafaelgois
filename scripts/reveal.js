@@ -784,7 +784,15 @@
     /* Onde cada case "para" no fio. Não são frações do scroll, e sim do
        comprimento do traço: é a rota que tem começo, meio e fim — o primeiro
        marco logo depois da largada, o último um pouco antes da chegada. */
-    var STOP_AT = [0.15, 0.5, 0.85];
+    var STOP_AT = stops.map(function (_, i) {
+      return stops.length > 1 ? 0.15 + (i * 0.7) / (stops.length - 1) : 0.5;
+    });
+    /* A página pode fixar as posições (data-stop-at="0.15,0.34,0.52,0.85" no
+       pin) quando o espaçamento igual faria uma parada cair em cima do texto
+       do último case, no quadro em que a dobra termina. */
+    var custom = (pin.getAttribute("data-stop-at") || "")
+      .split(",").map(parseFloat).filter(function (n) { return !isNaN(n); });
+    if (custom.length === stops.length) STOP_AT = custom;
     var curveLen = 0;
     if (curveMain) {
       curveLen = curveMain.getTotalLength();

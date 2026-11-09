@@ -6,7 +6,7 @@
     <title>Sistemas de Controle Industrial | Rafael Gois</title>
     <meta
       name="description"
-      content="Sistemas de controle industrial em Curitibanos. Apontamento no posto, ordem de fabricação e painel em tempo real, para decidir com a produção rodando."
+      content="Sistemas de controle industrial e supervisório de linha em Curitibanos. Apontamento no posto, ordem de fabricação e painel em tempo real, para decidir com a produção rodando."
     />
     <link rel="canonical" href="https://rafaelgois.com/sistemas-de-controle.html" />
     <meta name="author" content="Rafael Gois" />
@@ -18,7 +18,7 @@
     <meta property="og:title" content="Sistemas de Controle Industrial | Rafael Gois" />
     <meta
       property="og:description"
-      content="Sistemas de controle industrial em Curitibanos. Apontamento no posto, ordem de fabricação e painel em tempo real, para decidir com a produção rodando."
+      content="Sistemas de controle industrial e supervisório de linha em Curitibanos. Apontamento no posto, ordem de fabricação e painel em tempo real, para decidir com a produção rodando."
     />
     <meta
       property="og:image"
@@ -31,7 +31,7 @@
     <meta name="twitter:title" content="Sistemas de Controle Industrial | Rafael Gois" />
     <meta
       name="twitter:description"
-      content="Sistemas de controle industrial em Curitibanos. Apontamento no posto, ordem de fabricação e painel em tempo real, para decidir com a produção rodando."
+      content="Sistemas de controle industrial e supervisório de linha em Curitibanos. Apontamento no posto, ordem de fabricação e painel em tempo real, para decidir com a produção rodando."
     />
     <meta
       name="twitter:image"
@@ -56,7 +56,7 @@
               "name": "Curitibanos, Santa Catarina, Brasil"
             },
             "url": "https://rafaelgois.com/sistemas-de-controle.html",
-            "description": "Sistemas de controle industrial em Curitibanos. Apontamento no posto, ordem de fabricação e painel em tempo real, para decidir com a produção rodando."
+            "description": "Sistemas de controle industrial e supervisório de linha em Curitibanos. Apontamento no posto, ordem de fabricação e painel em tempo real, para decidir com a produção rodando."
           },
           {
             "@type": "BreadcrumbList",
@@ -404,7 +404,7 @@
         </div>
       </section>
 
-      <!-- ═══════════════ TRABALHOS REAIS — três cases em scroll horizontal ═══
+      <!-- ═══════════════ TRABALHOS REAIS — quatro cases em scroll horizontal ═══
            Mesma dobra de sites-institucionais.html (ver initCasesScroll em
            reveal.js): no desktop fica pinada, os cases deslizam na horizontal
            e o fio ao fundo se desenha conforme o scroll, com uma parada por
@@ -412,23 +412,25 @@
            roda dentro da planta e não tem endereço público, então dois dos
            três cases aparecem como fotografia (.case-panel__frame--photo, sem
            barra de navegador) e trazem selo de confidencialidade no lugar do
-           "Ver projeto". -->
+           "Ver projeto". O case IV (supervisório) não tem captura de tela
+           pública: usa um esquema ilustrativo, sem dado real, até haver print
+           anonimizado. -->
       <section class="section section--alt cases-scroll" id="cases">
         <div class="wrap wrap--wide">
           <header class="sec-head" data-reveal>
             <div class="sec-head__rule" data-rule></div>
             <p class="text-overline">Trabalhos reais</p>
-            <h2 class="sec-head__title">Três operações, três sistemas</h2>
+            <h2 class="sec-head__title">Quatro operações, quatro sistemas</h2>
             <p class="sec-head__lede">
               A maior parte desses projetos roda portas adentro e fica só entre
-              a gente. Estes três mostram o tipo de sistema que a sua operação
+              a gente. Estes quatro mostram o tipo de sistema que a sua operação
               pode ter.
             </p>
           </header>
         </div>
 
-        <div class="cases-scroll__pin" id="cases-scroll-pin">
-          <!-- A rota entre os três projetos. O traço-fantasma mostra o caminho
+        <div class="cases-scroll__pin" id="cases-scroll-pin" data-stop-at="0.15,0.34,0.52,0.85">
+          <!-- A rota entre os quatro projetos. O traço-fantasma mostra o caminho
                inteiro desde o começo; o traço cheio, por cima, só existe até
                onde o scroll já chegou. -->
           <svg class="cases-curve-svg" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true">
@@ -449,6 +451,7 @@
           <span class="cases-curve-stop" data-stop="0" aria-hidden="true">I</span>
           <span class="cases-curve-stop" data-stop="1" aria-hidden="true">II</span>
           <span class="cases-curve-stop" data-stop="2" aria-hidden="true">III</span>
+          <span class="cases-curve-stop" data-stop="3" aria-hidden="true">IV</span>
           <span class="cases-curve-head" aria-hidden="true"></span>
 
           <div class="cases-scroll__track" id="cases-scroll-track">
@@ -554,6 +557,156 @@
                   <span class="case-panel__tech">HTML5 · CSS3 · JavaScript</span>
                 </p>
               </div>
+            </article>
+
+            <!-- IV — Supervisório de linha (cliente não nomeado). Sem captura de
+                 tela pública: o sistema em produção tem login e dado real de
+                 cliente. O mockup ao lado reproduz a tela Turno atual (tema claro,
+                 vermelho da marca), só estrutura, sem número. Trocar por print anonimizado quando houver. -->
+            <article class="case-panel case-panel--iv case-panel--reverse case-panel--red" data-case-panel>
+              <div class="case-panel__text">
+                <span class="case-panel__roman" aria-hidden="true">IV</span>
+                <p class="case-panel__kicker">Case IV · Supervisório de linha</p>
+                <h3 class="case-panel__name">A linha inteira na mesma tela</h3>
+                <p class="case-panel__desc">
+                  Numa linha de serraria, a parada acontece no meio do turno e
+                  o motivo se perde antes do fim dele. O supervisório existe
+                  para que isso fique registrado na hora.
+                </p>
+                <ul class="case-panel__points">
+                  <li>Turno atual ao vivo: ritmo e produção atualizam assim que o dado chega.</li>
+                  <li>A parada é detectada pelo próprio sistema. O operador só aponta o motivo.</li>
+                  <li>Manutenção, troca de lâmina e pacotes no mesmo lugar, com histórico de quem mudou o quê.</li>
+                </ul>
+                <p class="case-panel__foot">
+                  <span class="case-panel__seal">Cliente não nomeado · confidencial</span>
+                  <span class="case-panel__tech">TypeScript · Next.js · PostgreSQL</span>
+                </p>
+              </div>
+              <figure class="case-panel__media">
+                <span class="case-panel__glow case-panel__glow--red" aria-hidden="true"></span>
+                <div class="case-panel__frame case-panel__frame--photo case-panel__frame--schema">
+                  <svg class="case-schema" viewBox="0 0 800 500" role="img" aria-label="Ilustração da tela Turno atual do supervisório, no tema claro com vermelho: indicadores do turno, volume acumulado contra a meta, paradas, toras por minuto e por hora. Sem dados reais.">
+                    <rect class="cs-bg" x="0" y="0" width="800" height="500" />
+
+                    <rect class="cs-side" x="0" y="0" width="148" height="500" />
+                    <line class="cs-sep" x1="148" y1="0" x2="148" y2="500" />
+                    <rect class="cs-brand" x="16" y="16" width="22" height="22" rx="6" />
+                    <text class="cs-t cs-t--strong" x="46" y="32">Supervisório</text>
+                    <rect class="cs-nav-on" x="10" y="58" width="128" height="24" rx="6" />
+                    <circle class="cs-ico cs-ico--on" cx="24" cy="70" r="4" />
+                    <text class="cs-t cs-t--red" x="36" y="74">Tempo real</text>
+                    <circle class="cs-ico" cx="24" cy="96" r="4" /><text class="cs-t cs-t--mute" x="36" y="100">Paradas</text>
+                    <circle class="cs-ico" cx="24" cy="122" r="4" /><text class="cs-t cs-t--mute" x="36" y="126">Manutenção</text>
+                    <circle class="cs-ico" cx="24" cy="148" r="4" /><text class="cs-t cs-t--mute" x="36" y="152">Lâminas</text>
+                    <circle class="cs-ico" cx="24" cy="174" r="4" /><text class="cs-t cs-t--mute" x="36" y="178">Pacotes</text>
+                    <circle class="cs-ico" cx="24" cy="200" r="4" /><text class="cs-t cs-t--mute" x="36" y="204">Alarmes</text>
+                    <circle class="cs-ico" cx="24" cy="256" r="4" /><text class="cs-t cs-t--mute" x="36" y="260">Produção</text>
+                    <circle class="cs-ico" cx="24" cy="282" r="4" /><text class="cs-t cs-t--mute" x="36" y="286">Aproveitamento</text>
+                    <circle class="cs-ico" cx="24" cy="308" r="4" /><text class="cs-t cs-t--mute" x="36" y="312">Metas</text>
+                    <text class="cs-t cs-t--cap" x="18" y="238">GESTÃO</text>
+
+                    <text class="cs-t cs-t--cap cs-t--red" x="164" y="34">TEMPO REAL</text>
+                    <text class="cs-t cs-t--title" x="164" y="58">Turno atual</text>
+                    <rect class="cs-pill" x="648" y="26" width="64" height="24" rx="12" />
+                    <circle class="cs-live" cx="662" cy="38" r="3.5" />
+                    <text class="cs-t" x="672" y="42">Ao vivo</text>
+                    <rect class="cs-btn" x="720" y="26" width="64" height="24" rx="6" />
+                    <text class="cs-t" x="752" y="42" text-anchor="middle">Atualizar</text>
+
+                    <rect class="cs-card" x="164.0" y="78" width="147" height="74" rx="8" />
+                    <text class="cs-t cs-t--mute" x="176.0" y="99">Toras processadas</text>
+                    <rect class="cs-val" x="176.0" y="108" width="70" height="15" rx="3" />
+                    <rect class="cs-track" x="176.0" y="134" width="123" height="4" rx="2" />
+                    <rect class="cs-fill" x="176.0" y="134" width="113" height="4" rx="2" />
+                    <rect class="cs-card" x="321.5" y="78" width="147" height="74" rx="8" />
+                    <text class="cs-t cs-t--mute" x="333.5" y="99">Volume de toras</text>
+                    <rect class="cs-val" x="333.5" y="108" width="84" height="15" rx="3" />
+                    <rect class="cs-track" x="333.5" y="134" width="123" height="4" rx="2" />
+                    <rect class="cs-fill" x="333.5" y="134" width="95" height="4" rx="2" />
+                    <rect class="cs-card" x="479.0" y="78" width="147" height="74" rx="8" />
+                    <text class="cs-t cs-t--mute" x="491.0" y="99">Ritmo na última hora</text>
+                    <rect class="cs-val" x="491.0" y="108" width="64" height="15" rx="3" />
+                    <rect class="cs-track" x="491.0" y="134" width="123" height="4" rx="2" />
+                    <rect class="cs-fill" x="491.0" y="134" width="105" height="4" rx="2" />
+                    <rect class="cs-card" x="636.5" y="78" width="147" height="74" rx="8" />
+                    <text class="cs-t cs-t--mute" x="648.5" y="99">Projeção de fechamento</text>
+                    <rect class="cs-val" x="648.5" y="108" width="76" height="15" rx="3" />
+                    <rect class="cs-track" x="648.5" y="134" width="123" height="4" rx="2" />
+                    <rect class="cs-fill" x="648.5" y="134" width="86" height="4" rx="2" />
+
+                    <rect class="cs-card" x="164" y="164" width="470" height="150" rx="8" />
+                    <text class="cs-t cs-t--strong" x="178" y="186">Volume acumulado do turno</text>
+                    <text class="cs-t cs-t--mute cs-t--sm" x="178" y="200">m³ contra a meta proporcional</text>
+                    <line class="cs-grid" x1="178" y1="226" x2="620" y2="226" />
+                    <line class="cs-grid" x1="178" y1="254" x2="620" y2="254" />
+                    <line class="cs-axis" x1="178" y1="290" x2="620" y2="290" />
+                    <path class="cs-area" d="M178 288 C 230 282, 270 266, 320 256 S 390 240, 440 232 L440 290 L178 290 Z" />
+                    <line class="cs-meta" x1="178" y1="286" x2="620" y2="224" />
+                    <path class="cs-line" d="M178 288 C 230 282, 270 266, 320 256 S 390 240, 440 232" />
+                    <line class="cs-proj" x1="440" y1="232" x2="620" y2="212" />
+                    <circle class="cs-dot" cx="440" cy="232" r="4" />
+                    <line class="cs-line" x1="178" y1="304" x2="194" y2="304" />
+                    <text class="cs-t cs-t--mute cs-t--sm" x="198" y="307">Realizado</text>
+                    <line class="cs-proj" x1="262" y1="304" x2="278" y2="304" />
+                    <text class="cs-t cs-t--mute cs-t--sm" x="282" y="307">Projeção</text>
+                    <line class="cs-meta" x1="338" y1="304" x2="354" y2="304" />
+                    <text class="cs-t cs-t--mute cs-t--sm" x="358" y="307">Meta proporcional</text>
+
+                    <rect class="cs-card" x="644" y="164" width="140" height="150" rx="8" />
+                    <text class="cs-t cs-t--strong" x="656" y="186">Paradas do turno</text>
+                    <text class="cs-t cs-t--mute cs-t--sm" x="656" y="200">sem tora no scanner</text>
+                    <rect class="cs-stopbar" x="656" y="214" width="4" height="26" rx="2" />
+                    <rect class="cs-sk" x="668" y="216" width="84" height="7" rx="3" />
+                    <rect class="cs-sk cs-sk--soft" x="668" y="230" width="48" height="6" rx="3" />
+                    <rect class="cs-stopbar cs-stopbar--b" x="656" y="248" width="4" height="26" rx="2" />
+                    <rect class="cs-sk" x="668" y="250" width="68" height="7" rx="3" />
+                    <rect class="cs-sk cs-sk--soft" x="668" y="264" width="40" height="6" rx="3" />
+                    <rect class="cs-stopbar" x="656" y="282" width="4" height="26" rx="2" />
+                    <rect class="cs-sk" x="668" y="284" width="76" height="7" rx="3" />
+                    <rect class="cs-sk cs-sk--soft" x="668" y="298" width="44" height="6" rx="3" />
+
+                    <rect class="cs-card" x="164" y="326" width="300" height="156" rx="8" />
+                    <text class="cs-t cs-t--strong" x="178" y="348">Toras por minuto</text>
+                    <text class="cs-t cs-t--mute cs-t--sm" x="178" y="362">minuto a minuto, ao vivo</text>
+                    <rect class="cs-b" x="180" y="432" width="9" height="38" rx="2" />
+                      <rect class="cs-b" x="195" y="443" width="9" height="27" rx="2" />
+                      <rect class="cs-b" x="210" y="427" width="9" height="43" rx="2" />
+                      <rect class="cs-b" x="225" y="449" width="9" height="21" rx="2" />
+                      <rect class="cs-b" x="240" y="448" width="9" height="22" rx="2" />
+                      <rect class="cs-b" x="255" y="418" width="9" height="52" rx="2" />
+                      <rect class="cs-b" x="270" y="446" width="9" height="24" rx="2" />
+                      <rect class="cs-b" x="285" y="429" width="9" height="41" rx="2" />
+                      <rect class="cs-b" x="300" y="415" width="9" height="55" rx="2" />
+                      <rect class="cs-b" x="315" y="449" width="9" height="21" rx="2" />
+                      <rect class="cs-b" x="330" y="420" width="9" height="50" rx="2" />
+                      <rect class="cs-b" x="345" y="439" width="9" height="31" rx="2" />
+                      <rect class="cs-b" x="360" y="450" width="9" height="20" rx="2" />
+                      <rect class="cs-b" x="375" y="447" width="9" height="23" rx="2" />
+                      <rect class="cs-b" x="390" y="425" width="9" height="45" rx="2" />
+                      <rect class="cs-b" x="405" y="426" width="9" height="44" rx="2" />
+                      <rect class="cs-b" x="420" y="448" width="9" height="22" rx="2" />
+                      <rect class="cs-b" x="435" y="437" width="9" height="33" rx="2" />
+                    <line class="cs-meta" x1="178" y1="438" x2="450" y2="438" />
+
+                    <rect class="cs-card" x="474" y="326" width="310" height="156" rx="8" />
+                    <text class="cs-t cs-t--strong" x="488" y="348">Toras por hora</text>
+                    <text class="cs-t cs-t--mute cs-t--sm" x="488" y="362">contra a meta por hora</text>
+                    <rect class="cs-b" x="492" y="412" width="22" height="58" rx="2" />
+                      <rect class="cs-b" x="528" y="398" width="22" height="72" rx="2" />
+                      <rect class="cs-b" x="564" y="404" width="22" height="66" rx="2" />
+                      <rect class="cs-b" x="600" y="390" width="22" height="80" rx="2" />
+                      <rect class="cs-b" x="636" y="396" width="22" height="74" rx="2" />
+                      <rect class="cs-b cs-b--low" x="672" y="418" width="22" height="52" rx="2" />
+                      <rect class="cs-b" x="708" y="400" width="22" height="70" rx="2" />
+                      <rect class="cs-b" x="744" y="394" width="22" height="76" rx="2" />
+                    <line class="cs-meta" x1="488" y1="408" x2="772" y2="408" />
+                    <line class="cs-axis" x1="488" y1="470" x2="772" y2="470" />
+
+                    <text class="cs-note" x="784" y="495" text-anchor="end">ilustração · sem dados reais</text>
+                  </svg>
+                </div>
+              </figure>
             </article>
           </div>
         </div>
